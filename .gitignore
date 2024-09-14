@@ -6,3 +6,4 @@ test/*
 *_config.yml
 apiclient_key.pem
 .env
+docker-compose-local.yml
