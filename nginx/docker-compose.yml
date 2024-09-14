@@ -1,0 +1,9 @@
+version: '3'
+services:
+  nginx:
+    image: registry.cn-hangzhou.aliyuncs.com/ripper/copilot-nginx:latest
+    ports:
+      - "443:443"
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
