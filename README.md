@@ -4,7 +4,19 @@
 
 理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个。  
 
-在使用之前, 推荐您首先了解并操作下 [信任证书文件](https://gitee.com/ripperTs/github-copilot-proxies#%E4%BF%A1%E4%BB%BB%E8%AF%81%E4%B9%A6) ,当然这不是强制的.
+## 信任证书
+> 在正式使用之前, 推荐您信任证书, 否则会出现各种各样的问题.
+
+### Windows操作
+1. 双击证书文件 [mycopilot.crt](nginx/ssl/mycopilot.crt) , 点击安装证书
+2. 选择 `本地计算机` > `下一步`
+3. 选择 `将所有的证书放入下列存储` > `浏览` > `受信任的发布者` > `确定` > `下一步` > `完成`
+
+### MacOS操作
+1. 打开钥匙串访问
+2. 将 [mycopilot.crt](nginx/ssl/mycopilot.crt) 文件拖拽到“系统”钥匙串列表中。
+3. 双击导入的证书,展开"信任"部分, 将"使用此证书时"选项改为"始终信任"。
+4. 关闭窗口,系统会要求输入管理员密码以确认更改。
 
 ## 如何使用?
 ### Docker【推荐】
@@ -61,7 +73,7 @@ docker-compose logs -f
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `mycopilot.com`
-3. 信任证书配置, 可以直接导入[ssl](nginx/ssl)目录下的证书文件, 系统级别信任证书, 也可以直接在IDE中信任即可.
+3. 如果已经配置了系统级别的信任证书, 可以忽略下面步骤, 直接在IDE中信任即可.
 ![Xnip2024-09-14_13-08-17.png](docs/Xnip2024-09-14_13-08-17.png)
 
 ### Visual Studio 2022
@@ -89,11 +101,6 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 3. 配置Nginx服务, 将指定域名解析到服务器IP, 并配置伪静态, 代理到本地服务端口, 内容参考文件: `[default.conf](nginx/conf.d/default.conf)`
 4. 所有解析的域名需要启用https
 5. `docker-compose up -d` 启动服务即可
-
-## 信任证书
-1. 证书在 **[ssl](nginx/ssl)** 目录下, 请自行导入到系统信任证书中, 以便浏览器访问时不会提示不安全.
-2. 信任证书可以解决大多数存在的问题, 虽然上面所有配置都是默认未信任的情况下的配置, 但是信任证书后, 可以直接使用https访问, 无需端口配置.
-3. 信任证书的方法, 不同系统不同, 请自行搜索.
 
 ## 注意事项
 1. 请勿将本服务用于商业用途, 仅供学习交流使用
