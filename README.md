@@ -4,6 +4,8 @@
 
 理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个。  
 
+在使用之前, 推荐您首先了解并操作下 [信任证书文件](https://gitee.com/ripperTs/github-copilot-proxies#%E4%BF%A1%E4%BB%BB%E8%AF%81%E4%B9%A6) ,当然这不是强制的.
+
 ## 如何使用?
 ### Docker【推荐】
 已经将nginx和服务端及自签证书的工作全部做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
@@ -56,8 +58,6 @@ docker-compose logs -f
 ```
 **vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式 (不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.**
 
-**也可以直接系统级别信任证书, 这样就可以继续使用https而无需端口配置了, 但需要手动操作下, 不同的系统自己搜索下教程吧.**
-
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `mycopilot.com`
@@ -90,10 +90,14 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 4. 所有解析的域名需要启用https
 5. `docker-compose up -d` 启动服务即可
 
+## 信任证书
+1. 证书在 **[ssl](nginx/ssl)** 目录下, 请自行导入到系统信任证书中, 以便浏览器访问时不会提示不安全.
+2. 信任证书可以解决大多数存在的问题, 虽然上面所有配置都是默认未信任的情况下的配置, 但是信任证书后, 可以直接使用https访问, 无需端口配置.
+3. 信任证书的方法, 不同系统不同, 请自行搜索.
+
 ## 注意事项
 1. 请勿将本服务用于商业用途, 仅供学习交流使用
 2. 请勿将本服务用于非法用途, 一切后果自负
-3. 因自签证书问题, 浏览器访问可能会提示不安全甚至拦截, 建议使用无痕窗口访问可解决大多数问题.
 
 ## 鸣谢
 - [LoveA/copilot_take_over](https://gitee.com/LoveA/copilot_take_over)
