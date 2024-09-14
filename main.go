@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"hzer/internal/redis"
-	"hzer/internal/router"
 	"log"
 	"os"
+	"ripper/internal/redis"
+	"ripper/internal/router"
 	"strconv"
 )
 

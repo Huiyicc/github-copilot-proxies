@@ -3,8 +3,8 @@ package response
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"hzer/pkg/util"
 	"net/http"
+	"ripper/pkg/util"
 )
 
 /*

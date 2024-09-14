@@ -3,9 +3,9 @@ package copilot
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
-	"hzer/internal/app/github_auth"
 	"net/http"
 	"os"
+	"ripper/internal/app/github_auth"
 	"time"
 )
 

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
-	"hzer/internal/middleware"
-	"hzer/internal/response"
-	jwtpkg "hzer/pkg/jwt"
+	"ripper/internal/middleware"
+	"ripper/internal/response"
+	jwtpkg "ripper/pkg/jwt"
 )
 
 // 业务模型

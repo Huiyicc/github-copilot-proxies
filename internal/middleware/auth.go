@@ -2,10 +2,10 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"hzer/internal/app/github_auth"
-	"hzer/internal/response"
-	jwtpkg "hzer/pkg/jwt"
 	"net/http"
+	"ripper/internal/app/github_auth"
+	"ripper/internal/response"
+	jwtpkg "ripper/pkg/jwt"
 	"strings"
 )
 

@@ -2,8 +2,8 @@ package middleware
 
 import (
 	"github.com/gin-gonic/gin"
-	"hzer/internal/response"
-	jwtpkg "hzer/pkg/jwt"
+	"ripper/internal/response"
+	jwtpkg "ripper/pkg/jwt"
 )
 
 // JWTCheck 检查是否登陆

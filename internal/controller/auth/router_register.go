@@ -2,7 +2,7 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"hzer/internal/middleware"
+	"ripper/internal/middleware"
 )
 
 func GinApi(g *gin.RouterGroup) {

@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/gomodule/redigo/redis"
-	redisPkg "hzer/internal/redis"
+	redisPkg "ripper/internal/redis"
 	"strings"
 )
 
@@ -29,14 +29,14 @@ func BindClientToCode(clientId string, exp int) (string, string, error) {
 	}
 	formattedUUID := genCode()
 	rep := 0
-	redisKey := fmt.Sprintf("copilot.oath.%s", formattedUUID)
+	redisKey := fmt.Sprintf("copilot.proxy.%s", formattedUUID)
 	repeat, _ := redis.Bool(rc.Do("EXISTS", redisKey))
 	for repeat {
 		if rep > 5 {
 			return "", "", fmt.Errorf("gen code error")
 		}
 		formattedUUID = genCode()
-		redisKey = fmt.Sprintf("copilot.oath.%s", formattedUUID)
+		redisKey = fmt.Sprintf("copilot.proxy.%s", formattedUUID)
 		repeat, _ = redis.Bool(rc.Do("EXISTS", redisKey))
 		rep++
 	}
@@ -51,7 +51,7 @@ func BindClientToCode(clientId string, exp int) (string, string, error) {
 	if err != nil {
 		return "", "", err
 	}
-	redisKey = fmt.Sprintf("copilot.oath.map.%s", devId)
+	redisKey = fmt.Sprintf("copilot.proxy.map.%s", devId)
 	_, err = rc.Do("set", redisKey, formattedUUID, "EX", exp)
 	return formattedUUID, devId, err
 }
@@ -59,12 +59,12 @@ func BindClientToCode(clientId string, exp int) (string, string, error) {
 // GetClientAuthInfoByDeviceCode 通过设备代码获取客户端授权信息
 func GetClientAuthInfoByDeviceCode(deviceCode string) (*ClientAuthInfo, error) {
 	rc := redisPkg.GetCoon()
-	redisKey := fmt.Sprintf("copilot.oath.map.%s", deviceCode)
+	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
 	userCode, err := rc.Do("get", redisKey)
 	if err != nil {
 		return nil, err
 	}
-	redisKey = fmt.Sprintf("copilot.oath.%s", userCode)
+	redisKey = fmt.Sprintf("copilot.proxy.%s", userCode)
 	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
 	if err != nil {
 		return nil, err
@@ -76,7 +76,7 @@ func GetClientAuthInfoByDeviceCode(deviceCode string) (*ClientAuthInfo, error) {
 
 func GetClientAuthInfo(code string) (ClientAuthInfo, error) {
 	rc := redisPkg.GetCoon()
-	redisKey := fmt.Sprintf("copilot.oath.%s", code)
+	redisKey := fmt.Sprintf("copilot.proxy.%s", code)
 	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
 	if err != nil {
 		return ClientAuthInfo{}, err
@@ -99,12 +99,12 @@ func GenDevicesCode(codeLen int) string {
 // UpdateClientAuthStatusByDeviceCode 更新客户端授权码通过设备代码
 func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) error {
 	rc := redisPkg.GetCoon()
-	redisKey := fmt.Sprintf("copilot.oath.map.%s", deviceCode)
+	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
 	uCode, err := rc.Do("get", redisKey)
 	if err != nil {
 		return err
 	}
-	redisKey = fmt.Sprintf("copilot.oath.%s", uCode)
+	redisKey = fmt.Sprintf("copilot.proxy.%s", uCode)
 	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
 	if err != nil {
 		return err
@@ -122,17 +122,17 @@ func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) erro
 
 func RemoveClientAuthInfoByDeviceCode(deviceCode string) error {
 	rc := redisPkg.GetCoon()
-	redisKey := fmt.Sprintf("copilot.oath.map.%s", deviceCode)
+	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
 	uCode, err := rc.Do("get", redisKey)
 	if err != nil {
 		return err
 	}
-	redisKey = fmt.Sprintf("copilot.oath.%s", uCode)
+	redisKey = fmt.Sprintf("copilot.proxy.%s", uCode)
 	_, err = rc.Do("del", redisKey)
 	if err != nil {
 		return err
 	}
-	redisKey = fmt.Sprintf("copilot.oath.map.%s", deviceCode)
+	redisKey = fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
 	_, err = rc.Do("del", redisKey)
 	return err
 }

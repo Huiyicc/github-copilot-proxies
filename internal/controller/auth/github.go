@@ -4,12 +4,12 @@ import (
 	_ "embed"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"hzer/internal/app/github_auth"
-	"hzer/internal/middleware"
-	"hzer/internal/response"
-	jwtpkg "hzer/pkg/jwt"
 	"net/http"
 	"os"
+	"ripper/internal/app/github_auth"
+	"ripper/internal/middleware"
+	"ripper/internal/response"
+	jwtpkg "ripper/pkg/jwt"
 	"time"
 )
 

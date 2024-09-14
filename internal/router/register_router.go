@@ -3,14 +3,13 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"html/template"
-	authApi "hzer/internal/controller/auth"
-	"hzer/internal/controller/copilot"
-	"hzer/internal/middleware"
-	"hzer/static"
+	authApi "ripper/internal/controller/auth"
+	"ripper/internal/controller/copilot"
+	"ripper/internal/middleware"
+	"ripper/static"
 )
 
 func NewHTTPRouter(r *gin.Engine) {
-	//isDebug := os.Getenv("GIN_MODE") == "debug"
 	rootRouter := r.Group("/")
 	tmpl := template.Must(template.New("").ParseFS(static.Public, "public/*.html"))
 	r.SetHTMLTemplate(tmpl)

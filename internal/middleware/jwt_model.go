@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/golang-jwt/jwt/v5"
-	jwtPkg "hzer/pkg/jwt"
+	jwtPkg "ripper/pkg/jwt"
 )
 
 type AdminLoad struct {

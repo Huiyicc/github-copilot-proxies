@@ -138,7 +138,6 @@
             }
 
             const result = await response.json();
-            console.log(result);
             if (result?.error !== 0) {
                 alert(result.message);
                 return false;
