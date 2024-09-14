@@ -46,7 +46,6 @@ docker-compose logs -f
 1. 安装插件: `GitHub Copilot`
 2. 修改 VSCode 的 settings.json 文件, 添加以下配置:
 ```json
-{
   "github.copilot.advanced": {
     "authProvider": "github-enterprise",
     "debug.overrideCAPIUrl": "https://api.mycopilot.com",
@@ -54,7 +53,6 @@ docker-compose logs -f
     "debug.chatOverrideProxyUrl": "https://api.mycopilot.com/chat/completions"
   },
   "github-enterprise.uri": "https://mycopilot.com"
-}
 ```
 
 ### Jetbrains IDE系列
