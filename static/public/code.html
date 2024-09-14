@@ -24,6 +24,7 @@
             box-sizing: border-box;
             width: 40vw; /* 添加固定宽度 */
             min-width: 400px; /* 添加最小宽度 */
+            max-width: 650px;
         }
 
         input {
@@ -82,15 +83,24 @@
                 background-color: #0056b3;
             }
         }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
 <div class="login-container">
     <h1>Github Copilot Login</h1>
     <form onsubmit="submitForm()">
-        <input type="text" id="authorization" class="input-field" placeholder="Enter authorization code">
-        <button type="submit">登录</button>
+        <input type="text" id="authorization" class="input-field"
+               placeholder="请输入剪切板内的授权码 (Ctrl+V直接粘贴即可)">
+        <button type="submit">授 权 登 录</button>
     </form>
+
+    <div class="footer">Copilot小助手</div>
 </div>
 <script>
     function getQueryParam(param) {
@@ -99,14 +109,19 @@
     }
 
     async function submitForm() {
-        // 禁用默认表单提交
         event.preventDefault();
         const authorization = document.getElementById('authorization').value;
+        const code = getQueryParam('user_code');
 
-        const data = {
-            code: getQueryParam('user_code'),
-            authorization: authorization
-        };
+        if (code === null) {
+            alert('链接打开方式不正确，请重新打开');
+            return false;
+        }
+
+        if (authorization === '') {
+            alert('请输入授权码');
+            return false;
+        }
 
         try {
             const response = await fetch('/login/device', {
@@ -114,19 +129,22 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(data)
+                body: JSON.stringify({code, authorization})
             })
 
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                alert('HTTP error! status: ' + response.status);
+                return false;
             }
 
             const result = await response.json();
             console.log(result);
-            if (result?.error === 422 || result?.error === 500) {
+            if (result?.error !== 0) {
                 alert(result.message);
-                return;
+                return false;
             }
+            alert('登录成功');
+            window.location.reload();
         } catch (e) {
             console.error('提交表单时出错:', error);
             alert('提交表单时出错，请稍后再试');
