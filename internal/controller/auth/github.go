@@ -14,7 +14,7 @@ import (
 )
 
 type postLoginDeviceCodeRequest struct {
-	ClientId string `json:"client_id"`
+	ClientId string `json:"client_id" form:"client_id"`
 }
 
 type postLoginDeviceCodeResponse struct {
@@ -27,13 +27,22 @@ type postLoginDeviceCodeResponse struct {
 
 func postLoginDeviceCode(ctx *gin.Context) {
 	cli := postLoginDeviceCodeRequest{}
-	if err := response.BindStruct(ctx, &cli); err != nil {
+	if err := ctx.ShouldBind(&cli); err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: -1,
 			Msg:  "Invalid client id.",
 		}, false)
 		return
 	}
+
+	if cli.ClientId == "" {
+		response.FailJson(ctx, response.FailStruct{
+			Code: -1,
+			Msg:  "Client id is required.",
+		}, false)
+		return
+	}
+
 	uid, devid, err := github_auth.BindClientToCode(cli.ClientId, 1800)
 	if err != nil {
 		response.FailJson(ctx, response.FailStruct{

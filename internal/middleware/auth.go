@@ -10,14 +10,14 @@ import (
 )
 
 type OAuthCheck struct {
-	ClientId   string `json:"client_id"`
-	DeviceCode string `json:"device_code"`
-	GrantType  string `json:"grant_type"`
+	ClientId   string `json:"client_id" form:"client_id"`
+	DeviceCode string `json:"device_code" form:"device_code"`
+	GrantType  string `json:"grant_type" form:"grant_type"`
 }
 
 func DeviceCodeCheckAuth(ctx *gin.Context) {
 	checkInfo := &OAuthCheck{}
-	if err := response.BindStruct(ctx, checkInfo); err != nil {
+	if err := ctx.ShouldBind(&checkInfo); err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: -1,
 			Msg:  "Invalid client id.",
