@@ -79,6 +79,8 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 待续...
 
 ## 服务器部署使用
+> 用于多人共享使用方案, 如果是个人使用还是推荐使用Docker部署, 然后 `hosts` 文件里面的ip配置改为服务器ip即可.
+
 1. 删除 `docker-compose.yml` 文件中的 `copilot-nginx` 配置
 2. `docker-compose.yml` 中的 `Copilot配置` 配置项中的域名替换你真实解析的域名.
 3. 配置Nginx服务, 将指定域名解析到服务器IP, 并配置伪静态, 代理到本地服务端口, 内容参考文件: `[default.conf](nginx/conf.d/default.conf)`
