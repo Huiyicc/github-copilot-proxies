@@ -6,7 +6,7 @@
 
 ## 如何使用?
 ### Docker【推荐】
-只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
+已经将nginx和服务端及自签证书的工作全部做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
 ```shell
 # 启动服务
 docker-compose up -d
@@ -21,8 +21,16 @@ docker-compose down
 # 查看日志
 docker-compose logs -f
 ```
-
 镜像全部上传到阿里云容器镜像服务, 国内访问无惧.   
+
+### 配置本机hosts文件
+将下面hosts配置添加到本机hosts文件中, 以便访问本地服务:
+```
+127.0.0.1 mycopilot.com
+127.0.0.1 api.mycopilot.com
+127.0.0.1 copilot-proxy.mycopilot.com
+127.0.0.1 copilot-telemetry-service.mycopilot.com
+```
 
 ### 手动部署【不推荐,相当繁琐】
 1. 下载最新版本的可执行文件
@@ -43,7 +51,7 @@ docker-compose logs -f
     "authProvider": "github-enterprise",
     "debug.overrideCAPIUrl": "https://api.mycopilot.com",
     "debug.overrideProxyUrl": "https://copilot-proxy.mycopilot.com",
-    "debug.chatOverrideProxyUrl": "https://api.mycopilot.com/chat/completions",
+    "debug.chatOverrideProxyUrl": "https://api.mycopilot.com/chat/completions"
   },
   "github-enterprise.uri": "https://mycopilot.com"
 }
