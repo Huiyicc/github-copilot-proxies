@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Github Copilot Login</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        .login-container {
+            background-color: white;
+            padding: 6em;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+            width: 40vw; /* 添加固定宽度 */
+            min-width: 400px; /* 添加最小宽度 */
+        }
+
+        input {
+            width: 100%;
+            padding: 1em;
+            margin: 0.5em 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* 确保填充和边框包含在宽度和高度中 */
+        }
+
+        button {
+            width: 100%;
+            padding: 1em;
+            margin-top: 1em;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            body, html {
+                background-color: #121212;
+                color: white;
+            }
+
+            .login-container {
+                background-color: #1e1e1e;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            }
+
+            input {
+                background-color: #2e2e2e;
+                border: 1px solid #444;
+                color: white;
+            }
+
+            input::placeholder {
+                color: #888;
+            }
+
+            button {
+                background-color: #007bff;
+                color: white;
+            }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <h1>Github Copilot Login</h1>
+    <form onsubmit="submitForm()">
+        <input type="text" id="authorization" class="input-field" placeholder="Enter authorization code">
+        <button type="submit">登录</button>
+    </form>
+</div>
+<script>
+    function getQueryParam(param) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    async function submitForm() {
+        // 禁用默认表单提交
+        event.preventDefault();
+        const authorization = document.getElementById('authorization').value;
+
+        const data = {
+            code: getQueryParam('user_code'),
+            authorization: authorization
+        };
+
+        try {
+            const response = await fetch('/login/device', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const result = await response.json();
+            console.log(result);
+            if (result?.error === 422 || result?.error === 500) {
+                alert(result.message);
+                return;
+            }
+        } catch (e) {
+            console.error('提交表单时出错:', error);
+            alert('提交表单时出错，请稍后再试');
+        }
+    }
+
+</script>
+</body>
+</html>

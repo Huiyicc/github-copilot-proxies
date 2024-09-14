@@ -1,0 +1,5 @@
+package logs
+
+func Init() {
+
+}
