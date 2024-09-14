@@ -6,7 +6,7 @@
 
 ## 如何使用?
 ### Docker【推荐】
-只需要将 `docker-compose.yml` 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
+只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
 ```shell
 # 启动服务
 docker-compose up -d
@@ -27,7 +27,7 @@ docker-compose logs -f
 ### 手动部署【不推荐,相当繁琐】
 1. 下载最新版本的可执行文件
 访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件, 然后执行以下命令启动服务即可.  
-需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 `.env.example` 文件。  
+需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件。  
 2. 配置Nginx服务
 3. 自签证书, 域名是`*.mycopilot.com`, 并启用https
 4. 配置伪静态, 代理到本地服务端口, 内容参考文件: `[default.conf](nginx/conf.d/default.conf)`
