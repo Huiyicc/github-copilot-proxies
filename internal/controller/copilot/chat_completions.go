@@ -3,6 +3,7 @@ package copilot
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
@@ -52,7 +53,11 @@ func chatCompletions(c *gin.Context) {
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("CHAT_API_KEY"))
 
-	client := &http.Client{}
+	client := &http.Client{
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
 	resp, err := client.Do(req)
 	if nil != err {
 		if errors.Is(err, context.Canceled) {
