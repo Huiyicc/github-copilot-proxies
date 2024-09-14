@@ -56,6 +56,8 @@ docker-compose logs -f
 ```
 **vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式 (不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.**
 
+**也可以直接系统级别信任证书, 这样就可以继续使用https而无需端口配置了, 但需要手动操作下, 不同的系统自己搜索下教程吧.**
+
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `mycopilot.com`
