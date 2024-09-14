@@ -48,12 +48,13 @@ docker-compose logs -f
 ```json
   "github.copilot.advanced": {
     "authProvider": "github-enterprise",
-    "debug.overrideCAPIUrl": "https://api.mycopilot.com",
-    "debug.overrideProxyUrl": "https://copilot-proxy.mycopilot.com",
-    "debug.chatOverrideProxyUrl": "https://api.mycopilot.com/chat/completions"
+    "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
+    "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
+    "debug.chatOverrideProxyUrl": "http://api.mycopilot.com/chat/completions:1188"
   },
-  "github-enterprise.uri": "https://mycopilot.com"
+  "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
+**vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式, 形式不重要直接粘贴进去即可.**
 
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
