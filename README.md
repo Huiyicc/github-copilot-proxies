@@ -54,11 +54,13 @@ docker-compose logs -f
   },
   "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
-**vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式, 形式不重要直接粘贴进去即可.**
+**vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式 (不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.**
 
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `mycopilot.com`
+3. 信任证书配置, 可以直接导入[ssl](nginx/ssl)目录下的证书文件, 系统级别信任证书, 也可以直接在IDE中信任即可.
+![Xnip2024-09-14_13-08-17.png](docs/Xnip2024-09-14_13-08-17.png)
 
 ### Visual Studio 2022
 **Visual Studio 2022 版本 高于17.9 的用户无法使用, 降级到历史版本, 请访问: [Visual Studio 2022 降级长绿引导程序](https://learn.microsoft.com/zh-cn/visualstudio/releases/2022/release-history#evergreen-bootstrappers)** 选择 17.8 的版本即可.   
