@@ -1,0 +1,40 @@
+version: '3'
+services:
+  copilot-app:
+    container_name: copilot-app
+    image: registry.cn-hangzhou.aliyuncs.com/ripper/copilot-proxies:latest
+    restart: always
+    ports:
+      - "11110:11110"
+    environment: # 更多环境变量配置查看README.md
+      - REDIS_HOST=copilot-redis
+      - REDIS_PASSWORD=yourpassword
+      - COPILOT_DEBOUNCE=200 # 代码补全请求防抖时间,ms
+      - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
+      - CODEX_API_KEY=yourapikey # 代码补全API密钥
+      - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
+      - CHAT_API_BASE=https://api.deepseek.com/v1/chat/completions # 聊天补全API地址
+      - CHAT_API_KEY=yourapikey # 聊天补全API密钥
+      - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
+      - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
+    depends_on:
+      - copilot-redis
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  copilot-redis:
+    container_name: copilot-redis
+    image: registry.cn-hangzhou.aliyuncs.com/ripper/redis:latest
+    restart: always
+    command: redis-server --requirepass yourpassword
+    environment:
+      - REDIS_PASSWORD=yourpassword
+
+  copilot-nginx:
+    container_name: copilot-nginx
+    image: registry.cn-hangzhou.aliyuncs.com/ripper/copilot-nginx:latest
+    ports:
+      - "443:443"
+    restart: always
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
