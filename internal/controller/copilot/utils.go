@@ -3,6 +3,8 @@ package copilot
 import (
 	_ "embed"
 	"github.com/gin-gonic/gin"
+	"io"
+	"log"
 	"net/http"
 	"time"
 )
@@ -179,4 +181,11 @@ func models(ctx *gin.Context) {
 		},
 		"object": "list",
 	})
+}
+
+func closeIO(c io.Closer) {
+	err := c.Close()
+	if nil != err {
+		log.Println(err)
+	}
 }

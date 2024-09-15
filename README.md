@@ -1,10 +1,13 @@
-# Github Copilot 后端代理服务 (本地部署搭建版)
+# Github Copilot 后端代理服务
+基于 Docker 部署的本地离线服务, 简单配置一行命令，拥有离线的`Copilot小助手`同款服务，速度更快，更稳定，更安全，最新版IDE已经过测试。
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。   
 
-理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个。  
+理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个。
 
 ## 如何使用?
+> 在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT` 相关的环境变量删除, 然后将插件更新最新版本后重启IDE即可.
+
 ### Docker【推荐】
 已经将nginx和服务端及自签证书的工作全部做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
 ```shell
@@ -56,12 +59,10 @@ docker-compose logs -f
 ```
 **vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式 (不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.**
 
-**也可以直接系统级别信任证书, 这样就可以继续使用https而无需端口配置了, 但需要手动操作下, 不同的系统自己搜索下教程吧.**
-
 ### Jetbrains IDE系列
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `mycopilot.com`
-3. 信任证书配置, 可以直接导入[ssl](nginx/ssl)目录下的证书文件, 系统级别信任证书, 也可以直接在IDE中信任即可.
+3. 如果已经配置了系统级别的信任证书, 可以忽略下面步骤, 直接在IDE中信任即可.
 ![Xnip2024-09-14_13-08-17.png](docs/Xnip2024-09-14_13-08-17.png)
 
 ### Visual Studio 2022
@@ -79,7 +80,9 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 ```
 
 ### HBuilderX
-待续...
+1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
+2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
+3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
 ## 服务器部署使用
 > 用于多人共享使用方案, 如果是个人使用还是推荐使用Docker部署, 然后 `hosts` 文件里面的ip配置改为服务器ip即可.
@@ -90,10 +93,23 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 4. 所有解析的域名需要启用https
 5. `docker-compose up -d` 启动服务即可
 
+## 信任证书
+> 在正式使用之前, 推荐您信任证书, 否则vscode会出现各种各样的问题.
+
+### Windows操作
+1. 双击证书文件 [mycopilot.crt](nginx/ssl/mycopilot.crt) , 点击安装证书
+2. 选择 `本地计算机` > `下一步`
+3. 选择 `将所有的证书放入下列存储` > `浏览` > `受信任的发布者` > `确定` > `下一步` > `完成`
+
+### MacOS操作
+1. 打开钥匙串访问
+2. 将 [mycopilot.crt](nginx/ssl/mycopilot.crt) 文件拖拽到“系统”钥匙串列表中。
+3. 双击导入的证书,展开"信任"部分, 将"使用此证书时"选项改为"始终信任"。
+4. 关闭窗口,系统会要求输入管理员密码以确认更改。
+
 ## 注意事项
 1. 请勿将本服务用于商业用途, 仅供学习交流使用
 2. 请勿将本服务用于非法用途, 一切后果自负
-3. 因自签证书问题, 浏览器访问可能会提示不安全甚至拦截, 建议使用无痕窗口访问可解决大多数问题.
 
 ## 鸣谢
 - [LoveA/copilot_take_over](https://gitee.com/LoveA/copilot_take_over)
