@@ -87,10 +87,3 @@ func chatCompletions(c *gin.Context) {
 
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
-
-func closeIO(c io.Closer) {
-	err := c.Close()
-	if nil != err {
-		log.Println(err)
-	}
-}

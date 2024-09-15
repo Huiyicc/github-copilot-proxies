@@ -20,4 +20,7 @@ func GinApi(g *gin.RouterGroup) {
 
 	g.POST("/chat/completions", chatCompletions)
 
+	g.GET("/api/v3/meta", v3meta)
+	g.GET("/api/v3/", cliv3)
+
 }
