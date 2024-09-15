@@ -1,4 +1,5 @@
-# Github Copilot 后端代理服务 (本地部署搭建版)
+# Github Copilot 后端代理服务
+基于 Docker 部署的本地离线服务, 简单配置一行命令，拥有离线的`Copilot小助手`同款服务，速度更快，更稳定，更安全，最新版IDE已经过测试。
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。   
 
