@@ -1,26 +1,15 @@
 package cache
 
-import (
-	"os"
-)
-
 var cache Cacheable
 
 func init() {
-	cacheImp := "memory"
+	cache = NewMemoryMap()
 
-	switch cacheImp {
-	case "redis":
-		host := os.Getenv("REDIS_HOST")
-		port := os.Getenv("REDIS_PORT")
-		psw := os.Getenv("REDIS_PASSWORD")
-		instance := NewRedisInstance(host, port, psw)
-		cache = instance
-	case "memory":
-		cache = NewMemoryMap()
-	default:
-		cache = NewMemoryMap()
-	}
+	// 已废弃redis缓存实现
+	/*host := os.Getenv("REDIS_HOST")
+	port := os.Getenv("REDIS_PORT")
+	psw := os.Getenv("REDIS_PASSWORD")
+	cache = NewRedisInstance(host, port, psw)*/
 }
 func Set(key string, value interface{}, ttl int) error {
 	return cache.Set(key, value, ttl)
