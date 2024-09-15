@@ -80,7 +80,9 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 ```
 
 ### HBuilderX
-待续...
+1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
+2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
+3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
 ## 服务器部署使用
 > 用于多人共享使用方案, 如果是个人使用还是推荐使用Docker部署, 然后 `hosts` 文件里面的ip配置改为服务器ip即可.
