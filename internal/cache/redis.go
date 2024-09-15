@@ -1,17 +1,49 @@
-package redis
+package cache
 
 import (
 	"fmt"
 	"github.com/gomodule/redigo/redis"
-	"os"
 	"strconv"
 	"time"
 )
 
-var pool *redis.Pool
+type Redis struct {
+	Host string
+	Port string
+	Psw  string
+	Pool *redis.Pool
+}
 
-func InitRedis() {
-	pool = &redis.Pool{
+func NewRedisInstance(host string, port string, psw string) *Redis {
+	r := &Redis{Host: host, Port: port, Psw: psw}
+	r.init()
+	return r
+}
+
+func (r *Redis) Get(k string) (interface{}, error) {
+	return r.getConn().Do("get", k)
+}
+
+func (r *Redis) Set(k string, v interface{}, ttl int) error {
+	_, err := r.getConn().Do("set", k, v, "EX", ttl)
+	return err
+}
+
+func (r *Redis) Exist(k string) (bool, error) {
+	return redis.Bool(r.getConn().Do("EXISTS", k))
+}
+
+func (r *Redis) Del(k string) error {
+	_, err := r.getConn().Do("del", k)
+	return err
+}
+
+func (r *Redis) getConn() redis.Conn {
+	return r.Pool.Get()
+}
+
+func (r *Redis) init() {
+	r.Pool = &redis.Pool{
 		// Maximum number of connections allocated by the pool at a given time.
 		// When zero, there is no limit on the number of connections in the pool.
 		//最大活跃连接数，0代表无限
@@ -31,12 +63,12 @@ func InitRedis() {
 		// The connection returned from Dial must not be in a special state
 		// (subscribed to pubsub channel, transaction started, ...).
 		Dial: func() (redis.Conn, error) {
-			port, _ := strconv.Atoi(os.Getenv("REDIS_PORT"))
-			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", os.Getenv("REDIS_HOST"), port))
+			port, _ := strconv.Atoi(r.Port)
+			c, err := redis.Dial("tcp", fmt.Sprintf("%s:%d", r.Host, port))
 			if err != nil {
 				return nil, err
 			}
-			password := os.Getenv("REDIS_PASSWORD")
+			password := r.Psw
 			if password != "" {
 				if _, err := c.Do("AUTH", password); err != nil {
 					c.Close()

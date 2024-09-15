@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"github.com/gofrs/uuid"
 	"github.com/gomodule/redigo/redis"
-	redisPkg "ripper/internal/redis"
+	"ripper/internal/cache"
 	"strings"
 )
 
@@ -21,7 +21,6 @@ type ClientAuthInfo struct {
 // exp 过期时间
 // return 用户代码, 设备代码, 错误
 func BindClientToCode(clientId string, exp int) (string, string, error) {
-	rc := redisPkg.GetCoon()
 	genCode := func() string {
 		newUUID, _ := uuid.NewV4()
 		uuidStr := strings.Replace(newUUID.String(), "-", "", -1)
@@ -30,14 +29,14 @@ func BindClientToCode(clientId string, exp int) (string, string, error) {
 	formattedUUID := genCode()
 	rep := 0
 	redisKey := fmt.Sprintf("copilot.proxy.%s", formattedUUID)
-	repeat, _ := redis.Bool(rc.Do("EXISTS", redisKey))
+	repeat, _ := cache.Exist(redisKey)
 	for repeat {
 		if rep > 5 {
 			return "", "", fmt.Errorf("gen code error")
 		}
 		formattedUUID = genCode()
 		redisKey = fmt.Sprintf("copilot.proxy.%s", formattedUUID)
-		repeat, _ = redis.Bool(rc.Do("EXISTS", redisKey))
+		repeat, _ = cache.Exist(redisKey)
 		rep++
 	}
 	devId := GenDevicesCode(40)
@@ -47,25 +46,24 @@ func BindClientToCode(clientId string, exp int) (string, string, error) {
 		UserCode:   formattedUUID,
 	}
 	authInfoData, _ := json.Marshal(authInfo)
-	_, err := rc.Do("set", redisKey, authInfoData, "EX", exp)
+	err := cache.Set(redisKey, authInfoData, exp)
 	if err != nil {
 		return "", "", err
 	}
 	redisKey = fmt.Sprintf("copilot.proxy.map.%s", devId)
-	_, err = rc.Do("set", redisKey, formattedUUID, "EX", exp)
+	err = cache.Set(redisKey, formattedUUID, exp)
 	return formattedUUID, devId, err
 }
 
 // GetClientAuthInfoByDeviceCode 通过设备代码获取客户端授权信息
 func GetClientAuthInfoByDeviceCode(deviceCode string) (*ClientAuthInfo, error) {
-	rc := redisPkg.GetCoon()
 	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
-	userCode, err := rc.Do("get", redisKey)
+	userCode, err := cache.Get(redisKey)
 	if err != nil {
 		return nil, err
 	}
 	redisKey = fmt.Sprintf("copilot.proxy.%s", userCode)
-	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
+	authInfoData, err := redis.Bytes(cache.Get(redisKey))
 	if err != nil {
 		return nil, err
 	}
@@ -75,9 +73,8 @@ func GetClientAuthInfoByDeviceCode(deviceCode string) (*ClientAuthInfo, error) {
 }
 
 func GetClientAuthInfo(code string) (ClientAuthInfo, error) {
-	rc := redisPkg.GetCoon()
 	redisKey := fmt.Sprintf("copilot.proxy.%s", code)
-	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
+	authInfoData, err := redis.Bytes(cache.Get(redisKey))
 	if err != nil {
 		return ClientAuthInfo{}, err
 	}
@@ -98,14 +95,13 @@ func GenDevicesCode(codeLen int) string {
 
 // UpdateClientAuthStatusByDeviceCode 更新客户端授权码通过设备代码
 func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) error {
-	rc := redisPkg.GetCoon()
 	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
-	uCode, err := rc.Do("get", redisKey)
+	uCode, err := cache.Get(redisKey)
 	if err != nil {
 		return err
 	}
 	redisKey = fmt.Sprintf("copilot.proxy.%s", uCode)
-	authInfoData, err := redis.Bytes(rc.Do("get", redisKey))
+	authInfoData, err := redis.Bytes(cache.Get(redisKey))
 	if err != nil {
 		return err
 	}
@@ -116,23 +112,22 @@ func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) erro
 	}
 	authInfo.CardCode = cardCode
 	authInfoData, _ = json.Marshal(authInfo)
-	_, err = rc.Do("set", redisKey, authInfoData)
+	err = cache.Set(redisKey, authInfoData, -1)
 	return err
 }
 
 func RemoveClientAuthInfoByDeviceCode(deviceCode string) error {
-	rc := redisPkg.GetCoon()
 	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
-	uCode, err := rc.Do("get", redisKey)
+	uCode, err := cache.Get(redisKey)
 	if err != nil {
 		return err
 	}
 	redisKey = fmt.Sprintf("copilot.proxy.%s", uCode)
-	_, err = rc.Do("del", redisKey)
+	err = cache.Del(redisKey)
 	if err != nil {
 		return err
 	}
 	redisKey = fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
-	_, err = rc.Do("del", redisKey)
+	err = cache.Del(redisKey)
 	return err
 }

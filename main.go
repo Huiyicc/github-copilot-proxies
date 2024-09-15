@@ -6,7 +6,6 @@ import (
 	"github.com/joho/godotenv"
 	"log"
 	"os"
-	"ripper/internal/redis"
 	"ripper/internal/router"
 	"strconv"
 )
@@ -22,9 +21,6 @@ func main() {
 
 	//初始化router
 	router.NewHTTPRouter(r)
-
-	// 初始化redis
-	redis.InitRedis()
 
 	//开启服务器
 	port, _ := strconv.Atoi(os.Getenv("PORT"))
