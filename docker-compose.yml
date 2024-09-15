@@ -6,7 +6,7 @@ services:
     restart: always
     ports:
       - "11110:11110"
-    environment: # 更多环境变量配置查看README.md
+    environment: # 更多环境变量配置查看 .env.example
       - REDIS_HOST=copilot-redis
       - REDIS_PASSWORD=yourpassword
       - COPILOT_DEBOUNCE=200 # 代码补全请求防抖时间,ms
