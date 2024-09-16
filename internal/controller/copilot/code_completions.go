@@ -98,7 +98,7 @@ func ConstructRequestBody(body []byte) []byte {
 		body, _ = sjson.SetBytes(body, "n", 1)
 	}
 
-	temperature, _ := strconv.Atoi(os.Getenv("temperature"))
+	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
 	if temperature != -1 {
 		// 重写 temperature 参数值
 		body, _ = sjson.SetBytes(body, "temperature", temperature)

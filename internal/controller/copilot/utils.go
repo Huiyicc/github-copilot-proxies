@@ -56,6 +56,34 @@ func models(ctx *gin.Context) {
 			},
 			{
 				"capabilities": gin.H{
+					"family":    "gpt-4o-mini",
+					"limits":    gin.H{"max_prompt_tokens": 12288},
+					"object":    "model_capabilities",
+					"supports":  gin.H{"tool_calls": true, "parallel_tool_calls": true},
+					"tokenizer": "o200k_base",
+					"type":      "chat",
+				},
+				"id":      "gpt-4o-mini",
+				"name":    "GPT 4o Mini",
+				"object":  "model",
+				"version": "gpt-4o-mini-2024-07-18",
+			},
+			{
+				"capabilities": gin.H{
+					"family":    "gpt-4o-mini",
+					"limits":    gin.H{"max_prompt_tokens": 12288},
+					"object":    "model_capabilities",
+					"supports":  gin.H{"tool_calls": true, "parallel_tool_calls": true},
+					"tokenizer": "o200k_base",
+					"type":      "chat",
+				},
+				"id":      "gpt-4o-mini",
+				"name":    "GPT 4o Mini",
+				"object":  "model",
+				"version": "gpt-4o-mini-2024-07-18",
+			},
+			{
+				"capabilities": gin.H{
 					"family":    "gpt-4",
 					"limits":    gin.H{"max_prompt_tokens": 20000},
 					"object":    "model_capabilities",

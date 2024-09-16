@@ -80,6 +80,8 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 ```
 
 ### HBuilderX
+> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的域名配置.
+
 1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
@@ -106,6 +108,16 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 2. 将 [mycopilot.crt](nginx/ssl/mycopilot.crt) 文件拖拽到“系统”钥匙串列表中。
 3. 双击导入的证书,展开"信任"部分, 将"使用此证书时"选项改为"始终信任"。
 4. 关闭窗口,系统会要求输入管理员密码以确认更改。
+
+## 模型超参数说明
+- `CODEX_TEMPERATURE` : 模型温度, 默认值为 `1`, 可以调整为 `0.1-1.0` 之间的值.
+- 此参数可以略微影响补全结果, 但是不建议调整, 除非你知道你在做什么.
+
+## 内存占用说明
+1. 运行 `docker-compose up -d` 后, 会占用大约 `30MB-40MB` 内存, 但是随着时间的推移, 内存会逐渐增加, 但是不会超过 `50MB` 内存.
+2. Windows环境的Docker Desktop会占用大约 `200MB` 内存 (不考虑有其他镜像服务的情况下).
+3. MacOS环境的Docker Desktop会占用较大, 建议 **[Orbstack](https://docs.orbstack.dev/)** 软件来代替Docker Desktop, 该软件占用内存会大幅度降低.
+4. Linux环境的Docker服务占用内存较小, 大约 `80MB` 内存 (不考虑有其他镜像服务的情况下.).
 
 ## 注意事项
 1. 请勿将本服务用于商业用途, 仅供学习交流使用

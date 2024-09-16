@@ -22,5 +22,7 @@ func GinApi(g *gin.RouterGroup) {
 
 	g.GET("/api/v3/meta", v3meta)
 	g.GET("/api/v3/", cliv3)
+	g.GET("/agents", agents)
+	g.GET("/teams/:teamID/memberships/:username", getMembership)
 
 }

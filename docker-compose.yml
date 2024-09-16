@@ -15,7 +15,7 @@ services:
       - CHAT_API_KEY=yourapikey # 聊天补全API密钥
       - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
       - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
-      - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:-1, 表示跟随插件动态设置, 如果是deepseek模型,官方推荐设置为1
+      - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
