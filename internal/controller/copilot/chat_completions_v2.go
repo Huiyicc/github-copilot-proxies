@@ -16,8 +16,7 @@ import (
 	"strings"
 )
 
-// Deprecated: 使用v2 流式chat响应
-func chatCompletions(c *gin.Context) {
+func chatCompletionsV2(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	body, err := io.ReadAll(c.Request.Body)
@@ -25,6 +24,7 @@ func chatCompletions(c *gin.Context) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
+	defer c.Request.Body.Close()
 
 	body, _ = sjson.SetBytes(body, "model", os.Getenv("CHAT_API_MODEL_NAME"))
 
@@ -39,6 +39,7 @@ func chatCompletions(c *gin.Context) {
 	body, _ = sjson.DeleteBytes(body, "intent")
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
+	body, _ = sjson.SetBytes(body, "stream", true)
 
 	ChatMaxTokens, _ := strconv.Atoi(os.Getenv("CHAT_MAX_TOKENS"))
 	if int(gjson.GetBytes(body, "max_tokens").Int()) > ChatMaxTokens {
@@ -72,13 +73,6 @@ func chatCompletions(c *gin.Context) {
 	}
 	defer closeIO(resp.Body)
 
-	if resp.StatusCode != http.StatusOK { // log
-		body, _ := io.ReadAll(resp.Body)
-		log.Println("request completions failed:", string(body))
-
-		resp.Body = io.NopCloser(bytes.NewBuffer(body))
-	}
-
 	c.Status(resp.StatusCode)
 
 	contentType := resp.Header.Get("Content-Type")
@@ -86,5 +80,20 @@ func chatCompletions(c *gin.Context) {
 		c.Header("Content-Type", contentType)
 	}
 
-	_, _ = io.Copy(c.Writer, resp.Body)
+	pr, pw := io.Pipe() // 创建管道
+
+	// 启动一个 goroutine 用于从 resp.Body 读取数据并写入到管道
+	go func() {
+		defer pw.Close()
+		_, err := io.Copy(pw, resp.Body)
+		if err != nil {
+			log.Println("Error copying response body:", err)
+		}
+	}()
+
+	// 从管道中读取数据并写入到客户端
+	_, err = io.Copy(c.Writer, pr)
+	if err != nil {
+		log.Println("Error writing to client:", err)
+	}
 }

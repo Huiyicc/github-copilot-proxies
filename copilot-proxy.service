@@ -1,0 +1,15 @@
+# 用服务器部署时，可以用这个systemd配置守护程序，注意env和工作目录配置
+[Unit]
+Description=copilot-proxy server daemon
+After=network.target
+
+[Service]
+PIDFile=/tmp/copilot-proxy.pid
+ExecStart=/usr/local/copilot/copilot-proxy
+ExecReload=/bin/kill -USR1 $MAINPID
+Restart=always
+TimeoutStartSec=2
+WorkingDirectory=/usr/local/copilot
+
+[Install]
+WantedBy=multi-user.target
