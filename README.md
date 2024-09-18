@@ -69,8 +69,7 @@ docker-compose logs -f
    需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件,
    并修改其中的配置项.
 2. 安装并配置Nginx服务, 并添加解析一个域名如: `yourdomain.com`
-3. 给 `yourdomain.com` 域名配置SSL证书, 并配置伪静态, 代理到本地服务端口, 内容参考文件:
-   `[default.conf](nginx/conf.d/default.conf)`
+3. 给 `yourdomain.com` 域名配置SSL证书, 并配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
 4. 修改 `.env` 文件中的 `DEFAULT_BASE_URL` `API_BASE_URL` `PROXY_BASE_URL` `TELEMETRY_BASE_URL` 域名为你的域名
    `yourdomain.com`.
 5. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
