@@ -3,10 +3,17 @@
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。   
 
-理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个。
+理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个, 参考[本地部署FIM模型](#本地部署FIM模型)。
 
 ## 如何使用?
 > 在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT` 相关的环境变量删除, 然后将插件更新最新版本后重启IDE即可.
+
+### 快速使用步骤
+1. **使用Docker部署服务**: 详细参考下面的[Docker部署](#Docker【推荐】).
+2. **配置IDE**: 详细参考下面的[IDE设置方法](#IDE设置方法).
+3. **修改本地hosts文件**: 具体参考[配置本机hosts文件](#配置本机hosts文件).
+4. **信任SSL证书**: 具体参考[信任证书](#信任证书) **(可选)**.
+5. 重启IDE, 点击登录 `GitHub Copilot` 插件即可.
 
 ### Docker【推荐】
 已经将nginx和服务端及自签证书的工作全部做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
@@ -35,7 +42,7 @@ docker-compose logs -f
 127.0.0.1 copilot-telemetry-service.mycopilot.com
 ```
 
-### 手动部署【不推荐,相当繁琐】
+### 手动部署【不推荐】
 1. 下载最新版本的可执行文件
 访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件, 然后执行以下命令启动服务即可.  
 需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件。  
@@ -118,6 +125,14 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 2. Windows环境的Docker Desktop会占用大约 `200MB` 内存 (不考虑有其他镜像服务的情况下).
 3. MacOS环境的Docker Desktop会占用较大, 建议 **[Orbstack](https://docs.orbstack.dev/)** 软件来代替Docker Desktop, 该软件占用内存会大幅度降低.
 4. Linux环境的Docker服务占用内存较小, 大约 `80MB` 内存 (不考虑有其他镜像服务的情况下.).
+
+
+## 本地部署FIM模型
+> 显存占用约为 `12GB`, 请确保你的显卡支持, 且显存足够. 此方案未做测试, 仅供参考有问题可以提issue.
+
+- 借助 `Ollama` 来本地部署 `DeepSeek-v2` 的FIM模型, 用于替换 `OpenAI` 的模型, 以达到离线使用的目的.  
+- 模型权重文件可以在 [DeepSeek-v2](https://ollama.com/mike/deepseek-coder-v2) , 直接使用 `Ollama` 启动即可
+- 然后将 `Ollama` 的地址配置到 `docker-compose.yml` 文件中即可.
 
 ## 注意事项
 1. 请勿将本服务用于商业用途, 仅供学习交流使用
