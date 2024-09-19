@@ -119,7 +119,7 @@ docker-compose logs -f
 CODESPACES=true
 GITHUB_API_URL=https://api.mycopilot.com
 GITHUB_SERVER_URL=https://mycopilot.com
-GITHUB_TOKEN=YOUR_GITHUB_TOKEN
+GITHUB_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjIxY2VjNyIsImNsaWVudCI6Ikl2MS5iNTA3YTA4Yzg3ZWNmZTk4IiwiaXNzIjoidXNlciIsImV4cCI6MzQ1MjczNTYyMCwibmJmIjoxNzI2MzY3ODEwLCJpYXQiOjE3MjYzNjc4MTB9.XPdtNpeEqrRjVx6CY3sdud37XPxM-LiYLAT_ZLbuj1A
 AGENT_DEBUG_OVERRIDE_PROXY_URL=https://copilot-proxy.mycopilot.com
 GITHUB_USER=Copilot
 AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
