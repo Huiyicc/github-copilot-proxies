@@ -20,7 +20,7 @@ services:
       - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
       - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
       - CHAT_LOCALE=zh_CN # 聊天API语言
-      # 下面是Copilot配置 (如果是自行部署, mycopilot.com域名可以统一为一个)
+      # 下面是Copilot配置
       - DEFAULT_BASE_URL=https://mycopilot.com
       - COPILOT_DEBOUNCE=200 # 补全防抖时间(毫秒)
       - API_BASE_URL=https://api.mycopilot.com
