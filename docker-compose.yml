@@ -8,7 +8,6 @@ services:
       - "11110:11110"
     environment:
       # 代码补全配置
-      - COPILOT_DEBOUNCE=200 # 代码补全请求防抖时间,ms
       - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
       - CODEX_API_KEY=yourapikey # 代码补全API密钥
       - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
