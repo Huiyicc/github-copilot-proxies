@@ -71,7 +71,7 @@ docker-compose logs -f
 2. 安装并配置Nginx服务, 并添加解析一个域名如: `yourdomain.com`
 3. 给 `yourdomain.com` 域名配置SSL证书, 并配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
 4. 修改 `.env` 文件中的 `DEFAULT_BASE_URL` `API_BASE_URL` `PROXY_BASE_URL` `TELEMETRY_BASE_URL` 域名为你的域名
-   `yourdomain.com`.
+   `yourdomain.com` 的二级域名.
 5. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
 6. 重启IDE,登录 `GitHub Copilot` 插件.
 
