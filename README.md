@@ -67,11 +67,14 @@ docker-compose logs -f
    访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件,
    然后执行以下命令启动服务即可.  
    需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件,
-   并修改其中的配置项.
+   并修改其中的配置项. 或者依旧可以使用docker部署, 详细参考[简化版的Docker部署](#服务器部署使用).
 2. 安装并配置Nginx服务, 并添加解析一个域名如: `yourdomain.com`
 3. 给 `yourdomain.com` 域名配置SSL证书, 并配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
-4. 修改 `.env` 文件中的 `DEFAULT_BASE_URL` `API_BASE_URL` `PROXY_BASE_URL` `TELEMETRY_BASE_URL` 域名为你的域名
-   `yourdomain.com` 的二级域名.
+4. 修改 `.env` 文件中的域名配置, 注意域名前缀必须相同, 如`DEFAULT_BASE_URL`域名为 `mycopilot.com` 则后续四个域名的前缀必须是 `api.mycopilot.com`..., 否则会导致插件无法登录或正常使用.
+   - `DEFAULT_BASE_URL`: 域名前缀: 无
+   - `API_BASE_URL`: 域名前缀: `api`
+   - `PROXY_BASE_URL`: 域名前缀: `copilot-proxy`
+   - `TELEMETRY_BASE_URL`: 域名前缀: `copilot-telemetry-service`
 5. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
 6. 重启IDE,登录 `GitHub Copilot` 插件.
 
@@ -177,6 +180,64 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 - 借助 `Ollama` 来本地部署 `DeepSeek-v2` 的FIM模型, 用于替换 `OpenAI` 的模型, 以达到离线使用的目的.
 - 模型权重文件可以在 [DeepSeek-v2](https://ollama.com/mike/deepseek-coder-v2) , 直接使用 `Ollama` 启动即可
 - 然后将 `Ollama` 的地址配置到 `docker-compose.yml` 文件中即可.
+
+## 通配符证书申请方法
+> 使用 [acme.sh](https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E) 依旧可以申请通配符域名证书, 如果你的域名托管在 `cf` `腾讯云` `阿里云` 等等, 都可以使用他们的API来自动续期.
+
+### 安装acme.sh
+```shell
+# 官方
+curl https://get.acme.sh | sh -s email=617498836@qq.com
+
+# 国内镜像
+https://github.com/acmesh-official/acme.sh/wiki/Install-in-China
+
+# 使环境变量立即生效
+source ~/.bashrc
+
+# 创建一个 alias，便于后续访问:
+alias acme.sh=~/.acme.sh/acme.sh
+```
+
+### 操作步骤
+我这里域名是托管在 `cf` 上的, 所以使用 `cf` 的API来申请证书, 你可以根据自己的情况来选择.
+
+1. 配置dns秘钥
+```shell
+export CF_Email="110110110@qq.com"
+export CF_Key="xxxxxxx"
+```
+2. 签发证书
+```shell
+acme.sh --issue --dns dns_cf -d supercopilot.top -d '*.supercopilot.top'
+```
+3. 安装证书
+```shell
+# 新建一个证书目录
+mkdir -p /etc/nginx/cert_file/supercopilot.top
+
+# 安装证书
+acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
+		--key-file   /etc/nginx/cert_file/key.pem  \
+		--fullchain-file /etc/nginx/cert_file/fullchain.pem
+```
+4. 配置nginx
+```shell
+...
+server {
+  listen       80;
+  # 增加443端口
+  listen 443 ssl http2 ; 
+
+  # 增加证书文件
+  ssl_certificate      /etc/nginx/cert_file/fullchain.pem;
+  ssl_certificate_key  /etc/nginx/cert_file/key.pem;
+  # ...
+}
+```
+
+**如果你使用`宝塔`面板将会更加容易的申请, 因为面板中已经高度集成了此模块**
+
 
 ## 注意事项
 
