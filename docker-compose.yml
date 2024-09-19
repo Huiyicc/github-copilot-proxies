@@ -6,16 +6,27 @@ services:
     restart: always
     ports:
       - "11110:11110"
-    environment: # 更多环境变量配置查看 .env.example
+    environment:
+      # 代码补全配置
       - COPILOT_DEBOUNCE=200 # 代码补全请求防抖时间,ms
       - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
       - CODEX_API_KEY=yourapikey # 代码补全API密钥
       - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
+      - CODEX_MAX_TOKENS=500 # 代码补全API最大返回token数
+      - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
+      # 聊天对话配置
       - CHAT_API_BASE=https://api.deepseek.com/v1/chat/completions # 聊天补全API地址
       - CHAT_API_KEY=yourapikey # 聊天补全API密钥
       - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
       - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
-      - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
+      - CHAT_LOCALE=zh_CN # 聊天API语言
+      # 下面是Copilot配置 (如果是自行部署, mycopilot.com域名可以统一为一个)
+      - DEFAULT_BASE_URL=https://mycopilot.com
+      - COPILOT_DEBOUNCE=200 # 补全防抖时间(毫秒)
+      - API_BASE_URL=https://api.mycopilot.com
+      - ORIGIN_TRACKER_BASE_URL=https://origin-tracker.githubusercontent.com
+      - PROXY_BASE_URL=https://copilot-proxy.mycopilot.com
+      - TELEMETRY_BASE_URL=https://copilot-telemetry-service.mycopilot.com
 
   copilot-nginx:
     container_name: copilot-nginx
