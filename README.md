@@ -61,7 +61,7 @@ docker-compose logs -f
 ```
 
 ### 手动部署【不推荐】
-> 前提条件: nginx 需要自行安装, 因为接管了插件所有API接口, 而插件必须使用`https`协议, 所以需要配置SSL证书.
+> 前提条件: nginx 需要自行安装, 因为接管了插件所有API接口, 而插件必须使用`https`协议, 所以需要配置SSL证书, 通配符证书教程参考[通配符证书申请方法](#通配符证书申请方法).
 
 1. 下载最新版本的可执行文件
    访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件,
