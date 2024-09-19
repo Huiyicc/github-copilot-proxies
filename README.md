@@ -12,7 +12,7 @@
 - [x] 支持多种IDE, 如: `VSCode`, `Jetbrains IDE系列`, `Visual Studio 2022`, `HBuilderX`
 - [x] 支持任意符合 `OpenAI` 接口规范的模型, 如: `DeepSeek-v2`
 - [x] `GitHub Copilot` 插件各种API接口全接管, 无需担心插件升级导致服务失效
-- [x] 代码补全请求防抖设置, 避免过度消耗tokens
+- [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 
 ## 如何使用?
 
@@ -61,22 +61,24 @@ docker-compose logs -f
 ```
 
 ### 手动部署【不推荐】
-> 前提条件: nginx 需要自行安装, 因为接管了插件所有API接口, 而插件必须使用`https`协议, 所以需要配置SSL证书, 通配符证书教程参考[通配符证书申请方法](#通配符证书申请方法).
+> 前提条件: nginx 需要自行安装, 因为接管了插件所有API接口, 而插件必须使用`https`协议, 所以需要配置SSL证书.
 
 1. 下载最新版本的可执行文件
    访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件,
    然后执行以下命令启动服务即可.  
    需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件,
    并修改其中的配置项. 或者依旧可以使用docker部署, 详细参考[简化版的Docker部署](#服务器部署使用).
-2. 安装并配置Nginx服务, 并添加解析一个域名如: `yourdomain.com`
-3. 给 `yourdomain.com` 域名配置SSL证书, 并配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
-4. 修改 `.env` 文件中的域名配置, 注意域名前缀必须相同, 如`DEFAULT_BASE_URL`域名为 `mycopilot.com` 则后续四个域名的前缀必须是 `api.mycopilot.com`..., 否则会导致插件无法登录或正常使用.
-   - `DEFAULT_BASE_URL`: 域名前缀: 无
-   - `API_BASE_URL`: 域名前缀: `api`
-   - `PROXY_BASE_URL`: 域名前缀: `copilot-proxy`
-   - `TELEMETRY_BASE_URL`: 域名前缀: `copilot-telemetry-service`
-5. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
-6. 重启IDE,登录 `GitHub Copilot` 插件.
+2. 安装并配置Nginx服务, 并添加解析以下四个域名, 假设你的域名为 `yourdomain.com`, 则你需要解析的域名记录如下:
+   - `DEFAULT_BASE_URL`: `yourdomain.com`
+   - `API_BASE_URL`: `api.yourdomain.com`
+   - `PROXY_BASE_URL`: `copilot-proxy.yourdomain.com`
+   - `TELEMETRY_BASE_URL`: `copilot-telemetry-service.yourdomain.com`
+   - 以上四个域名都需要配置SSL证书, 通配符证书教程参考[免费通配符证书申请方法](#通配符证书申请方法).
+   - 以上四个域名前缀固定, 不可自定义修改, 否则会导致插件无法登录或正常使用.
+   - 最后将以上域名修改到对应的环境变量配置文件中
+3. 配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
+4. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
+5. 重启IDE,登录 `GitHub Copilot` 插件.
 
 ## IDE设置方法
 
@@ -86,11 +88,11 @@ docker-compose logs -f
 2. 修改 VSCode 的 settings.json 文件, 添加以下配置:
 
 ```json
-  "github.copilot.advanced": {
-"authProvider": "github-enterprise",
-"debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
-"debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-"debug.chatOverrideProxyUrl": "http://api.mycopilot.com/chat/completions:1188"
+"github.copilot.advanced": {
+  "authProvider": "github-enterprise",
+  "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
+  "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
+  "debug.chatOverrideProxyUrl": "http://api.mycopilot.com/chat/completions:1188"
 },
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
