@@ -26,7 +26,7 @@ func getCopilotInternalV2Token(ctx *gin.Context) {
 
 	endpoints := make(map[string]interface{})
 	endpoints["api"] = os.Getenv("API_BASE_URL")
-	endpoints["origin-tracker"] = os.Getenv("ORIGIN_TRACKER_BASE_URL")
+	endpoints["origin-tracker"] = "https://origin-tracker.githubusercontent.com"
 	endpoints["proxy"] = os.Getenv("PROXY_BASE_URL")
 	endpoints["telemetry"] = os.Getenv("TELEMETRY_BASE_URL")
 

@@ -25,6 +25,5 @@ services:
       - DEFAULT_BASE_URL=https://mycopilot.com
       - COPILOT_DEBOUNCE=200 # 补全防抖时间(毫秒)
       - API_BASE_URL=https://api.mycopilot.com
-      - ORIGIN_TRACKER_BASE_URL=https://origin-tracker.githubusercontent.com
       - PROXY_BASE_URL=https://copilot-proxy.mycopilot.com
       - TELEMETRY_BASE_URL=https://copilot-telemetry-service.mycopilot.com
