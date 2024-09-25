@@ -53,7 +53,7 @@ docker-compose logs -f
 
 ### 下载文件直接部署使用
 1. 下载最新版本的可执行文件
-   访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件, 修改里面 `.env` 文件的配置项, 然后直接运行即可.
+   访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases), 修改里面 `.env` 文件的配置项, 然后直接运行即可.
 2. 如果希望绑定自己自有的域名, 可以参考: [自定义域名](#自定义域名) 配置, 然后将所有 `mycopilot.com` 相关的域名都修改为自己的域名.
 3. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
 4. 重启IDE,登录 `GitHub Copilot` 插件.
