@@ -6,6 +6,7 @@ services:
     restart: always
     ports:
       - "1188:1188"
+      - "443:443"
     environment:
       - PORT=1188
       - HTTPS_PORT=443

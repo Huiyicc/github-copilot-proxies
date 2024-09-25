@@ -27,8 +27,9 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 COPY .env.example .env
 
-# 暴露端口（如果你的应用需要的话）
-EXPOSE 11110
+# 暴露端口
+EXPOSE 1188
+EXPOSE 443
 
 # 运行应用
 CMD ["./main"]
