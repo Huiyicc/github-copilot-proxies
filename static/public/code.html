@@ -22,8 +22,8 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
             box-sizing: border-box;
-            width: 40vw; /* 添加固定宽度 */
-            min-width: 400px; /* 添加最小宽度 */
+            width: 50vw; /* 添加固定宽度 */
+            min-width: 450px; /* 添加最小宽度 */
             max-width: 650px;
         }
 
@@ -34,11 +34,12 @@
             border: 1px solid #ccc;
             border-radius: 5px;
             box-sizing: border-box; /* 确保填充和边框包含在宽度和高度中 */
+            font-size: 16px;
         }
 
         button {
             width: 100%;
-            padding: 1em;
+            padding: .8em;
             margin-top: 1em;
             border: none;
             border-radius: 5px;
@@ -89,6 +90,9 @@
             font-size: 12px;
             color: #aaa;
         }
+        .footer a{
+            color: #aaa;
+        }
     </style>
 </head>
 <body>
@@ -96,11 +100,13 @@
     <h1>Github Copilot Login</h1>
     <form onsubmit="submitForm()">
         <input type="text" id="authorization" class="input-field"
-               placeholder="请输入剪切板内的授权码 (Ctrl+V直接粘贴即可)">
-        <button type="submit">授 权 登 录</button>
+               placeholder="请输入剪贴板内的授权码 (Ctrl+V直接粘贴即可)">
+        <button type="submit">登 录</button>
     </form>
 
-    <div class="footer">Copilot小助手</div>
+    <div class="footer">
+        <a href="https://gitee.com/ripperTs/github-copilot-proxies" target="_blank">Copilot后端代理服务</a>
+    </div>
 </div>
 <script>
     function getQueryParam(param) {

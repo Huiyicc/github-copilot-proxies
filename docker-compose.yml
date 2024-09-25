@@ -5,8 +5,10 @@ services:
     image: registry.cn-hangzhou.aliyuncs.com/ripper/copilot-proxies:latest
     restart: always
     ports:
-      - "11110:11110"
+      - "1188:1188"
     environment:
+      - PORT=1188
+      - HTTPS_PORT=443
       # 代码补全配置
       - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
       - CODEX_API_KEY=yourapikey # 代码补全API密钥
@@ -26,11 +28,3 @@ services:
       - ORIGIN_TRACKER_BASE_URL=https://origin-tracker.githubusercontent.com
       - PROXY_BASE_URL=https://copilot-proxy.mycopilot.com
       - TELEMETRY_BASE_URL=https://copilot-telemetry-service.mycopilot.com
-
-  copilot-nginx:
-    container_name: copilot-nginx
-    image: registry.cn-hangzhou.aliyuncs.com/ripper/copilot-nginx:latest
-    ports:
-      - "443:443"
-      - "1188:80"
-    restart: always
