@@ -1,14 +1,16 @@
 # Github Copilot 后端代理服务
 
-基于 Docker 部署的本地离线服务, [仅需四步](#快速使用步骤)即刻拥有离线的`Copilot小助手`同款服务，速度更快，更稳定，更安全。
+[仅需四步](#快速使用步骤)即刻拥有离线的`Copilot小助手`同款服务，速度更快，更稳定，更安全。  
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
-理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个, 参考[本地部署FIM模型](#本地部署fim模型)。
+理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个, 参考[本地部署FIM模型](#本地部署fim模型)。  
+
+🚨**破坏性更新提示: `v0.0.5` 版本为了更加简单的部署使用, 精简掉了Nginx服务的同时也改变了默认的端口号(11110 → 1188), 详细更新内容到: [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 页面查看**   
+
 
 ## 特性
-
-- [x] 使用Docker部署, 简单方便
+- [x] 支持使用Docker部署, 简单方便
 - [x] 支持多种IDE, 如: `VSCode`, `Jetbrains IDE系列`, `Visual Studio 2022`, `HBuilderX`
 - [x] 支持任意符合 `OpenAI` 接口规范的模型, 如: `DeepSeek-v2`
 - [x] `GitHub Copilot` 插件各种API接口全接管, 无需担心插件升级导致服务失效
@@ -21,15 +23,15 @@
 
 ### 快速使用步骤
 
-1. **使用Docker部署服务**: 详细参考下面的[Docker部署](#docker推荐).
+1. **部署服务**: 可以使用[下载文件直接部署使用](#下载文件直接部署使用) 或 使用[docker部署](#docker部署).
 2. **配置IDE**: 详细参考下面的[IDE设置方法](#ide设置方法).
 3. **修改本地hosts文件**: 具体参考[配置本机hosts文件](#配置本机hosts文件).
 4. **信任SSL证书**: 具体参考[信任证书](#信任证书) **(可选)**.
 5. 重启IDE, 点击登录 `GitHub Copilot` 插件即可.
 
-### Docker【推荐】
-
-已经将nginx和服务端及自签证书的工作全部做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的
+### Docker部署
+**(推荐)** 懒人推荐使用此方案, 比较简单  
+已经将自签证书的工作做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的
 **模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
 
 ```shell
@@ -49,6 +51,14 @@ docker-compose logs -f
 
 镜像全部上传到阿里云容器镜像服务, 国内访问无惧.
 
+### 下载文件直接部署使用
+1. 下载最新版本的可执行文件
+   访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件, 修改里面 `.env` 文件的配置项, 然后直接运行即可.
+2. 如果希望绑定自己自有的域名, 可以参考: [自定义域名](#自定义域名) 配置, 然后将所有 `mycopilot.com` 相关的域名都修改为自己的域名.
+3. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
+4. 重启IDE,登录 `GitHub Copilot` 插件.
+
+
 ### 配置本机hosts文件
 
 将下面hosts配置添加到本机hosts文件中, 以便访问本地服务:
@@ -59,26 +69,6 @@ docker-compose logs -f
 127.0.0.1 copilot-proxy.mycopilot.com
 127.0.0.1 copilot-telemetry-service.mycopilot.com
 ```
-
-### 手动部署【不推荐】
-> 前提条件: nginx 需要自行安装, 因为接管了插件所有API接口, 而插件必须使用`https`协议, 所以需要配置SSL证书.
-
-1. 下载最新版本的可执行文件
-   访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件,
-   然后执行以下命令启动服务即可.  
-   需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件,
-   并修改其中的配置项. 或者依旧可以使用docker部署, 详细参考[简化版的Docker部署](#简化版的docker部署).
-2. 安装并配置Nginx服务, 并添加解析以下四个域名, 假设你的域名为 `yourdomain.com` (非必须是顶级域名), 则你需要解析的域名记录如下:
-   - `DEFAULT_BASE_URL`: `yourdomain.com`
-   - `API_BASE_URL`: `api.yourdomain.com`
-   - `PROXY_BASE_URL`: `copilot-proxy.yourdomain.com`
-   - `TELEMETRY_BASE_URL`: `copilot-telemetry-service.yourdomain.com`
-   - 以上四个域名都需要配置SSL证书, 通配符证书教程参考[免费通配符证书申请方法](#通配符证书申请方法).
-   - 以上几个域名前缀 (`api`, `copilot-proxy`, `copilot-telemetry-service`) 必须是一样的, 不可自定义修改, 否则会导致插件无法登录或正常使用.
-   - 最后将以上域名修改到对应的环境变量配置文件中.
-3. 配置`Nginx`伪静态规则, 目的是实现反向代理到本地服务端口, 内容参考文件: [nginx规则.conf](docs/pseudostatic.conf)
-4. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
-5. 重启IDE,登录 `GitHub Copilot` 插件.
 
 ## IDE设置方法
 
@@ -127,61 +117,32 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 
 ### HBuilderX
 
-> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的域名配置.
+> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 mycopilot.com 域名配置.
 
 1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
-
-## 简化版的Docker部署
-
-> 用于多人共享使用方案, 如果是个人使用还是推荐使用Docker部署, 然后 `hosts` 文件里面的ip配置改为服务器ip即可.
-
-1. 删除 `docker-compose.yml` 文件中的 `copilot-nginx` 配置
-2. `docker-compose.yml` 中的 `Copilot配置` 配置项中的域名替换你真实解析的域名.
-3. 配置Nginx服务, 将指定域名解析到服务器IP, 并配置伪静态, 代理到本地服务端口, 内容参考文件:
-   `[default.conf](nginx/conf.d/default.conf)`
-4. 所有解析的域名需要启用https
-5. `docker-compose up -d` 启动服务即可
-
-## 信任证书
-
-> 在正式使用之前, 推荐您信任证书, 否则vscode会出现各种各样的问题.
-
-### Windows操作
-
-1. 双击证书文件 [mycopilot.crt](nginx/ssl/mycopilot.crt) , 点击安装证书
-2. 选择 `本地计算机` > `下一步`
-3. 选择 `将所有的证书放入下列存储` > `浏览` > `受信任的发布者` > `确定` > `下一步` > `完成`
-
-### MacOS操作
-
-1. 打开钥匙串访问
-2. 将 [mycopilot.crt](nginx/ssl/mycopilot.crt) 文件拖拽到“系统”钥匙串列表中。
-3. 双击导入的证书,展开"信任"部分, 将"使用此证书时"选项改为"始终信任"。
-4. 关闭窗口,系统会要求输入管理员密码以确认更改。
 
 ## 模型超参数说明
 
 - `CODEX_TEMPERATURE` : 模型温度, 默认值为 `1`, 可以调整为 `0.1-1.0` 之间的值.
 - 此参数可以略微影响补全结果, 但是不建议调整, 除非你知道你在做什么.
 
-## 内存占用说明
+## 自定义域名
+如果你有自己的域名或者不想使用默认的 `mycopilot.com` 域名, 你需要申请或自签一个https证书, 然后将证书文件路径配置到 `.env` 或 `docker-compose.yml` 文件中.   
 
-1. 运行 `docker-compose up -d` 后, 会占用大约 `30MB-40MB` 内存, 但是随着时间的推移, 内存会逐渐增加, 但是不会超过 `50MB`
-   内存.
-2. Windows环境的Docker Desktop会占用大约 `200MB` 内存 (不考虑有其他镜像服务的情况下).
-3. MacOS环境的Docker Desktop会占用较大, 建议 **[Orbstack](https://docs.orbstack.dev/)** 软件来代替Docker Desktop,
-   该软件占用内存会大幅度降低.
-4. Linux环境的Docker服务占用内存较小, 大约 `80MB` 内存 (不考虑有其他镜像服务的情况下.).
+### 绑定使用自有域名  
+将域名添加解析以下四个域名, 假设你的域名为 `yourdomain.com` (非必须是顶级域名), 则你需要解析的域名记录如下:
+- `DEFAULT_BASE_URL`: `yourdomain.com`
+- `API_BASE_URL`: `api.yourdomain.com`
+- `PROXY_BASE_URL`: `copilot-proxy.yourdomain.com`
+- `TELEMETRY_BASE_URL`: `copilot-telemetry-service.yourdomain.com`
+- 以上四个域名都需要配置SSL证书, 通配符证书教程参考[免费通配符证书申请方法](#通配符证书申请方法).
+- 以上几个域名前缀 (`api`, `copilot-proxy`, `copilot-telemetry-service`) 必须是一样的, 不可自定义修改, 否则会导致插件无法登录或正常使用.
+- 最后将以上域名修改到对应的环境变量配置文件中.
 
-## 本地部署FIM模型
-
-> 显存占用约为 `12GB`, 请确保你的显卡支持, 且显存足够. 此方案未做测试, 仅供参考有问题可以提issue.
-
-- 借助 `Ollama` 来本地部署 `DeepSeek-v2` 的FIM模型, 用于替换 `OpenAI` 的模型, 以达到离线使用的目的.
-- 模型权重文件可以在 [DeepSeek-v2](https://ollama.com/mike/deepseek-coder-v2) , 直接使用 `Ollama` 启动即可
-- 然后将 `Ollama` 的地址配置到 `docker-compose.yml` 文件中即可.
+### 没有域名自签本地证书
+如果你没有域名, 可以随便想一个"假"域名, 然后直接修改 `hosts` 文件的方式进行解析, 然后使用自签证书即可.
 
 ## 通配符证书申请方法
 > 使用 [acme.sh](https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E) 依旧可以申请通配符域名证书, 如果你的域名托管在 `cf` `腾讯云` `阿里云` 等等, 都可以使用他们的API来自动续期.
@@ -223,23 +184,20 @@ acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
 		--key-file   /etc/nginx/cert_file/key.pem  \
 		--fullchain-file /etc/nginx/cert_file/fullchain.pem
 ```
-4. 配置nginx
-```shell
-...
-server {
-  listen       80;
-  # 增加443端口
-  listen 443 ssl http2 ; 
-
-  # 增加证书文件
-  ssl_certificate      /etc/nginx/cert_file/fullchain.pem;
-  ssl_certificate_key  /etc/nginx/cert_file/key.pem;
-  # ...
-}
-```
+4. 修改对应的环境变量配置   
+   - CERT_FILE=/etc/nginx/cert_file/fullchain.pem
+   - KEY_FILE=/etc/nginx/cert_file/key.pem
 
 **如果你使用`宝塔`面板将会更加容易的申请, 因为面板中已经高度集成了此模块**
 
+
+## 本地部署FIM模型
+
+> 显存占用约为 `12GB`, 请确保你的显卡支持, 且显存足够. 此方案未做测试, 仅供参考有问题可以提issue.
+
+- 借助 `Ollama` 来本地部署 `DeepSeek-v2` 的FIM模型, 用于替换 `OpenAI` 的模型, 以达到离线使用的目的.
+- 模型权重文件可以在 [DeepSeek-v2](https://ollama.com/mike/deepseek-coder-v2) , 直接使用 `Ollama` 启动即可
+- 然后将 `Ollama` 的地址配置到 `docker-compose.yml` 文件中即可.
 
 ## 注意事项
 
