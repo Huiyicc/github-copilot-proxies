@@ -131,7 +131,7 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 ## 自定义域名
 如果你有自己的域名或者不想使用默认的 `mycopilot.com` 域名, 你需要申请或自签一个https证书, 然后将证书文件路径配置到 `.env` 或 `docker-compose.yml` 文件中.   
 
-### 绑定使用自有域名  
+### 自有域名配置  
 将域名添加解析以下四个域名, 假设你的域名为 `yourdomain.com` (非必须是顶级域名), 则你需要解析的域名记录如下:
 - `DEFAULT_BASE_URL`: `yourdomain.com`
 - `API_BASE_URL`: `api.yourdomain.com`
