@@ -67,16 +67,16 @@ docker-compose logs -f
    访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 下载最新版本的可执行文件,
    然后执行以下命令启动服务即可.  
    需要注意的是, 在启动服务之前添加 `.env` 文件到可执行文件同级目录, 内容参考 [.env.example](.env.example) 文件,
-   并修改其中的配置项. 或者依旧可以使用docker部署, 详细参考[简化版的Docker部署](#服务器部署使用).
-2. 安装并配置Nginx服务, 并添加解析以下四个域名, 假设你的域名为 `yourdomain.com`, 则你需要解析的域名记录如下:
+   并修改其中的配置项. 或者依旧可以使用docker部署, 详细参考[简化版的Docker部署](#简化版的docker部署).
+2. 安装并配置Nginx服务, 并添加解析以下四个域名, 假设你的域名为 `yourdomain.com` (非必须是顶级域名), 则你需要解析的域名记录如下:
    - `DEFAULT_BASE_URL`: `yourdomain.com`
    - `API_BASE_URL`: `api.yourdomain.com`
    - `PROXY_BASE_URL`: `copilot-proxy.yourdomain.com`
    - `TELEMETRY_BASE_URL`: `copilot-telemetry-service.yourdomain.com`
    - 以上四个域名都需要配置SSL证书, 通配符证书教程参考[免费通配符证书申请方法](#通配符证书申请方法).
-   - 以上四个域名前缀固定, 不可自定义修改, 否则会导致插件无法登录或正常使用.
-   - 最后将以上域名修改到对应的环境变量配置文件中
-3. 配置伪静态, 代理到本地服务端口, 内容参考文件: [default.conf](nginx/conf.d/default.conf)
+   - 以上几个域名前缀 (`api`, `copilot-proxy`, `copilot-telemetry-service`) 必须是一样的, 不可自定义修改, 否则会导致插件无法登录或正常使用.
+   - 最后将以上域名修改到对应的环境变量配置文件中.
+3. 配置`Nginx`伪静态规则, 目的是实现反向代理到本地服务端口, 内容参考文件: [nginx规则.conf](docs/pseudostatic.conf)
 4. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
 5. 重启IDE,登录 `GitHub Copilot` 插件.
 
@@ -133,7 +133,7 @@ AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
-## 服务器部署使用
+## 简化版的Docker部署
 
 > 用于多人共享使用方案, 如果是个人使用还是推荐使用Docker部署, 然后 `hosts` 文件里面的ip配置改为服务器ip即可.
 
