@@ -85,8 +85,6 @@ func codeCompletions(c *gin.Context) {
 
 // ConstructRequestBody 重新构建请求体
 func ConstructRequestBody(body []byte) []byte {
-	body, _ = sjson.DeleteBytes(body, "extra")
-	body, _ = sjson.DeleteBytes(body, "nwo")
 	// 重置参数值已符合环境变量配置
 	envCodexModel := os.Getenv("CODEX_API_MODEL_NAME")
 	body, _ = sjson.SetBytes(body, "model", envCodexModel)
@@ -107,7 +105,7 @@ func ConstructRequestBody(body []byte) []byte {
 	}
 
 	if strings.Contains(envCodexModel, "qwen-coder-turbo") || strings.Contains(envCodexModel, "qwen-coder-turbo-latest") {
-		return constructWithQwenCoderTurboModel(body, codeMaxTokens)
+		return constructWithQwenCoderTurboModel(body)
 	}
 
 	return constructWithDeepSeekModel(body, codeMaxTokens)
@@ -162,25 +160,32 @@ func constructWithChatModel(body []byte, content string) []byte {
 }
 
 // constructWithQwenCoderTurboModel 重写QwenCoderTurbo模型要求的请求体
-func constructWithQwenCoderTurboModel(body []byte, codeMaxTokens int) []byte {
-	if int(gjson.GetBytes(body, "max_tokens").Int()) > codeMaxTokens {
-		body, _ = sjson.SetBytes(body, "max_tokens", codeMaxTokens)
-	}
-
+func constructWithQwenCoderTurboModel(body []byte) []byte {
 	if gjson.GetBytes(body, "n").Int() > 1 {
 		body, _ = sjson.SetBytes(body, "n", 1)
 	}
+	suffix := gjson.GetBytes(body, "suffix")
 	prompt := gjson.GetBytes(body, "prompt")
 	codeLanguage := gjson.GetBytes(body, "extra.language")
 
 	messages := []map[string]interface{}{
 		{
-			"role":    "user",
-			"content": "- You are a " + codeLanguage.Str + " programming expert, please complete the code appropriately based on the context, Do not generate content outside of the code." + "\n- The `#Path: ...` in the given prompt indicates the file path, which you can use to determine the programming language or simply ignore them.\n- Your maximum output tokens are: " + strconv.Itoa(codeMaxTokens) + ".",
+			"role":    "system",
+			"content": "You are an expert in " + codeLanguage.Str + " programming, highly skilled at understanding and continuing to write code.",
+		},
+		{
+			"role": "user",
+			"content": "Combined with subsequent code snippets, help me complete the code:\n\n" +
+				"Code subsequent content:\n```" + codeLanguage.Str + "\n" + suffix.Str + "```\n\n" +
+				"Remember:\n" +
+				"- Do not generate content outside of the code.\n" +
+				"- Never answer a complete block of code, it'll make it hard for me to use.\n" +
+				"- Answer must refer to the code suffix content, do not exceed the boundary, otherwise repeated code will occur.\n" +
+				"- If you don't know how to answer, just reply with an empty string.",
 		},
 		{
 			"role":    "assistant",
-			"content": "```" + codeLanguage.Str + "\n" + prompt.Str,
+			"content": prompt.Str,
 			"partial": true,
 		},
 	}

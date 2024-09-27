@@ -19,13 +19,16 @@
 ## 支持的模型
 > 大部分Chat模型都兼容, 因此下面列出的模型是支持 FIM 的模型, 也就是说支持补全功能.
 
-| 模型名称                                                           | 类型               | 接入地址                                           | 说明                         |
-|----------------------------------------------------------------|------------------|------------------------------------------------|----------------------------|
-| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费 | `https://api.deepseek.com/beta/v1/completions` | 👍🏻完美适配, 推荐使用             |
-| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费          | `https://api.mistral.ai/v1/fim/completions`    | Mistral 出品, 免费计划有非常严重的频率限制 |
-| [stable-code](https://ollama.com/library/stable-code)          | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的超小量级补全模型        |
-| [codegemma](https://ollama.com/library/codegemma)            | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
-| [codellama](https://ollama.com/library/codellama)            | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
+| 模型名称                                                           | 类型      | 接入地址                                           | 说明                         |
+|----------------------------------------------------------------|---------|------------------------------------------------|----------------------------|
+| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费      | `https://api.deepseek.com/beta/v1/completions` | 👍🏻完美适配, 推荐使用             |
+| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费 | `https://api.mistral.ai/v1/fim/completions`    | Mistral 出品, 免费计划有非常严重的频率限制 |
+| [stable-code](https://ollama.com/library/stable-code)          | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的超小量级补全模型        |
+| [codegemma](https://ollama.com/library/codegemma)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
+| [codellama](https://ollama.com/library/codellama)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
+| [qwen-coder-turbo-latest](https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG)         | 收费      | `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions`   | 阿里通义代码补全模型                 |
+
+**💡以上接入的模型除了 `DeepSeek` 模型之外, 效果均不理想, 这里仅做接入更多模型的Demo参考.**
 
 ## 如何使用?
 
