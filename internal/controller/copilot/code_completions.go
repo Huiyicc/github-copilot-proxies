@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
@@ -13,6 +14,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -85,30 +87,79 @@ func codeCompletions(c *gin.Context) {
 func ConstructRequestBody(body []byte) []byte {
 	body, _ = sjson.DeleteBytes(body, "extra")
 	body, _ = sjson.DeleteBytes(body, "nwo")
-	// 重写 model 参数值
-	body, _ = sjson.SetBytes(body, "model", os.Getenv("CODEX_API_MODEL_NAME"))
+	// 重置参数值已符合环境变量配置
+	envCodexModel := os.Getenv("CODEX_API_MODEL_NAME")
+	body, _ = sjson.SetBytes(body, "model", envCodexModel)
 
-	// 重写 max_tokens 参数值
-	CodeMaxTokens, _ := strconv.Atoi(os.Getenv("CODEX_MAX_TOKENS"))
-	if int(gjson.GetBytes(body, "max_tokens").Int()) > CodeMaxTokens {
-		body, _ = sjson.SetBytes(body, "max_tokens", CodeMaxTokens)
+	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
+	if temperature != -1 {
+		body, _ = sjson.SetBytes(body, "temperature", temperature)
+	}
+
+	codeMaxTokens, _ := strconv.Atoi(os.Getenv("CODEX_MAX_TOKENS"))
+
+	if strings.Contains(envCodexModel, "stable-code") || strings.Contains(envCodexModel, "codegemma") {
+		return constructWithStableCodeModel(body)
+	}
+
+	if strings.Contains(envCodexModel, "codellama") {
+		return constructWithCodeLlamaModel(body)
+	}
+
+	return constructWithDeepSeekModel(body, codeMaxTokens)
+}
+
+// constructWithDeepSeekModel 重写DeepSeek模型要求的请求体
+func constructWithDeepSeekModel(body []byte, codeMaxTokens int) []byte {
+	if int(gjson.GetBytes(body, "max_tokens").Int()) > codeMaxTokens {
+		body, _ = sjson.SetBytes(body, "max_tokens", codeMaxTokens)
 	}
 
 	if gjson.GetBytes(body, "n").Int() > 1 {
 		body, _ = sjson.SetBytes(body, "n", 1)
 	}
-
-	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
-	if temperature != -1 {
-		// 重写 temperature 参数值
-		body, _ = sjson.SetBytes(body, "temperature", temperature)
-	}
 	return body
 }
 
+// constructWithCodeLlamaModel 重写codeLlama模型要求的请求体
+func constructWithCodeLlamaModel(body []byte) []byte {
+	suffix := gjson.GetBytes(body, "suffix")
+	prompt := gjson.GetBytes(body, "prompt")
+	content := fmt.Sprintf("<PRE> %s <SUF> %s <MID>", prompt, suffix)
+
+	return constructWithChatModel(body, content)
+}
+
+// constructWithStableCodeModel 重写StableCode模型要求的请求体
+func constructWithStableCodeModel(body []byte) []byte {
+	suffix := gjson.GetBytes(body, "suffix")
+	prompt := gjson.GetBytes(body, "prompt")
+	content := fmt.Sprintf("<fim_prefix>%s<fim_suffix>%s<fim_middle>", prompt, suffix)
+
+	return constructWithChatModel(body, content)
+}
+
+// constructWithChatModel 重写Chat请求体
+func constructWithChatModel(body []byte, content string) []byte {
+	// 创建新的 JSON 对象并添加到 body 中
+	messages := []map[string]string{
+		{
+			"role":    "user",
+			"content": content,
+		},
+	}
+
+	body, _ = sjson.SetBytes(body, "messages", messages)
+
+	jsonStr := string(body)
+	jsonStr = strings.ReplaceAll(jsonStr, "\\u003c", "<")
+	jsonStr = strings.ReplaceAll(jsonStr, "\\u003e", ">")
+	return []byte(jsonStr)
+}
+
+// abortCodex 中断请求
 func abortCodex(c *gin.Context, status int) {
 	c.Header("Content-Type", "text/event-stream")
-
 	c.String(status, "data: [DONE]\n")
 	c.Abort()
 }
