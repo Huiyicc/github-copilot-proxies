@@ -106,6 +106,10 @@ func ConstructRequestBody(body []byte) []byte {
 		return constructWithCodeLlamaModel(body)
 	}
 
+	if strings.Contains(envCodexModel, "qwen-coder-turbo") || strings.Contains(envCodexModel, "qwen-coder-turbo-latest") {
+		return constructWithQwenCoderTurboModel(body, codeMaxTokens)
+	}
+
 	return constructWithDeepSeekModel(body, codeMaxTokens)
 }
 
@@ -155,6 +159,35 @@ func constructWithChatModel(body []byte, content string) []byte {
 	jsonStr = strings.ReplaceAll(jsonStr, "\\u003c", "<")
 	jsonStr = strings.ReplaceAll(jsonStr, "\\u003e", ">")
 	return []byte(jsonStr)
+}
+
+// constructWithQwenCoderTurboModel 重写QwenCoderTurbo模型要求的请求体
+func constructWithQwenCoderTurboModel(body []byte, codeMaxTokens int) []byte {
+	if int(gjson.GetBytes(body, "max_tokens").Int()) > codeMaxTokens {
+		body, _ = sjson.SetBytes(body, "max_tokens", codeMaxTokens)
+	}
+
+	if gjson.GetBytes(body, "n").Int() > 1 {
+		body, _ = sjson.SetBytes(body, "n", 1)
+	}
+	prompt := gjson.GetBytes(body, "prompt")
+	codeLanguage := gjson.GetBytes(body, "extra.language")
+
+	messages := []map[string]interface{}{
+		{
+			"role":    "user",
+			"content": "- You are a " + codeLanguage.Str + " programming expert, please complete the code appropriately based on the context, Do not generate content outside of the code." + "\n- The `#Path: ...` in the given prompt indicates the file path, which you can use to determine the programming language or simply ignore them.\n- Your maximum output tokens are: " + strconv.Itoa(codeMaxTokens) + ".",
+		},
+		{
+			"role":    "assistant",
+			"content": "```" + codeLanguage.Str + "\n" + prompt.Str,
+			"partial": true,
+		},
+	}
+
+	body, _ = sjson.SetBytes(body, "messages", messages)
+	body, _ = sjson.DeleteBytes(body, "prompt")
+	return body
 }
 
 // abortCodex 中断请求
