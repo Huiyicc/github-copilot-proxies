@@ -4,17 +4,28 @@
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
-理论上支持任何符合 `OpenAI` 接口格式的FIM模型API, 当然也可以自己实现一个, 参考[本地部署FIM模型](#本地部署fim模型)。  
 
 > 🚨**破坏性更新提示: `v0.0.5` 版本为了更加简单的部署使用, 精简掉了Nginx服务的同时也改变了默认的端口号(11110 → 1188), 详细更新内容到: [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 页面查看**   
 
 
-## 特性
+## 特点
 - [x] 支持使用Docker部署, 简单方便
 - [x] 支持多种IDE, 如: `VSCode`, `Jetbrains IDE系列`, `Visual Studio 2022`, `HBuilderX`
-- [x] 支持任意符合 `OpenAI` 接口规范的模型, 如: `DeepSeek-v2`
+- [x] 支持任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
 - [x] `GitHub Copilot` 插件各种API接口全接管, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
+
+
+## 支持的模型
+> 大部分Chat模型都兼容, 因此下面列出的模型是支持 FIM 的模型, 也就是说支持补全功能.
+
+| 模型名称                                                           | 类型               | 接入地址                                           | 说明                         |
+|----------------------------------------------------------------|------------------|------------------------------------------------|----------------------------|
+| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费 | `https://api.deepseek.com/beta/v1/completions` | 👍🏻完美适配, 推荐使用             |
+| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费          | `https://api.mistral.ai/v1/fim/completions`    | Mistral 出品, 免费计划有非常严重的频率限制 |
+| [stable-code](https://ollama.com/library/stable-code)          | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的超小量级补全模型        |
+| [codegemma](https://ollama.com/library/codegemma)            | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
+| [codellama](https://ollama.com/library/codellama)            | 免费               | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
 
 ## 如何使用?
 
@@ -190,14 +201,6 @@ acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
 
 **如果你使用`宝塔`面板将会更加容易的申请, 因为面板中已经高度集成了此模块**
 
-
-## 本地部署FIM模型
-
-> 显存占用约为 `12GB`, 请确保你的显卡支持, 且显存足够. 此方案未做测试, 仅供参考有问题可以提issue.
-
-- 借助 `Ollama` 来本地部署 `DeepSeek-v2` 的FIM模型, 用于替换 `OpenAI` 的模型, 以达到离线使用的目的.
-- 模型权重文件可以在 [DeepSeek-v2](https://ollama.com/mike/deepseek-coder-v2) , 直接使用 `Ollama` 启动即可
-- 然后将 `Ollama` 的地址配置到 `docker-compose.yml` 文件中即可.
 
 ## 注意事项
 
