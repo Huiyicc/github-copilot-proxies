@@ -112,26 +112,11 @@ docker-compose logs -f
    ![Xnip2024-09-14_13-08-17.png](docs/Xnip2024-09-14_13-08-17.png)
 
 ### Visual Studio 2022
-#### 最新版本（内置 Copilot 版本）：
-首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
+1. 更新到最新版本（内置 Copilot 版本）至少是 `17.10.x` 以上
+2. 首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
+3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
 
-然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
-
-#### Visual Studio 2022 版本 17.8 及以下的版本：
-请访问: [Visual Studio 2022 降级长绿引导程序](https://learn.microsoft.com/zh-cn/visualstudio/releases/2022/release-history#evergreen-bootstrappers)
-** 选择 17.8 的版本即可.
-
-配置系统环境变量
-
-```shell
-CODESPACES=true
-GITHUB_API_URL=https://api.mycopilot.com
-GITHUB_SERVER_URL=https://mycopilot.com
-GITHUB_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjIxY2VjNyIsImNsaWVudCI6Ikl2MS5iNTA3YTA4Yzg3ZWNmZTk4IiwiaXNzIjoidXNlciIsImV4cCI6MzQ1MjczNTYyMCwibmJmIjoxNzI2MzY3ODEwLCJpYXQiOjE3MjYzNjc4MTB9.XPdtNpeEqrRjVx6CY3sdud37XPxM-LiYLAT_ZLbuj1A
-AGENT_DEBUG_OVERRIDE_PROXY_URL=https://copilot-proxy.mycopilot.com
-GITHUB_USER=Copilot
-AGENT_DEBUG_OVERRIDE_CAPI_URL=https://api.mycopilot.com
-```
+**如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` , 具体方法网上搜索下, 证书文件 [mycopilot.crt](ssl/mycopilot.crt)**
 
 ### HBuilderX
 

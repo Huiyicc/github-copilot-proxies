@@ -45,8 +45,8 @@ func chatCompletions(c *gin.Context) {
 		body, _ = sjson.SetBytes(body, "max_tokens", ChatMaxTokens)
 	}
 
-	if strings.Contains(envChatModel, "deepseek") {
-		body = constructWithDeepSeekModel(body, ChatMaxTokens)
+	if gjson.GetBytes(body, "n").Int() > 1 {
+		body, _ = sjson.SetBytes(body, "n", 1)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CHAT_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
