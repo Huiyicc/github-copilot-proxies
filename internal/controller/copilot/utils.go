@@ -161,9 +161,10 @@ func models(ctx *gin.Context) {
 					"tokenizer": "o200k_base",
 					"type":      "chat",
 				},
-				"id":     "gpt-4-o-preview",
-				"name":   "GPT 4o",
-				"object": "model",
+				"id":      "gpt-4-o-preview",
+				"name":    "GPT 4o",
+				"object":  "model",
+				"version": "gpt-4-o-preview",
 			},
 			{
 				"capabilities": gin.H{

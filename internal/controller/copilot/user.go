@@ -6,6 +6,7 @@ import (
 )
 
 func getLoginUser(ctx *gin.Context) {
+	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
 	ctx.JSON(http.StatusOK, gin.H{
 		"login":               "github",
 		"id":                  9919,
@@ -41,4 +42,9 @@ func getLoginUser(ctx *gin.Context) {
 		"updated_at":          "2022-11-29T19:44:55Z",
 	})
 
+}
+
+func getUserOrgs(ctx *gin.Context) {
+	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
+	ctx.JSON(http.StatusOK, []interface{}{})
 }

@@ -25,7 +25,8 @@ func chatCompletions(c *gin.Context) {
 		return
 	}
 
-	body, _ = sjson.SetBytes(body, "model", os.Getenv("CHAT_API_MODEL_NAME"))
+	envChatModel := os.Getenv("CHAT_API_MODEL_NAME")
+	body, _ = sjson.SetBytes(body, "model", envChatModel)
 
 	if !gjson.GetBytes(body, "function_call").Exists() {
 		messages := gjson.GetBytes(body, "messages").Array()
@@ -42,6 +43,10 @@ func chatCompletions(c *gin.Context) {
 	ChatMaxTokens, _ := strconv.Atoi(os.Getenv("CHAT_MAX_TOKENS"))
 	if int(gjson.GetBytes(body, "max_tokens").Int()) > ChatMaxTokens {
 		body, _ = sjson.SetBytes(body, "max_tokens", ChatMaxTokens)
+	}
+
+	if strings.Contains(envChatModel, "deepseek") {
+		body = constructWithDeepSeekModel(body, ChatMaxTokens)
 	}
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CHAT_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))

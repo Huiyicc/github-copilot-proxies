@@ -112,8 +112,12 @@ docker-compose logs -f
    ![Xnip2024-09-14_13-08-17.png](docs/Xnip2024-09-14_13-08-17.png)
 
 ### Visual Studio 2022
+#### 最新版本（内置 Copilot 版本）：
+首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
 
-**Visual Studio 2022 版本 高于17.9 的用户无法使用, 降级到历史版本,
+然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
+
+#### Visual Studio 2022 版本 17.8 及以下的版本：
 请访问: [Visual Studio 2022 降级长绿引导程序](https://learn.microsoft.com/zh-cn/visualstudio/releases/2022/release-history#evergreen-bootstrappers)
 ** 选择 17.8 的版本即可.
 
