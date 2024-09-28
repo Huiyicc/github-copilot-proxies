@@ -16,6 +16,13 @@ type ClientAuthInfo struct {
 	CardCode   string `json:"card_code"`
 }
 
+type ClientOAuthInfo struct {
+	ClientId     string `json:"client_id" form:"client_id"`
+	Code         string `json:"code" form:"code"`
+	ClientSecret string `json:"client_secret" form:"client_secret"`
+	Scope        string `json:"scope" form:"scope"`
+}
+
 // BindClientToCode 绑定客户端到代码
 // clientId 客户端ID
 // exp 过期时间
@@ -72,6 +79,24 @@ func GetClientAuthInfoByDeviceCode(deviceCode string) (*ClientAuthInfo, error) {
 	return authInfo, err
 }
 
+func GetOAuthCodeInfoByClientIdAndCode(clientId string, code string) (*ClientOAuthInfo, error) {
+	cacheKey := "oauth2_authorize_" + clientId
+	oauthCodeData, err := redis.Bytes(cache.Get(cacheKey))
+	if err != nil {
+		return nil, err
+	}
+
+	var oauthCode ClientOAuthInfo
+	err = json.Unmarshal(oauthCodeData, &oauthCode)
+	if err != nil {
+		return nil, err
+	}
+	if oauthCode.Code != code {
+		return nil, fmt.Errorf("invalid oauth code")
+	}
+	return &oauthCode, nil
+}
+
 func GetClientAuthInfo(code string) (ClientAuthInfo, error) {
 	redisKey := fmt.Sprintf("copilot.proxy.%s", code)
 	authInfoData, err := redis.Bytes(cache.Get(redisKey))
@@ -86,7 +111,7 @@ func GetClientAuthInfo(code string) (ClientAuthInfo, error) {
 // GenDevicesCode 生成设备代码
 func GenDevicesCode(codeLen int) string {
 	var newUUID string
-	for len(newUUID) < 40 {
+	for len(newUUID) < 64 {
 		ud, _ := uuid.NewV4()
 		newUUID += strings.Replace(ud.String(), "-", "", -1)
 	}

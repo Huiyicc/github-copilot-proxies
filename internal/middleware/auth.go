@@ -39,6 +39,31 @@ func DeviceCodeCheckAuth(ctx *gin.Context) {
 	ctx.Next()
 }
 
+func AuthCodeFlowCheckAuth(ctx *gin.Context) {
+	checkInfoClient := &github_auth.ClientOAuthInfo{}
+	err := ctx.Bind(&checkInfoClient)
+	if err != nil {
+		response.FailJson(ctx, response.FailStruct{
+			Code: -1,
+			Msg:  "Invalid client id.",
+		}, false)
+		ctx.Abort()
+		return
+	}
+	oauthCodeInfo, err := github_auth.GetOAuthCodeInfoByClientIdAndCode(checkInfoClient.ClientId, checkInfoClient.Code)
+	if err != nil {
+		response.FailJson(ctx, response.FailStruct{
+			Code: -1,
+			Msg:  "Invalid client id.",
+		}, false)
+		ctx.Abort()
+		return
+	}
+
+	ctx.Set("client_auth_info", oauthCodeInfo)
+	ctx.Next()
+}
+
 func AccessTokenCheckAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.Request.Header.Get("Authorization")
