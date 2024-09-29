@@ -120,7 +120,7 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
 
 🚨 如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` 然后重启浏览器和IDE, 具体方法网上搜索下 证书文件 [mycopilot.crt](ssl/mycopilot.crt)  
-🚧 Chat目前暂不支持多轮对话, 可以解释指定范围代码等
+🚧 Chat服务在代码选中后右键选择解释代码会报错, 解决方法是点击一下"在聊天窗口中继续"即可.
 
 ### HBuilderX
 
