@@ -31,11 +31,11 @@ func getCopilotInternalV2Token(ctx *gin.Context) {
 	endpoints["telemetry"] = os.Getenv("TELEMETRY_BASE_URL")
 
 	gout := gin.H{
-		"annotations_enabled":                      false,
+		"annotations_enabled":                      true,
 		"chat_enabled":                             true,
 		"chat_jetbrains_enabled":                   true,
 		"code_quote_enabled":                       true,
-		"codesearch":                               false,
+		"codesearch":                               true,
 		"copilot_ide_agent_chat_gpt4_small_prompt": false,
 		"copilotignore_enabled":                    false,
 		"endpoints":                                endpoints,
@@ -55,6 +55,8 @@ func getCopilotInternalV2Token(ctx *gin.Context) {
 		"vs_editor_fetcher":                        false,
 		"vsc_panel_v2":                             false,
 		"project":                                  "copilot-proxy",
+		"xcode":                                    true,
+		"xcode_chat":                               true,
 	}
 	ctx.JSON(http.StatusOK, gout)
 }
