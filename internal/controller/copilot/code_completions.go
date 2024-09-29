@@ -39,7 +39,11 @@ func codeCompletions(c *gin.Context) {
 		return
 	}
 
+	// 为了兼容旧版本, 设置默认的 CODEX_SERVICE_TYPE
 	codexServiceType := os.Getenv("CODEX_SERVICE_TYPE")
+	if codexServiceType == "" {
+		codexServiceType = "default"
+	}
 	body = ConstructRequestBody(body, codexServiceType)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CODEX_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
