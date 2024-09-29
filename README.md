@@ -104,8 +104,8 @@ docker-compose logs -f
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
 
-**vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式 (
-不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.**
+vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式   
+(不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.  
 
 ### Jetbrains IDE系列
 
