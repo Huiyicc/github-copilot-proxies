@@ -16,6 +16,7 @@ services:
       - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
       - CODEX_MAX_TOKENS=500 # 代码补全API最大返回token数
       - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
+      - CODEX_SERVICE_TYPE=default # 补全服务类型, 默认值为:default, 可选值: ollama
       # 聊天对话配置
       - CHAT_API_BASE=https://api.deepseek.com/v1/chat/completions # 聊天补全API地址
       - CHAT_API_KEY=yourapikey # 聊天补全API密钥

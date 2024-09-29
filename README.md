@@ -40,7 +40,7 @@
 1. **部署服务**: 可以使用[下载文件直接部署使用](#下载文件直接部署使用) 或 使用[docker部署](#docker部署).
 2. **配置IDE**: 详细参考下面的[IDE设置方法](#ide设置方法).
 3. **修改本地hosts文件**: 具体参考[配置本机hosts文件](#配置本机hosts文件).
-4. **信任SSL证书**: 具体参考[信任证书](#信任证书) **(可选)**.
+4. **信任SSL证书**: 具体自行搜索各个系统平台信任根证书操作 **(可选)**.
 5. 重启IDE, 点击登录 `GitHub Copilot` 插件即可.
 
 ### Docker部署
@@ -116,7 +116,7 @@ docker-compose logs -f
 2. 首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
 3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
 
-**如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` , 具体方法网上搜索下, 证书文件 [mycopilot.crt](ssl/mycopilot.crt)**
+🚨 如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` 然后重启浏览器和IDE, 具体方法网上搜索下 证书文件 [mycopilot.crt](ssl/mycopilot.crt)
 
 ### HBuilderX
 
