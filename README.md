@@ -4,10 +4,6 @@
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
-
-> 🚨**破坏性更新提示: `v0.0.5` 版本为了更加简单的部署使用, 精简掉了Nginx服务的同时也改变了默认的端口号(11110 → 1188), 详细更新内容到: [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases) 页面查看**   
-
-
 ## 特点
 - [x] 支持使用Docker部署, 简单方便
 - [x] 支持多种IDE, 如: `VSCode`, `Jetbrains IDE系列`, `Visual Studio 2022`, `HBuilderX`
@@ -19,16 +15,19 @@
 ## 支持的模型
 > 大部分Chat模型都兼容, 因此下面列出的模型是支持 FIM 的模型, 也就是说支持补全功能.
 
-| 模型名称                                                           | 类型      | 接入地址                                           | 说明                         |
-|----------------------------------------------------------------|---------|------------------------------------------------|----------------------------|
-| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费      | `https://api.deepseek.com/beta/v1/completions` | 👍🏻完美适配, 推荐使用             |
-| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费 | `https://api.mistral.ai/v1/fim/completions`    | Mistral 出品, 免费计划有非常严重的频率限制 |
-| [stable-code](https://ollama.com/library/stable-code)          | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的超小量级补全模型        |
-| [codegemma](https://ollama.com/library/codegemma)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
-| [codellama](https://ollama.com/library/codellama)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`   | Ollama部署本地的补全模型            |
-| [qwen-coder-turbo-latest](https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG)         | 收费      | `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions`   | 阿里通义代码补全模型                 |
+| 模型名称                                                           | 类型      | 接入地址                                                                 | 说明                         |
+|----------------------------------------------------------------|---------|----------------------------------------------------------------------|----------------------------|
+| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费      | `https://api.deepseek.com/beta/v1/completions`                       | 👍🏻完美适配, 推荐使用             |
+| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费 | `https://api.mistral.ai/v1/fim/completions`                          | Mistral 出品, 免费计划有非常严重的频率限制 |
+| [stable-code](https://ollama.com/library/stable-code)          | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的超小量级补全模型        |
+| [codegemma](https://ollama.com/library/codegemma)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型            |
+| [codellama](https://ollama.com/library/codellama)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型            |
+| [qwen-coder-turbo-latest](https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG)         | 收费      | `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` | 阿里通义代码补全模型                 |
+| [deepseek-coder-v2](https://ollama.com/library/deepseek-coder-v2)         | 免费      | `http://127.0.0.1:11434/api/generate`                                | Ollama官方 支持的 `suffix` 后缀方式 |
 
 **💡以上接入的模型除了 `DeepSeek` 模型之外, 效果均不理想, 这里仅做接入更多模型的Demo参考.**
+
+
 
 ## 如何使用?
 
@@ -84,6 +83,10 @@ docker-compose logs -f
 127.0.0.1 copilot-telemetry-service.mycopilot.com
 ```
 
+### 环境变量参数说明
+详细参考: [环境变量参数说明](PARAM.md)
+
+
 ## IDE设置方法
 
 ### VSCode
@@ -116,7 +119,8 @@ docker-compose logs -f
 2. 首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
 3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
 
-🚨 如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` 然后重启浏览器和IDE, 具体方法网上搜索下 证书文件 [mycopilot.crt](ssl/mycopilot.crt)
+🚨 如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` 然后重启浏览器和IDE, 具体方法网上搜索下 证书文件 [mycopilot.crt](ssl/mycopilot.crt)  
+🚧 Chat服务目前还不支持, 等待接口适配.
 
 ### HBuilderX
 
@@ -125,11 +129,6 @@ docker-compose logs -f
 1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
-
-## 模型超参数说明
-
-- `CODEX_TEMPERATURE` : 模型温度, 默认值为 `1`, 可以调整为 `0.1-1.0` 之间的值.
-- 此参数可以略微影响补全结果, 但是不建议调整, 除非你知道你在做什么.
 
 ## 自定义域名
 如果你有自己的域名或者不想使用默认的 `mycopilot.com` 域名, 你需要申请或自签一个https证书, 然后将证书文件路径配置到 `.env` 或 `docker-compose.yml` 文件中.   
