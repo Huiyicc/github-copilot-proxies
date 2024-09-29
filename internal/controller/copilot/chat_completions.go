@@ -25,20 +25,16 @@ func chatCompletions(c *gin.Context) {
 		return
 	}
 
-	envChatModel := os.Getenv("CHAT_API_MODEL_NAME")
-	body, _ = sjson.SetBytes(body, "model", envChatModel)
-
-	if !gjson.GetBytes(body, "function_call").Exists() {
-		messages := gjson.GetBytes(body, "messages").Array()
-		lastIndex := len(messages) - 1
-		if !strings.Contains(messages[lastIndex].Get("content").String(), "Respond in the following locale") {
-			body, _ = sjson.SetBytes(body, "messages."+strconv.Itoa(lastIndex)+".content", messages[lastIndex].Get("content").String()+"Respond in the following locale: "+os.Getenv("CHAT_LOCALE")+".")
-		}
-	}
-
+	c.Header("Content-Type", "text/event-stream")
+	body, _ = sjson.SetBytes(body, "model", os.Getenv("CHAT_API_MODEL_NAME"))
 	body, _ = sjson.DeleteBytes(body, "intent")
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
+	body, _ = sjson.DeleteBytes(body, "tools")
+	body, _ = sjson.DeleteBytes(body, "tool_call")
+	body, _ = sjson.DeleteBytes(body, "functions")
+	body, _ = sjson.DeleteBytes(body, "function_call")
+	body, _ = sjson.DeleteBytes(body, "tool_choice")
 
 	ChatMaxTokens, _ := strconv.Atoi(os.Getenv("CHAT_MAX_TOKENS"))
 	if int(gjson.GetBytes(body, "max_tokens").Int()) > ChatMaxTokens {
@@ -49,6 +45,19 @@ func chatCompletions(c *gin.Context) {
 		body, _ = sjson.SetBytes(body, "n", 1)
 	}
 
+	messages := gjson.GetBytes(body, "messages").Array()
+	userAgent := c.GetHeader("User-Agent")
+	// vs2022客户端的兼容处理
+	if strings.Contains(userAgent, "VSCopilotClient") {
+		lastMessage := messages[len(messages)-1]
+		messageRole := lastMessage.Get("role").String()
+		messageContent := lastMessage.Get("content").String()
+		if messageRole == "user" && messageContent == "Write a short one-sentence question that I can ask that naturally follows from the previous few questions and answers. It should not ask a question which is already answered in the conversation. It should be a question that you are capable of answering. Reply with only the text of the question and nothing else." {
+			_, _ = c.Writer.WriteString("data: [DONE]\n\n")
+			c.Writer.Flush()
+			return
+		}
+	}
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CHAT_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
 	if nil != err {
 		c.AbortWithStatus(http.StatusInternalServerError)
@@ -76,7 +85,7 @@ func chatCompletions(c *gin.Context) {
 	}
 	defer closeIO(resp.Body)
 
-	if resp.StatusCode != http.StatusOK { // log
+	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
 		log.Println("request completions failed:", string(body))
 
@@ -84,11 +93,5 @@ func chatCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-
-	contentType := resp.Header.Get("Content-Type")
-	if "" != contentType {
-		c.Header("Content-Type", contentType)
-	}
-
 	_, _ = io.Copy(c.Writer, resp.Body)
 }

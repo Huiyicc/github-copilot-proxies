@@ -24,13 +24,14 @@
 | CHAT_API_KEY             | 对话服务请求的API KEY                                                                       | string |                                                 |
 | CHAT_API_MODEL_NAME      | 对话服务请求的模型名称                                                                          | string | deepseek-chat                                   |
 | CHAT_MAX_TOKENS          | 对话模型的最大响应tokens , 常见的模型响应tokens是4k, 如果支持8k可以手动调整                                     | int    | 4096                                            |
-| CHAT_LOCALE              | 回答语言, 只有当对话模型默认的 `system` 参数未设定的时候会生效此参数, 通常用于vscode                                 | string | zh_CN                                           |
+| ~~CHAT_LOCALE~~          | 回答语言, 此参数在 `v0.0.8` 版本之后废弃                                                           | string | zh_CN                                           |
 | DEFAULT_BASE_URL         | 默认的服务请求地址, 必须开启https. 可以替换任何二级域名, 但后续的服务域名必须与此域名有关                                   | string | https://mycopilot.com                           |
 | API_BASE_URL             | 默认的API服务请求地址, 必须开启https.  域名 `api` 前缀必须固定                                            | string | https://api.mycopilot.com                       |
 | PROXY_BASE_URL           | 默认的代理服务请求地址, 必须开启https.  域名 `copilot-proxy` 前缀必须固定                                   | string | https://copilot-proxy.mycopilot.com             |
 | TELEMETRY_BASE_URL       | 默认的心跳服务请求地址, 必须开启https.  域名 `copilot-telemetry-service` 前缀必须固定                       | string | https://copilot-telemetry-service.mycopilot.com |
 
 以上环境变量参数配置可以手动在以下几个地方更改进行覆盖默认的设置:
+
 - 二进制文件同级目录下的 `.env` 文件, 如果没有可自行创建
 - 系统的环境变量中设置, 例如 `export PORT=1188`
 - `docker-compose.yml` 文件中的 `environment` 配置项

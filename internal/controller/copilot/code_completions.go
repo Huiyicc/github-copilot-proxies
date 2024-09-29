@@ -23,7 +23,6 @@ import (
 
 // codeCompletions 代码补全
 func codeCompletions(c *gin.Context) {
-	c.Header("Content-Type", "text/event-stream")
 	ctx := c.Request.Context()
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
@@ -39,6 +38,7 @@ func codeCompletions(c *gin.Context) {
 		return
 	}
 
+	c.Header("Content-Type", "text/event-stream")
 	// 为了兼容旧版本, 设置默认的 CODEX_SERVICE_TYPE
 	codexServiceType := os.Getenv("CODEX_SERVICE_TYPE")
 	if codexServiceType == "" {
@@ -184,7 +184,7 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	}
 
 	// https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG
-	if strings.Contains(envCodexModel, "qwen-coder-turbo") || strings.Contains(envCodexModel, "qwen-coder-turbo-latest") {
+	if strings.Contains(envCodexModel, "qwen-coder-turbo") {
 		return constructWithQwenCoderTurboModel(body)
 	}
 
