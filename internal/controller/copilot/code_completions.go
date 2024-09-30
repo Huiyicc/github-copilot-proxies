@@ -252,7 +252,7 @@ func constructWithQwenCoderTurboModel(body []byte) []byte {
 				"Code subsequent content:\n```" + codeLanguage.Str + "\n" + suffix.Str + "```\n\n" +
 				"Remember:\n" +
 				"- Do not generate content outside of the code.\n" +
-				"- Do not directly fill in all the content of the code, only need to fill in 1-2 lines of code content.\n" +
+				"- Do not directly fill in all the code content, the maximum number of lines of code should not exceed 5 lines.\n" +
 				"- Answer must refer to the code suffix content, do not exceed the boundary, otherwise repeated code will occur.\n" +
 				"- If you don't know how to answer, just reply with an empty string.",
 		},
@@ -313,7 +313,7 @@ func constructWithSiliconFlowModel(body []byte) []byte {
 			"content": "我将会给你提供一段已经完成的代码片段内容, 请根据我的要求帮我完成后续的代码补全:\n\n" +
 				"要求:\n" +
 				"- 请不要生成代码之外的内容.\n" +
-				"- 不要直接补全全部代码内容, 只需要补全1-2行代码内容.\n" +
+				"- 不要直接补全全部代码内容, 代码行数最多不要超过5行.\n" +
 				"- 你的回答不要带有 ``` 或者其他代码块标记, 以免影响我的使用.\n" +
 				"- 如果你不知道如何回答, 请直接回复空字符串.\n\n" +
 				"如果你准备好了, 请回答我: OK, 我会将代码片段发送给你.",
