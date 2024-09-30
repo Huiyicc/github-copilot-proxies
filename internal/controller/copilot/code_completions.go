@@ -39,11 +39,7 @@ func codeCompletions(c *gin.Context) {
 	}
 
 	c.Header("Content-Type", "text/event-stream")
-	// 为了兼容旧版本, 设置默认的 CODEX_SERVICE_TYPE
 	codexServiceType := os.Getenv("CODEX_SERVICE_TYPE")
-	if codexServiceType == "" {
-		codexServiceType = "default"
-	}
 	body = ConstructRequestBody(body, codexServiceType)
 
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CODEX_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
@@ -83,12 +79,8 @@ func codeCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-	if strings.Contains(codexServiceType, "default") {
-		_, _ = io.Copy(c.Writer, resp.Body)
-	}
-
 	// 处理 Ollama 服务的流式响应
-	if strings.Contains(codexServiceType, "ollama") {
+	if codexServiceType == "ollama" {
 		reader := bufio.NewReader(resp.Body)
 		for {
 			line, err := reader.ReadString('\n')
@@ -150,12 +142,15 @@ func codeCompletions(c *gin.Context) {
 
 		_, _ = c.Writer.WriteString("data: [DONE]\n\n")
 		c.Writer.Flush()
+		return
 	}
+
+	// 处理默认服务的响应
+	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
 // ConstructRequestBody 重新构建请求体
 func ConstructRequestBody(body []byte, codexServiceType string) []byte {
-	// 重置参数值已符合环境变量配置
 	envCodexModel := os.Getenv("CODEX_API_MODEL_NAME")
 	body, _ = sjson.SetBytes(body, "model", envCodexModel)
 
@@ -189,8 +184,13 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	}
 
 	// 支持 Ollama FIM 的模型, 如:https://ollama.com/library/deepseek-coder-v2
-	if strings.Contains(codexServiceType, "ollama") {
+	if codexServiceType == "ollama" {
 		return constructWithOllamaModel(body, codeMaxTokens)
+	}
+
+	// 硅基流动支持的 FIM 模型, 文档: https://docs.siliconflow.cn/features/fim
+	if codexServiceType == "siliconflow" {
+		return constructWithSiliconFlowModel(body)
 	}
 
 	return body
@@ -252,7 +252,7 @@ func constructWithQwenCoderTurboModel(body []byte) []byte {
 				"Code subsequent content:\n```" + codeLanguage.Str + "\n" + suffix.Str + "```\n\n" +
 				"Remember:\n" +
 				"- Do not generate content outside of the code.\n" +
-				"- Never answer a complete block of code, it'll make it hard for me to use.\n" +
+				"- Do not directly fill in all the content of the code, only need to fill in 1-2 lines of code content.\n" +
 				"- Answer must refer to the code suffix content, do not exceed the boundary, otherwise repeated code will occur.\n" +
 				"- If you don't know how to answer, just reply with an empty string.",
 		},
@@ -268,7 +268,7 @@ func constructWithQwenCoderTurboModel(body []byte) []byte {
 	return body
 }
 
-// constructWithOllamaModel 重写DeepSeekCodeV2模型要求的请求体
+// constructWithOllamaModel 重写Ollama模型要求的请求体
 func constructWithOllamaModel(body []byte, codeMaxTokens int) []byte {
 	body, _ = sjson.SetBytes(body, "options.temperature", 0)
 	// stop参数处理
@@ -286,6 +286,49 @@ func constructWithOllamaModel(body []byte, codeMaxTokens int) []byte {
 	} else {
 		body, _ = sjson.SetBytes(body, "options.num_predict", maxTokens)
 	}
+	return body
+}
+
+// constructWithSiliconFlowModel 重写SiliconFlow模型要求的请求体
+func constructWithSiliconFlowModel(body []byte) []byte {
+	codeLanguage := gjson.GetBytes(body, "extra.language")
+	suffix := gjson.GetBytes(body, "suffix")
+	prompt := gjson.GetBytes(body, "prompt")
+
+	// todo: 这里的prompt参数好像并没有什么作用, 但是为了保持一致性还是保留了, 还好不会增加tokens
+	body, _ = sjson.SetBytes(body, "extra_body.prefix", prompt.Str)
+	body, _ = sjson.SetBytes(body, "extra_body.suffix", suffix.Str)
+
+	body, _ = sjson.DeleteBytes(body, "prompt")
+	body, _ = sjson.DeleteBytes(body, "suffix")
+	body, _ = sjson.DeleteBytes(body, "extra")
+
+	messages := []map[string]string{
+		{
+			"role":    "system",
+			"content": "你是一名高级 " + codeLanguage.Str + " 开发工程师, 接下来请根据我提供的代码片段和你二十年的开发经验, 帮我完成代码补全工作, 千万不要回答代码之外的任何内容.",
+		},
+		{
+			"role": "user",
+			"content": "我将会给你提供一段已经完成的代码片段内容, 请根据我的要求帮我完成后续的代码补全:\n\n" +
+				"要求:\n" +
+				"- 请不要生成代码之外的内容.\n" +
+				"- 不要直接补全全部代码内容, 只需要补全1-2行代码内容.\n" +
+				"- 你的回答不要带有 ``` 或者其他代码块标记, 以免影响我的使用.\n" +
+				"- 如果你不知道如何回答, 请直接回复空字符串.\n\n" +
+				"如果你准备好了, 请回答我: OK, 我会将代码片段发送给你.",
+		},
+		{
+			"role":    "assistant",
+			"content": "OK",
+		},
+		{
+			"role":    "user",
+			"content": prompt.Str,
+		},
+	}
+
+	body, _ = sjson.SetBytes(body, "messages", messages)
 	return body
 }
 
