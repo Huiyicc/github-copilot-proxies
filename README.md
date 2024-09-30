@@ -11,25 +11,6 @@
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 
-
-## 支持的模型
-> 大部分Chat模型都兼容, 因此下面列出的模型是支持 FIM 的模型, 也就是说支持补全功能.
-
-| 模型名称                                                           | 类型      | 接入地址                                                                 | 说明                        |
-|----------------------------------------------------------------|---------|----------------------------------------------------------------------|---------------------------|
-| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费      | `https://api.deepseek.com/beta/v1/completions`                       | 👍🏻完美适配, 推荐使用            |
-| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费 | `https://api.mistral.ai/v1/fim/completions`                          | Mistral 出品, 免费计划有非常严重的频率限制 |
-| [stable-code](https://ollama.com/library/stable-code)          | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的超小量级补全模型       |
-| [codegemma](https://ollama.com/library/codegemma)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型           |
-| [codellama](https://ollama.com/library/codellama)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型           |
-| [qwen-coder-turbo-latest](https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG)         | 收费      | `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` | 阿里通义代码补全模型                |
-| [mike/deepseek-coder-v2](https://ollama.com/mike/deepseek-coder-v2)         | 免费      | `http://127.0.0.1:11434/api/generate`                                | Ollama支持的 `suffix` 参数方式实现 |
-| [deepseek-coder-v2](https://ollama.com/library/deepseek-coder-v2)         | 免费      | `http://127.0.0.1:11434/api/generate`                                | Ollama支持的 `suffix` 参数方式实现 |
-
-**💡以上接入的模型除了 `DeepSeek` 模型之外, 效果均不理想, 这里仅做接入更多模型的Demo参考.**
-
-
-
 ## 如何使用?
 
 > 在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT`
@@ -145,6 +126,24 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 ### 没有域名自签本地证书
 如果你没有域名, 可以随便想一个"假"域名, 然后直接修改 `hosts` 文件的方式进行解析, 然后使用自签证书即可.
+
+
+## 支持的模型
+> 大部分Chat模型都兼容, 因此下面列出的模型是支持 FIM 的模型, 也就是说支持补全功能.
+
+| 模型名称                                                           | 类型      | 接入地址                                                                 | 说明                        |
+|----------------------------------------------------------------|---------|----------------------------------------------------------------------|---------------------------|
+| [DeepSeek (API)](https://www.deepseek.com/)                    | 付费      | `https://api.deepseek.com/beta/v1/completions`                       | 👍🏻完美适配, 推荐使用            |
+| [codestral-latest (API)](https://docs.mistral.ai/api/#tag/fim) | 免费 / 付费 | `https://api.mistral.ai/v1/fim/completions`                          | Mistral 出品, 免费计划有非常严重的频率限制 |
+| [stable-code](https://ollama.com/library/stable-code)          | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的超小量级补全模型       |
+| [codegemma](https://ollama.com/library/codegemma)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型           |
+| [codellama](https://ollama.com/library/codellama)              | 免费      | `http://127.0.0.1:11434/v1/chat/completions`                         | Ollama部署本地的补全模型           |
+| [qwen-coder-turbo-latest](https://help.aliyun.com/zh/model-studio/user-guide/qwen-coder?spm=a2c4g.11186623.0.0.a5234823I6LvAG)         | 收费      | `https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions` | 阿里通义代码补全模型                |
+| [mike/deepseek-coder-v2](https://ollama.com/mike/deepseek-coder-v2)         | 免费      | `http://127.0.0.1:11434/api/generate`                                | Ollama支持的 `suffix` 参数方式实现 |
+| [deepseek-coder-v2](https://ollama.com/library/deepseek-coder-v2)         | 免费      | `http://127.0.0.1:11434/api/generate`                                | Ollama支持的 `suffix` 参数方式实现 |
+
+**💡以上接入的模型除了 `DeepSeek` 模型之外, 效果均不理想, 这里仅做接入更多模型的Demo参考.**
+
 
 ## 通配符证书申请方法
 > 使用 [acme.sh](https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E) 依旧可以申请通配符域名证书, 如果你的域名托管在 `cf` `腾讯云` `阿里云` 等等, 都可以使用他们的API来自动续期.

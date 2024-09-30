@@ -25,16 +25,20 @@ func chatCompletions(c *gin.Context) {
 		return
 	}
 
+	envModelName := os.Getenv("CHAT_API_MODEL_NAME")
 	c.Header("Content-Type", "text/event-stream")
-	body, _ = sjson.SetBytes(body, "model", os.Getenv("CHAT_API_MODEL_NAME"))
+	body, _ = sjson.SetBytes(body, "model", envModelName)
 	body, _ = sjson.DeleteBytes(body, "intent")
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
-	body, _ = sjson.DeleteBytes(body, "tools")
-	body, _ = sjson.DeleteBytes(body, "tool_call")
-	body, _ = sjson.DeleteBytes(body, "functions")
-	body, _ = sjson.DeleteBytes(body, "function_call")
-	body, _ = sjson.DeleteBytes(body, "tool_choice")
+
+	if !strings.HasPrefix(envModelName, "gpt-") {
+		body, _ = sjson.DeleteBytes(body, "tools")
+		body, _ = sjson.DeleteBytes(body, "tool_call")
+		body, _ = sjson.DeleteBytes(body, "functions")
+		body, _ = sjson.DeleteBytes(body, "function_call")
+		body, _ = sjson.DeleteBytes(body, "tool_choice")
+	}
 
 	ChatMaxTokens, _ := strconv.Atoi(os.Getenv("CHAT_MAX_TOKENS"))
 	if int(gjson.GetBytes(body, "max_tokens").Int()) > ChatMaxTokens {
