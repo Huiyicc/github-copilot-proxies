@@ -4,14 +4,16 @@ FROM golang:alpine AS builder
 # 设置工作目录
 WORKDIR /app
 
-# 复制 go mod 和 sum 文件
-COPY go.mod go.sum ./
-
-# 下载依赖
-RUN go mod download
-
 # 复制源代码
 COPY . .
+
+# 检查 go.mod 是否存在，如果不存在则初始化一个新的模块
+RUN if [ ! -f go.mod ]; then \
+    go mod init myapp; \
+    fi
+
+# 下载依赖
+RUN go mod tidy
 
 # 构建应用
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main .
