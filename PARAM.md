@@ -18,7 +18,7 @@
 | CODEX_API_MODEL_NAME     | 代码补全服务的模型名称                                                                          | string |                                                 |
 | CODEX_MAX_TOKENS         | 代码补全模型的最大响应tokens, 如果是Ollama建议设置小一点, 避免直接补全一长串代码                                     | int    | 500                                             |
 | CODEX_TEMPERATURE        | 代码补全模型温度超参数,deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1 (默认值为 `1`, 可以调整为 `0.1-1.0` 之间的值.) | int    | 0                                               |
-| CODEX_SERVICE_TYPE       | 代码补全模型类型, 用于兼容本地模型 <br/>可选值: `default` `ollama` `siliconflow`                        | string | default                                         |
+| CODEX_SERVICE_TYPE       | 代码补全模型类型, 用于兼容本地模型 <br/>可选值: `default` `ollama`                                      | string | default                                         |
 | COPILOT_DEBOUNCE         | 补全防抖时间, 单位:毫秒                                                                        | int    | 200                                             |
 | CHAT_API_BASE            | 对话服务请求地址, 理论支持任何符合 `OpenAI` 接口规范的模型                                                  | string | https://api.deepseek.com/v1/chat/completions    |
 | CHAT_API_KEY             | 对话服务请求的API KEY                                                                       | string |                                                 |
@@ -43,6 +43,7 @@
 | 服务地址                                                               | 描述                                       |
 |--------------------------------------------------------------------|------------------------------------------|
 | https://api.deepseek.com/beta/v1/completions                       | DeepSeek 官方API, 这里使用Beta地址是为了 8k 的prompt |
+| https://api.siliconflow.cn/v1/completions                          | 硅基流动 官方API                               |
 | https://api.mistral.ai/v1/fim/completions                          | Mistral 官方API                            |
 | http://127.0.0.1:11434/v1/chat/completions                         | Ollama的Chat对话接口                          |
 | http://127.0.0.1:11434/api/generate                                | Ollama代码生成, 主要适配了 `suffix` 后缀参数的模型       |

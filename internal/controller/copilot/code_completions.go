@@ -188,11 +188,6 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 		return constructWithOllamaModel(body, codeMaxTokens)
 	}
 
-	// 硅基流动支持的 FIM 模型, 文档: https://docs.siliconflow.cn/features/fim
-	if codexServiceType == "siliconflow" {
-		return constructWithSiliconFlowModel(body)
-	}
-
 	return body
 }
 
@@ -286,49 +281,6 @@ func constructWithOllamaModel(body []byte, codeMaxTokens int) []byte {
 	} else {
 		body, _ = sjson.SetBytes(body, "options.num_predict", maxTokens)
 	}
-	return body
-}
-
-// constructWithSiliconFlowModel 重写SiliconFlow模型要求的请求体
-func constructWithSiliconFlowModel(body []byte) []byte {
-	codeLanguage := gjson.GetBytes(body, "extra.language")
-	suffix := gjson.GetBytes(body, "suffix")
-	prompt := gjson.GetBytes(body, "prompt")
-
-	// todo: 这里的prompt参数好像并没有什么作用, 但是为了保持一致性还是保留了, 还好不会增加tokens
-	body, _ = sjson.SetBytes(body, "extra_body.prefix", prompt.Str)
-	body, _ = sjson.SetBytes(body, "extra_body.suffix", suffix.Str)
-
-	body, _ = sjson.DeleteBytes(body, "prompt")
-	body, _ = sjson.DeleteBytes(body, "suffix")
-	body, _ = sjson.DeleteBytes(body, "extra")
-
-	messages := []map[string]string{
-		{
-			"role":    "system",
-			"content": "你是一名高级 " + codeLanguage.Str + " 开发工程师, 接下来请根据我提供的代码片段和你二十年的开发经验, 帮我完成代码补全工作, 千万不要回答代码之外的任何内容.",
-		},
-		{
-			"role": "user",
-			"content": "我将会给你提供一段已经完成的代码片段内容, 请根据我的要求帮我完成后续的代码补全:\n\n" +
-				"要求:\n" +
-				"- 请不要生成代码之外的内容.\n" +
-				"- 不要直接补全全部代码内容, 代码行数最多不要超过5行.\n" +
-				"- 你的回答不要带有 ``` 或者其他代码块标记, 以免影响我的使用.\n" +
-				"- 如果你不知道如何回答, 请直接回复空字符串.\n\n" +
-				"如果你准备好了, 请回答我: OK, 我会将代码片段发送给你.",
-		},
-		{
-			"role":    "assistant",
-			"content": "OK",
-		},
-		{
-			"role":    "user",
-			"content": prompt.Str,
-		},
-	}
-
-	body, _ = sjson.SetBytes(body, "messages", messages)
 	return body
 }
 
