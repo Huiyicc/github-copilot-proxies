@@ -5,6 +5,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -15,6 +16,16 @@ import (
 	"golang.org/x/sync/errgroup"
 	"ripper/internal/router"
 )
+
+// 检查端口是否被占用，如果被占用则退出程序
+func checkPortAndExit(host string, port int) {
+	addr := fmt.Sprintf("%s:%d", host, port)
+	conn, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Fatalf("端口: %d 已被占用, 运行结束!", port)
+	}
+	conn.Close()
+}
 
 func main() {
 	err := godotenv.Load()
@@ -41,6 +52,15 @@ func main() {
 	host := os.Getenv("HOST")
 	certFile := os.Getenv("CERT_FILE")
 	keyFile := os.Getenv("KEY_FILE")
+
+	if httpsPort != 443 {
+		log.Fatal("HTTPS_PORT 必须为 443")
+		return
+	}
+
+	// 检查端口是否被占用
+	checkPortAndExit(host, httpPort)
+	checkPortAndExit(host, httpsPort)
 
 	//创建一个错误组
 	g, _ := errgroup.WithContext(context.Background())
