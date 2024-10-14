@@ -8,7 +8,8 @@
 | PORT                     | HTTP请求的端口号 ,非必要请勿更改                                                                  | int    | 1188                                            |
 | HTTPS_PORT               | HTTPS请求的端口号 ,非必要请勿更改                                                                 | int    | 443                                             |
 | HOST                     | 主机地址                                                                                 | int    | 0.0.0.0                                         |
-| TOKEN_SALT               | JWT秘钥                                                                                | string | 7L3Gqrn24TUWzLwG                                |
+| LOGIN_PASSWORD           | `login/device` 页面的访问密码, 用于部署在公共服务器上防止他人盗用服务, 默认空:表示不设置                               | string |                                                 |
+| TOKEN_SALT               | JWT秘钥 **建议修改**                                                                       | string | 7L3Gqrn24TUWzLwG                                |
 | VS_COPILOT_CLIENT_ID     | VS2022登录GitHub Copilot插件所需的客户端ID                                                     | string | a200baed193bb2088a6e                            |
 | VS_COPILOT_CLIENT_SECRET | VS2022登录GitHub Copilot插件所需的客户端秘钥                                                     | string |                                                 |
 | CERT_FILE                | HTTPS域名证书                                                                            | string | ssl/mycopilot.crt                               |

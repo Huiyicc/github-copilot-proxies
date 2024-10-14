@@ -10,6 +10,7 @@ services:
     environment:
       - PORT=1188
       - HTTPS_PORT=443
+      - LOGIN_PASSWORD=
       # 代码补全配置
       - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
       - CODEX_API_KEY=yourapikey # 代码补全API密钥

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Github Copilot Login</title>
+    <title>登录 Github Copilot 插件</title>
     <style>
         body, html {
             height: 100%;
@@ -90,15 +90,22 @@
             font-size: 12px;
             color: #aaa;
         }
-        .footer a{
+
+        .footer a {
             color: #aaa;
+        }
+
+        #password {
+            display: none;
         }
     </style>
 </head>
 <body>
 <div class="login-container">
-    <h1>Github Copilot Login</h1>
+    <h1>登录 Github Copilot 插件</h1>
     <form onsubmit="submitForm()">
+        <input type="text" id="password" class="input-field"
+               placeholder="请输入访问密码, 在环境变量LOGIN_PASSWORD参数中">
         <input type="text" id="authorization" class="input-field"
                placeholder="请输入剪贴板内的授权码 (Ctrl+V直接粘贴即可)">
         <button type="submit">登 录</button>
@@ -109,6 +116,17 @@
     </div>
 </div>
 <script>
+
+    async function getLoginConfig() {
+        const result = await fetch('/login/config');
+        const resultJson = await result.json();
+        if (resultJson.is_login_password) {
+            document.getElementById('password').style.display = 'block';
+        }
+    }
+
+    getLoginConfig();
+
     function getQueryParam(param) {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get(param);
@@ -117,6 +135,7 @@
     async function submitForm() {
         event.preventDefault();
         const authorization = document.getElementById('authorization').value;
+        const password = document.getElementById('password').value;
         const code = getQueryParam('user_code');
 
         if (code === null) {
@@ -135,7 +154,7 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({code, authorization})
+                body: JSON.stringify({code, authorization, password})
             })
 
             if (!response.ok) {
@@ -151,7 +170,6 @@
             alert('登录成功');
             window.location.reload();
         } catch (e) {
-            console.error('提交表单时出错:', error);
             alert('提交表单时出错，请稍后再试');
         }
     }

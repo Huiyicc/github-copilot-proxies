@@ -98,6 +98,7 @@ func postLoginOauthAccessToken(ctx *gin.Context) {
 type loginDeviceRequestInfo struct {
 	Code          string `json:"code"`
 	Authorization string `json:"authorization"`
+	Password      string `json:"password"`
 }
 
 func postLoginDevice(ctx *gin.Context) {
@@ -105,7 +106,16 @@ func postLoginDevice(ctx *gin.Context) {
 	if err := response.BindStruct(ctx, &info); err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: 422,
-			Msg:  "Invalid json.",
+			Msg:  "请求参数错误",
+		}, false)
+		return
+	}
+	// 验证密码
+	loginPassword := os.Getenv("LOGIN_PASSWORD")
+	if loginPassword != "" && info.Password != loginPassword {
+		response.FailJson(ctx, response.FailStruct{
+			Code: 422,
+			Msg:  "访问密码错误",
 		}, false)
 		return
 	}
@@ -114,7 +124,7 @@ func postLoginDevice(ctx *gin.Context) {
 	if err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: 422,
-			Msg:  "Invalid code.",
+			Msg:  "授权码填写错误",
 		}, false)
 		return
 	}
@@ -123,7 +133,7 @@ func postLoginDevice(ctx *gin.Context) {
 	if err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: 500,
-			Msg:  "System Error",
+			Msg:  "系统异常, 请稍后再试",
 		}, false)
 		return
 	}

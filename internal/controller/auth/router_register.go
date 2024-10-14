@@ -30,4 +30,7 @@ func GinApi(g *gin.RouterGroup) {
 
 	// enterprise 验证
 	g.GET("/site/sha", getSiteSha)
+
+	// 获取登录页面配置
+	g.GET("/login/config", getLoginConfig)
 }

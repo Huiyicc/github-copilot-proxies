@@ -91,3 +91,10 @@ func getSiteSha(ctx *gin.Context) {
 	ctx.Header("X-GitHub-Request-Id", "C0E1:6A1A:1A1F:2A1D:1A1F:1A1F:1A1F:1A1F")
 	ctx.JSON(http.StatusOK, gin.H{})
 }
+
+func getLoginConfig(ctx *gin.Context) {
+	loginPassword := os.Getenv("LOGIN_PASSWORD")
+	ctx.JSON(http.StatusOK, gin.H{
+		"is_login_password": loginPassword != "",
+	})
+}
