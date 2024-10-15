@@ -132,6 +132,14 @@
         return urlParams.get(param);
     }
 
+    function setCodeInputValue(){
+        const code = getQueryParam('user_code');
+        if (code !== null) {
+            document.getElementById('authorization').value = code;
+        }
+    }
+    setCodeInputValue();
+
     async function submitForm() {
         event.preventDefault();
         const authorization = document.getElementById('authorization').value;
