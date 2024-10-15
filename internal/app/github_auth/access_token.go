@@ -20,7 +20,7 @@ func GetAccessTokenT() string {
 	return t.String()
 }
 
-func jsonMap2Token(data map[string]interface{}) string {
+func JsonMap2Token(data map[string]interface{}) string {
 	if len(data) == 0 {
 		return ""
 	}
@@ -45,11 +45,16 @@ func jsonMap2Token(data map[string]interface{}) string {
 }
 
 func JsonMap2SignToken(data map[string]interface{}) string {
-	token := jsonMap2Token(data)
+	token := JsonMap2Token(data)
 	if token == "" {
 		return ""
 	}
 
-	sign := sha256Sign(token + fmt.Sprintf(";salt=%s", os.Getenv("TOKEN_SALT")))
+	sign := Token2Sign(token)
 	return token + ";8kp=1:" + sign
+}
+
+func Token2Sign(token string) string {
+	sign := sha256Sign(token + fmt.Sprintf(";salt=%s", os.Getenv("TOKEN_SALT")))
+	return sign
 }

@@ -21,7 +21,7 @@ func getCopilotInternalV2Token(ctx *gin.Context) {
 		"sku":  sku,
 		"st":   "dotcom",
 		"chat": 1,
-		"u":    "fakeuser",
+		"u":    "github",
 	})
 
 	endpoints := make(map[string]interface{})

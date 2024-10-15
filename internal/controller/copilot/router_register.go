@@ -17,10 +17,10 @@ func GinApi(g *gin.RouterGroup) {
 	g.GET("/api/v3/user/orgs", middleware.AccessTokenCheckAuth(), getUserOrgs)
 
 	g.GET("/copilot_internal/v2/token", middleware.AccessTokenCheckAuth(), getCopilotInternalV2Token)
-	g.POST("/v1/engines/copilot-codex/completions", codeCompletions)
-	g.POST("/v1/engines/copilot-codex", codeCompletions)
+	g.POST("/v1/engines/copilot-codex/completions", middleware.TokenCheckAuth(), codeCompletions)
+	g.POST("/v1/engines/copilot-codex", middleware.TokenCheckAuth(), codeCompletions)
 
-	g.POST("/chat/completions", chatCompletions)
+	g.POST("/chat/completions", middleware.TokenCheckAuth(), chatCompletions)
 
 	g.GET("/api/v3/meta", v3meta)
 	g.GET("/api/v3/", cliv3)

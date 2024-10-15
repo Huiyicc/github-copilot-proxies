@@ -20,15 +20,15 @@ package response
 var (
 	NoAccess = FailStruct{
 		Code: 401,
-		Msg:  "无权访问，请先登录",
+		Msg:  "无权访问",
 	}
 	TokenWrongful = FailStruct{
 		Code: 401,
-		Msg:  "Token不合法，请重新登录",
+		Msg:  "Token不合法",
 	}
 	TokenOverdue = FailStruct{
 		Code: 401,
-		Msg:  "Token过期，请重新登录",
+		Msg:  "Token过期",
 	}
 	NoIntactParameters = FailStruct{
 		Code: -10001,

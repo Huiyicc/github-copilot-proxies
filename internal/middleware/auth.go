@@ -1,12 +1,15 @@
 package middleware
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"ripper/internal/app/github_auth"
 	"ripper/internal/response"
 	jwtpkg "ripper/pkg/jwt"
+	"strconv"
 	"strings"
+	"time"
 )
 
 type OAuthCheck struct {
@@ -117,4 +120,80 @@ func AccessTokenCheckAuth() gin.HandlerFunc {
 		c.Set("token.issuer", issuerStr)
 		c.Next()
 	}
+}
+
+func TokenCheckAuth() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		token := c.Request.Header.Get("Authorization")
+		if token == "" {
+			response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenWrongful, false)
+			c.Abort()
+			return
+		}
+		last := strings.Index(token, " ")
+		if len(token) < last || last == -1 {
+			response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenWrongful, false)
+			c.Abort()
+			return
+		}
+		token = token[last+1:]
+		parsedToken := parseAuthorizationToken(token)
+		// 校验exp是否过期
+		expired, err := isExpired(parsedToken["exp"])
+		if err != nil {
+			response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenWrongful, false)
+			c.Abort()
+			return
+		} else {
+			if expired {
+				response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenOverdue, false)
+				c.Abort()
+				return
+			}
+		}
+		rawToken := github_auth.JsonMap2Token(map[string]interface{}{
+			"tid":  parsedToken["tid"],
+			"exp":  parsedToken["exp"],
+			"sku":  parsedToken["sku"],
+			"st":   parsedToken["st"],
+			"chat": parsedToken["chat"],
+			"u":    parsedToken["u"],
+		})
+		sign := "1:" + github_auth.Token2Sign(rawToken)
+		if sign != parsedToken["8kp"] {
+			response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenWrongful, false)
+			c.Abort()
+			return
+		}
+		c.Next()
+	}
+}
+
+func parseAuthorizationToken(token string) map[string]string {
+	result := make(map[string]string)
+	pairs := strings.Split(token, ";")
+
+	for _, pair := range pairs {
+		kv := strings.SplitN(pair, "=", 2)
+		if len(kv) == 2 {
+			key := kv[0]
+			value := kv[1]
+
+			if key == "tid" || key == "exp" || key == "sku" || key == "st" || key == "8kp" || key == "chat" || key == "u" {
+				result[key] = value
+			}
+		}
+	}
+
+	return result
+}
+
+func isExpired(expStr string) (bool, error) {
+	exp, err := strconv.ParseInt(expStr, 10, 64)
+	if err != nil {
+		return false, fmt.Errorf("invalid exp timestamp: %v", err)
+	}
+
+	now := time.Now().Unix()
+	return now > exp, nil
 }

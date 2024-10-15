@@ -4,7 +4,6 @@ import (
 	"errors"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"ripper/pkg/util"
 )
 
 /*
@@ -34,31 +33,27 @@ func SuccessJson(c *gin.Context, msg string, data ...interface{}) {
 }
 
 func FailJson(c *gin.Context, load FailStruct, WriteLog bool, logMsh ...string) {
-	id, _ := util.GetUUID()
 	if WriteLog {
 		var werrmsg string
 		for _, v := range logMsh {
 			werrmsg += v + "\n"
 		}
-		//mongodb.InsertFailLog(c, http.StatusOK, load.ErrCode, werrmsg, id)
 	}
 	c.JSON(http.StatusOK, Message{
 		ErrCode: load.Code,
-		Msg:     load.Msg + "\nErrorID: " + id,
+		Msg:     load.Msg,
 	})
 }
 func FailJsonAndStatusCode(c *gin.Context, code int, load FailStruct, WriteLog bool, logMsh ...string) {
-	id, _ := util.GetUUID()
 	if WriteLog {
 		var werrmsg string
 		for _, v := range logMsh {
 			werrmsg += v + "\n"
 		}
-		//mongodb.InsertFailLog(c, http.StatusOK, load.ErrCode, werrmsg, id)
 	}
 	c.JSON(code, Message{
 		ErrCode: load.Code,
-		Msg:     load.Msg + "\nErrorID: " + id,
+		Msg:     load.Msg,
 	})
 }
 
