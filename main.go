@@ -53,11 +53,6 @@ func main() {
 	certFile := os.Getenv("CERT_FILE")
 	keyFile := os.Getenv("KEY_FILE")
 
-	if httpsPort != 443 {
-		log.Fatal("HTTPS_PORT 必须为 443")
-		return
-	}
-
 	// 检查端口是否被占用
 	checkPortAndExit(host, httpPort)
 	checkPortAndExit(host, httpsPort)
