@@ -175,8 +175,8 @@
                 alert(result.message);
                 return false;
             }
-            alert('登录成功');
-            window.location.reload();
+            alert('登录成功, 请返回IDE查看并使用');
+            window.close();
         } catch (e) {
             alert('提交表单时出错，请稍后再试');
         }

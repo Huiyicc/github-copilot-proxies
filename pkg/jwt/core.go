@@ -5,11 +5,10 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v5"
+	"os"
 	"reflect"
 	"time"
 )
-
-var SecretKey string
 
 // LoadModel 成员中套上jwt.RegisteredClaims
 type LoadModel interface {
@@ -30,7 +29,7 @@ type JWT struct {
 // NewJWT 初始化jwt对象
 func NewJWT() *JWT {
 	return &JWT{
-		[]byte(SecretKey),
+		[]byte(os.Getenv("TOKEN_SALT")),
 	}
 }
 
