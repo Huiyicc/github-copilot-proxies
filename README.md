@@ -112,7 +112,7 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 > 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 mycopilot.com 域名配置.
 
-1. 下载 **[copilot-for-hbuilderx.zip](docs/copilot-for-hbuilderx.zip)** 插件到本地
+1. 下载 **[copilot-for-hbuilderx.zip](https://pan.quark.cn/s/eb7f501ad585)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
