@@ -86,7 +86,7 @@ docker-compose logs -f
 "authProvider": "github-enterprise",
 "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
 "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-"debug.chatOverrideProxyUrl": "http://api.mycopilot.com/chat/completions:1188"
+"debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
 },
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
