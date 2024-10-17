@@ -4,7 +4,7 @@
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。  
 
-✨现提供一个免费的公共服务端点: `mycopilot.noteo.cn`, 服务端代码会与此仓库版本保持一致, 响应速度较慢可用于测试服务有效性但不保证稳定性, 使用方式详见:[IDE设置方法](#ide设置方法)
+✨ 现提供一个免费的公共服务端点: `mycopilot.noteo.cn` 服务端代码会与此仓库版本保持一致,用于测试服务有效性但不保证稳定性, 使用方式详见:[IDE设置方法](#ide设置方法) 将域名部分替换为 `mycopilot.noteo.cn` 即可.
 
 ## 特点
 
@@ -83,10 +83,10 @@ docker-compose logs -f
 
 ```json
 "github.copilot.advanced": {
-"authProvider": "github-enterprise",
-"debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
-"debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-"debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
+  "authProvider": "github-enterprise",
+  "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
+  "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
+  "debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
 },
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
@@ -223,5 +223,6 @@ acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
 
 ## 鸣谢
 
-- [LoveA/copilot_take_over](https://gitee.com/LoveA/copilot_take_over)
+- [copilot_take_over](https://gitee.com/LoveA/copilot_take_over)
 - [override](https://github.com/linux-do/override)
+- [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供的免费模型服务
