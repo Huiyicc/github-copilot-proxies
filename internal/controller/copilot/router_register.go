@@ -21,6 +21,7 @@ func GinApi(g *gin.RouterGroup) {
 	g.POST("/v1/engines/copilot-codex", middleware.TokenCheckAuth(), codeCompletions)
 
 	g.POST("/chat/completions", middleware.TokenCheckAuth(), chatCompletions)
+	g.POST("/v1/chat/completions", middleware.TokenCheckAuth(), chatCompletions)
 
 	g.GET("/api/v3/meta", v3meta)
 	g.GET("/api/v3/", cliv3)
