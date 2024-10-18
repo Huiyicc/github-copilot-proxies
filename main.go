@@ -4,10 +4,12 @@ import (
 	"context"
 	"crypto/tls"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -28,6 +30,9 @@ func checkPortAndExit(host string, port int) {
 }
 
 func main() {
+	// 设置日志输出
+	setupLogging()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -91,4 +96,29 @@ func main() {
 	if err := g.Wait(); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func setupLogging() {
+	// 创建日志目录
+	logDir := "logs"
+	err := os.MkdirAll(logDir, 0755)
+	if err != nil {
+		log.Fatal("无法创建日志目录:", err)
+	}
+
+	// 创建日志文件，使用当前日期作为文件名
+	currentTime := time.Now()
+	logFileName := filepath.Join(logDir, fmt.Sprintf("%s.log", currentTime.Format("2006-01-02")))
+	logFile, err := os.OpenFile(logFileName, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatal("无法创建日志文件:", err)
+	}
+
+	// 设置 gin 的日志输出到文件和控制台
+	gin.DefaultWriter = io.MultiWriter(logFile, os.Stdout)
+
+	// 设置标准日志输出到文件和控制台
+	log.SetOutput(io.MultiWriter(logFile, os.Stdout))
+	log.SetPrefix("[Copilot Proxies] ")
+	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
 }
