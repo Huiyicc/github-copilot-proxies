@@ -9,8 +9,11 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"os/signal"
 	"path/filepath"
+	"ripper/pkg/message"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -33,10 +36,11 @@ func main() {
 	// 设置日志输出
 	setupLogging()
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-		return
+	// 在非生产环境中加载 .env 文件
+	if os.Getenv("ENV") != "production" {
+		if err := godotenv.Load(); err != nil {
+			log.Printf("Warning: Error loading .env file: %v", err)
+		}
 	}
 
 	log.Println("Current Environment: ", os.Getenv("ENV"))
@@ -62,39 +66,81 @@ func main() {
 	checkPortAndExit(host, httpPort)
 	checkPortAndExit(host, httpsPort)
 
-	//创建一个错误组
-	g, _ := errgroup.WithContext(context.Background())
+	// 创建一个带取消功能的上下文
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
-	//启动HTTP服务器
+	// 创建一个错误组
+	g, groupCtx := errgroup.WithContext(ctx)
+
+	// 创建一个通道来表示服务器已经启动
+	serverStarted := make(chan struct{}, 2)
+
+	// 启动HTTP服务器
+	httpServer := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", host, httpPort),
+		Handler: r,
+	}
 	g.Go(func() error {
-		httpAddr := fmt.Sprintf("%s:%d", host, httpPort)
-		log.Printf("Starting HTTP server on %s\n", httpAddr)
-		return r.Run(httpAddr)
+		log.Printf("Starting HTTP server on %s\n", httpServer.Addr)
+		serverStarted <- struct{}{}
+		return httpServer.ListenAndServe()
 	})
 
-	//启动HTTPS服务器
+	// 启动HTTPS服务器
+	httpsServer := &http.Server{
+		Addr:    fmt.Sprintf("%s:%d", host, httpsPort),
+		Handler: r,
+		TLSConfig: &tls.Config{
+			MinVersion: tls.VersionTLS10,
+			MaxVersion: tls.VersionTLS13,
+		},
+		ReadTimeout:  30 * time.Second,
+		WriteTimeout: 60 * time.Second,
+		IdleTimeout:  120 * time.Second,
+	}
 	g.Go(func() error {
-		httpsAddr := fmt.Sprintf("%s:%d", host, httpsPort)
-		log.Printf("Starting HTTPS server on %s\n", httpsAddr)
-
-		server := &http.Server{
-			Addr:    httpsAddr,
-			Handler: r,
-			TLSConfig: &tls.Config{
-				MinVersion: tls.VersionTLS10,
-				MaxVersion: tls.VersionTLS13,
-			},
-			ReadTimeout:  30 * time.Second,
-			WriteTimeout: 60 * time.Second,
-			IdleTimeout:  120 * time.Second,
-		}
-
-		return server.ListenAndServeTLS(certFile, keyFile)
+		log.Printf("Starting HTTPS server on %s\n", httpsServer.Addr)
+		serverStarted <- struct{}{}
+		return httpsServer.ListenAndServeTLS(certFile, keyFile)
 	})
 
-	//等待所有goroutine完成
+	// 等待两个服务器都启动
+	<-serverStarted
+	<-serverStarted
+
+	// 显示消息或消息框
+	message.ShowAppLaunchMessage()
+
+	// 设置优雅关闭
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+
+	select {
+	case <-quit:
+		log.Println("Shutdown signal received, exiting...")
+	case <-groupCtx.Done():
+		log.Println("Unexpected exit, trying to shutdown gracefully...")
+	}
+
+	// 取消上下文
+	cancel()
+
+	// 给服务器一些时间来完成正在处理的请求
+	shutdownCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+
+	// 优雅地关闭服务器
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("HTTP server Shutdown: %v", err)
+	}
+
+	if err := httpsServer.Shutdown(shutdownCtx); err != nil {
+		log.Printf("HTTPS server Shutdown: %v", err)
+	}
+
+	// 等待所有 goroutine 完成
 	if err := g.Wait(); err != nil {
-		log.Fatal(err)
+		log.Printf("Error during server operations: %v", err)
 	}
 }
 
