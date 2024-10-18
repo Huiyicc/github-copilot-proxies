@@ -8,3 +8,4 @@ apiclient_key.pem
 .env
 docker-compose-local.yml
 out
+logs
