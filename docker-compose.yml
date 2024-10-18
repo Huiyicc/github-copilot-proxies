@@ -29,3 +29,5 @@ services:
       - API_BASE_URL=https://api.mycopilot.com
       - PROXY_BASE_URL=https://copilot-proxy.mycopilot.com
       - TELEMETRY_BASE_URL=https://copilot-telemetry-service.mycopilot.com
+    volumes:
+      - ./logs:/app/logs
