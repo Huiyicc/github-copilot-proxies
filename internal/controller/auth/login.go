@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -64,15 +63,6 @@ func getGhuToken(c *gin.Context) {
 
 // getGithubLoginDevice returns the login page for GitHub.
 func getGithubLoginDevice(ctx *gin.Context) {
-	clientType := os.Getenv("COPILOT_CLIENT_TYPE")
-	if clientType != "github" {
-		response.FailJson(ctx, response.FailStruct{
-			Code: -1,
-			Msg:  "客户端类型不是 github, 无法获取 ghu_token",
-		}, false)
-		return
-	}
-
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.HTML(http.StatusOK, "login.html", gin.H{})
 }
