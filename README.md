@@ -175,8 +175,7 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 ### 使用方法
 
-- 设置环境变量参数 `COPILOT_CLIENT_TYPE=github`
-- 设置此参数后其余的 `Copilot配置` 都可以不用设置, 因为这里已经使用了官方的服务.
+- 设置环境变量参数 `COPILOT_CLIENT_TYPE=github` (设置此参数后其他的Copilot相关配置都可以不用设置了, 因为这里已经使用了官方的服务).
 - 启动服务访问 `http://127.0.0.1:1188/github/login/device/code` 获取 `ghu_` 的参数
 - 将获取到的 `ghu_` 参数填写到 `COPILOT_GHU_TOKEN` 环境变量中.
 - 重启服务, 重启IDE即可.
@@ -246,4 +245,4 @@ acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
 
 - [copilot_take_over](https://gitee.com/LoveA/copilot_take_over)
 - [override](https://github.com/linux-do/override)
-- [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供的免费模型服务
+- [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3)
