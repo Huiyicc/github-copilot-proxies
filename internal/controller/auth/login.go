@@ -4,10 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"log"
 	"ripper/internal/response"
 )
 
@@ -25,7 +25,6 @@ type githubLoginDeviceRequest struct {
 func getDeviceCode(c *gin.Context) {
 	body := map[string]string{
 		"client_id": clientID,
-		"scope":     "read:user",
 	}
 
 	result, err := makeRequest(c, http.MethodPost, deviceCodeURL, body)
@@ -65,6 +64,15 @@ func getGhuToken(c *gin.Context) {
 
 // getGithubLoginDevice returns the login page for GitHub.
 func getGithubLoginDevice(ctx *gin.Context) {
+	clientType := os.Getenv("COPILOT_CLIENT_TYPE")
+	if clientType != "github" {
+		response.FailJson(ctx, response.FailStruct{
+			Code: -1,
+			Msg:  "客户端类型不是 github, 无法获取 ghu_token",
+		}, false)
+		return
+	}
+
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.HTML(http.StatusOK, "login.html", gin.H{})
 }
@@ -76,18 +84,17 @@ func makeRequest(c *gin.Context, method, url string, body map[string]string) (in
 		return nil, err
 	}
 
-	log.Println("Request body:", string(jsonBody))
 	req, err := http.NewRequestWithContext(c, method, url, bytes.NewBuffer(jsonBody))
 	if err != nil {
 		return nil, err
 	}
 
-	req.Header.Set("Accept", "application/json")
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Editor-Plugin-Version", "copilot-intellij/1.5.21.6667")
-	req.Header.Set("Copilot-Language-Server-Version", "1.228.0")
-	req.Header.Set("User-Agent", "GithubCopilot/1.228.0")
-	req.Header.Set("Editor-Version", "JetBrains-IU/242.21829.142")
+	req.Header.Set("accept", "application/json")
+	req.Header.Set("content-type", "application/json")
+	req.Header.Set("editor-plugin-version", "copilot-intellij/1.5.21.6667")
+	req.Header.Set("copilot-language-server-version", "1.228.0")
+	req.Header.Set("user-agent", "GithubCopilot/1.228.0")
+	req.Header.Set("editor-version", "JetBrains-IU/242.21829.142")
 
 	client := &http.Client{Timeout: 60 * time.Second}
 	resp, err := client.Do(req)

@@ -2,6 +2,7 @@ package copilot
 
 import (
 	"github.com/gin-gonic/gin"
+	"os"
 	"ripper/internal/middleware"
 )
 
@@ -16,7 +17,15 @@ func GinApi(g *gin.RouterGroup) {
 	g.GET("/api/v3/user", middleware.AccessTokenCheckAuth(), getLoginUser)
 	g.GET("/api/v3/user/orgs", middleware.AccessTokenCheckAuth(), getUserOrgs)
 
-	g.GET("/copilot_internal/v2/token", middleware.AccessTokenCheckAuth(), getCopilotInternalV2Token)
+	g.GET("/copilot_internal/v2/token", middleware.AccessTokenCheckAuth(), func(c *gin.Context) {
+		clientType := os.Getenv("COPILOT_CLIENT_TYPE")
+		if clientType == "github" {
+			getCopilotInternalV2Token(c)
+		} else {
+			getDisguiseCopilotInternalV2Token(c)
+		}
+	})
+
 	g.POST("/v1/engines/copilot-codex/completions", middleware.TokenCheckAuth(), codeCompletions)
 	g.POST("/v1/engines/copilot-codex", middleware.TokenCheckAuth(), codeCompletions)
 

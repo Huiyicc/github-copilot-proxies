@@ -2,10 +2,11 @@
 
 [仅需四步](#快速使用步骤)即刻拥有完全离线的 `Copilot小助手` 同款服务，速度更快，更稳定，更安全。
 
-借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。  
+借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
 > ✨ 搭建一个免费的公共服务端点: **mycopilot.noteo.cn**   
-> 服务端代码会与此仓库版本保持一致, 感谢[硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3)提供免费的模型服务, 使用方式详见:[IDE设置方法](#ide设置方法) 将域名部分替换即可.
+> 服务端代码会与此仓库版本保持一致, 感谢[硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3)提供免费的模型服务,
+> 使用方式详见:[IDE设置方法](#ide设置方法) 将域名部分替换即可.
 
 ## 特点
 
@@ -15,6 +16,7 @@
 - [x] 支持任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
+- [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
 
 ## 如何使用?
 
@@ -84,10 +86,10 @@ docker-compose logs -f
 
 ```json
 "github.copilot.advanced": {
-  "authProvider": "github-enterprise",
-  "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
-  "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-  "debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
+"authProvider": "github-enterprise",
+"debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
+"debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
+"debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
 },
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```
@@ -160,6 +162,24 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 **💡以上接入的模型除了 `DeepSeek` 模型与 `硅基流动` 模型之外, 效果均不理想, 这里仅做接入更多模型的Demo参考.**,
 理论上后续如果有API支持标准的FIM补全, 都可以接入.
+
+## 使用Github Copilot官方服务
+
+> 前提条件: 必须有官方正版的 `GitHub Copilot` 订阅权限, 否则无法使用.
+
+**应用场景:**
+
+- 适用于 **"月抛"** 的Github账号, 避免每个月切换Github账号后都要重复登录多个IDE中的插件操作, 只需要更改环境变量中的
+  `COPILOT_GHU_TOKEN` 参数一处即可.
+- 适用于 **"多人共享"** 的Github账号, 共享者只需要使用此服务即可, 不需要告知Github账号密码.
+
+### 使用方法
+
+- 设置环境变量参数 `COPILOT_CLIENT_TYPE=github`
+- 设置此参数后其余的 `Copilot配置` 都可以不用设置, 因为这里已经使用了官方的服务.
+- 启动服务访问 `http://127.0.0.1:1188/github/login/device/code` 获取 `ghu_` 的参数
+- 将获取到的 `ghu_` 参数填写到 `COPILOT_GHU_TOKEN` 环境变量中.
+- 重启服务, 重启IDE即可.
 
 ## 通配符证书申请方法
 
