@@ -33,4 +33,9 @@ func GinApi(g *gin.RouterGroup) {
 
 	// 获取登录页面配置
 	g.GET("/login/config", getLoginConfig)
+
+	// GitHub模拟登录获取 ghu_token
+	g.GET("/github/login/device/code", getGithubLoginDevice)
+	g.POST("/github/login/device/code", getDeviceCode)
+	g.POST("/github/login/ghu-token", getGhuToken)
 }
