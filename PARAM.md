@@ -32,6 +32,7 @@
 | TELEMETRY_BASE_URL       | 默认的心跳服务请求地址, 必须开启https.  域名 `copilot-telemetry-service` 前缀必须固定                                                                                                | string | https://copilot-telemetry-service.mycopilot.com |
 | COPILOT_CLIENT_TYPE      | copilot的客户端类型, 用于区分是否使用官方copilot服务<br/>可选值: `default` `github`                                                                                                | string | default                                         |
 | COPILOT_GHU_TOKEN        | 官方copilot服务的ghu token, 如果 `COPILOT_CLIENT_TYPE` 值为 `github` 的时候必填<br/>获取方法: 程序启动后访问 [获取 GitHub GHU](http://127.0.0.1:1188/github/login/device/code) 页面按提示操作即可 | string |                                                 |
+| COPILOT_PROXY_ALL        | 在使用官方Copilot服务的时候是否全代理 (可选值: `false` `true`) <br/> **有封号的风险, 请自行甄别后慎重使用**                                                                                     | bool   | false                                           |
 
 以上环境变量参数配置可以手动在以下几个地方更改进行覆盖默认的设置:
 

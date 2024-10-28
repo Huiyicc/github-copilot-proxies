@@ -44,8 +44,11 @@ func main() {
 	}
 
 	log.Println("Current Environment: ", os.Getenv("ENV"))
-	r := gin.Default()
 
+	// 设置默认环境变量
+	initDefaultEnv()
+
+	r := gin.Default()
 	// 添加 HSTS 中间件
 	r.Use(func(c *gin.Context) {
 		c.Header("Strict-Transport-Security", "max-age=0")
@@ -167,4 +170,17 @@ func setupLogging() {
 	log.SetOutput(io.MultiWriter(logFile, os.Stdout))
 	log.SetPrefix("[Copilot Proxies] ")
 	log.SetFlags(log.Ldate | log.Ltime | log.Lshortfile)
+}
+
+// initDefaultEnv 初始化默认环境变量
+func initDefaultEnv() {
+	copilotProxyAllStr := os.Getenv("COPILOT_PROXY_ALL")
+	if copilotProxyAllStr == "" {
+		os.Setenv("COPILOT_PROXY_ALL", "false")
+	}
+
+	copilotClientTypeStr := os.Getenv("COPILOT_CLIENT_TYPE")
+	if copilotClientTypeStr == "" {
+		os.Setenv("COPILOT_CLIENT_TYPE", "default")
+	}
 }

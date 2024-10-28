@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"os"
 	"ripper/internal/app/github_auth"
 	"ripper/internal/response"
 	jwtpkg "ripper/pkg/jwt"
@@ -124,6 +125,12 @@ func AccessTokenCheckAuth() gin.HandlerFunc {
 
 func TokenCheckAuth() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		clientType := os.Getenv("COPILOT_CLIENT_TYPE")
+		copilotProxyAll, err := strconv.ParseBool(os.Getenv("COPILOT_PROXY_ALL"))
+		if clientType == "github" && !copilotProxyAll {
+			c.Next()
+			return
+		}
 		token := c.Request.Header.Get("Authorization")
 		if token == "" {
 			response.FailJsonAndStatusCode(c, http.StatusUnauthorized, response.TokenWrongful, false)
