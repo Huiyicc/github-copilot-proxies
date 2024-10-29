@@ -18,8 +18,8 @@ body:
       label: 遇到的问题
       description: 请详细告诉我们如何复现你遇到的问题，如涉及代码，可提供一个最小代码示例，并使用反引号```附上它
       value: |
-        - **问题描述: **
-        - **使用的模型: ** 
+        - 问题描述: 
+        - 使用的模型:
     validations:
       required: true
   - type: textarea
