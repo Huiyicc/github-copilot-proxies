@@ -15,24 +15,37 @@ body:
           required: true
   - type: textarea
     attributes:
-      label: 如何复现
+      label: 遇到的问题
       description: 请详细告诉我们如何复现你遇到的问题，如涉及代码，可提供一个最小代码示例，并使用反引号```附上它
-      placeholder: |
-        1. ...
-        2. ...
-        3. ...
+      value: |
+        - **问题描述: **
+        - **使用的模型: ** 
     validations:
       required: true
   - type: textarea
     attributes:
-      label: 预期结果
-      description: 请告诉我们你预期会发生什么。
+      label: 环境变量配置
+      description: 请提供你的环境变量配置，以便我们更好地定位问题, 如果数据敏感，请替换为假数据。
     validations:
       required: true
-  - type: textarea
+  - type: dropdown
+    id: version
     attributes:
-      label: 实际结果
-      description: 请告诉我们实际发生了什么。
+      label: 部署方式
+      description: 你当前是如何部署项目的?
+      options:
+        - Docker 部署(默认)
+        - 下载的可执行文件
+    validations:
+      required: true
+  - type: dropdown
+    id: version
+    attributes:
+      label: 部署环境
+      description: 你是将程序部署在哪里的?
+      options:
+        - 本机(默认)
+        - 服务器
     validations:
       required: true
   - type: textarea
