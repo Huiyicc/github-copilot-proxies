@@ -11,7 +11,7 @@ body:
     attributes:
       label: 这个问题是否已经存在？
       options:
-        - label: 我已经搜索过现有的Issues [Issues](https://gitee.com/ripperTs/github-copilot-proxies/issues)
+        - label: 我已经搜索过现有的 [Issues列表](https://gitee.com/ripperTs/github-copilot-proxies/issues)
           required: true
   - type: textarea
     attributes:
