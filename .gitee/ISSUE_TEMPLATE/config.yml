@@ -3,3 +3,6 @@ contact_links:
   - name: 环境变量参数说明
     url: https://gitee.com/ripperTs/github-copilot-proxies/blob/master/PARAM.md
     about: 提供了所有用到的环境变量参数、可选值、默认值等说明
+  - name: 免费的公共服务端点
+    url: https://mycopilot.noteo.cn
+    about: 提供了免费的公共服务端点，代码会与此仓库版本保持一致，仅用于测试连通性
