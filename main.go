@@ -174,13 +174,16 @@ func setupLogging() {
 
 // initDefaultEnv 初始化默认环境变量
 func initDefaultEnv() {
-	copilotProxyAllStr := os.Getenv("COPILOT_PROXY_ALL")
-	if copilotProxyAllStr == "" {
+	if os.Getenv("COPILOT_PROXY_ALL") == "" {
 		os.Setenv("COPILOT_PROXY_ALL", "false")
 	}
 
-	copilotClientTypeStr := os.Getenv("COPILOT_CLIENT_TYPE")
-	if copilotClientTypeStr == "" {
+	if os.Getenv("COPILOT_CLIENT_TYPE") == "" {
 		os.Setenv("COPILOT_CLIENT_TYPE", "default")
 	}
+
+	if os.Getenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT") == "" {
+		os.Setenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT", "1800")
+	}
+
 }

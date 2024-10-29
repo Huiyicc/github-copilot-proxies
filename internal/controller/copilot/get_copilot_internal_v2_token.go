@@ -9,6 +9,7 @@ import (
 	"os"
 	"ripper/internal/app/github_auth"
 	"ripper/internal/cache"
+	"strconv"
 	"time"
 )
 
@@ -16,7 +17,8 @@ import (
 func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 	trackingId, _ := uuid.NewV4()
 	now := time.Now().Unix()
-	expiresAt := now + 1800
+	dcAt, _ := strconv.Atoi(os.Getenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT"))
+	expiresAt := now + int64(dcAt)
 	sku := "copilot_for_business_seat"
 
 	copilotToken := github_auth.JsonMap2SignToken(map[string]interface{}{
@@ -58,7 +60,6 @@ func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 		"vsc_electron_fetcher":                     false,
 		"vs_editor_fetcher":                        false,
 		"vsc_panel_v2":                             false,
-		"project":                                  "copilot-proxy",
 		"xcode":                                    true,
 		"xcode_chat":                               true,
 	}
