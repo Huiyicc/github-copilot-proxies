@@ -35,27 +35,19 @@ func codexCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://copilot-proxy.githubusercontent.com/v1/engines/copilot-codex/completions"
+	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-codex/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
 
-	// 设置Content-Type
-	req.Header.Set("Content-Type", "application/json")
-
-	token, err := getAuthToken()
-	if err != nil {
-		log.Println("获取GitHub Copilot的临时Token失败:", err.Error())
+	// 合并请求头
+	if err := mergeHeaders(c.Request.Header, req); err != nil {
+		log.Println(err)
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-	req.Header.Set("authorization", "Bearer "+token)
-	req.Header.Set("editor-plugin-version", "copilot-intellij/1.5.21.6667")
-	req.Header.Set("copilot-language-server-version", "1.228.0")
-	req.Header.Set("user-agent", "GithubCopilot/1.228.0")
-	req.Header.Set("editor-version", "JetBrains-IU/242.21829.142")
 
 	client := &http.Client{
 		Timeout: 60 * time.Second,
@@ -103,26 +95,19 @@ func chatsCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://api.githubcopilot.com/chat/completions"
+	url := "https://api.individual.githubcopilot.com/chat/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
 
-	// 固定请求头参数
-	token, err := getAuthToken()
-	if err != nil {
-		log.Println("获取GitHub Copilot的临时Token失败:", err.Error())
+	// 合并请求头
+	if err := mergeHeaders(c.Request.Header, req); err != nil {
+		log.Println(err)
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-	req.Header.Set("authorization", "Bearer "+token)
-	req.Header.Set("editor-plugin-version", "copilot-intellij/1.5.21.6667")
-	req.Header.Set("copilot-language-server-version", "1.228.0")
-	req.Header.Set("user-agent", "GithubCopilot/1.228.0")
-	req.Header.Set("editor-version", "JetBrains-IU/242.21829.142")
-	// todo: sessionId和requestId参数暂时先不做处理, 后续有需要再添加
 
 	client := &http.Client{
 		Timeout: 60 * time.Second,
@@ -216,4 +201,36 @@ func getAuthToken() (string, error) {
 		return "", err
 	}
 	return newToken, nil
+}
+
+// mergeHeaders 合并请求头，固定请求头会覆盖原有请求头
+func mergeHeaders(originalHeader http.Header, req *http.Request) error {
+	// 复制原始请求头
+	for key, values := range originalHeader {
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
+	}
+
+	// 获取token
+	token, err := getAuthToken()
+	if err != nil {
+		return fmt.Errorf("获取GitHub Copilot的临时Token失败: %w", err)
+	}
+
+	// 固定请求头
+	fixedHeaders := map[string]string{
+		"authorization":                   "Bearer " + token,
+		"editor-plugin-version":           "copilot-intellij/1.5.21.6667",
+		"copilot-language-server-version": "1.228.0",
+		"user-agent":                      "GithubCopilot/1.228.0",
+		"editor-version":                  "JetBrains-IU/242.21829.142",
+	}
+
+	// 设置固定请求头(覆盖原有的)
+	for key, value := range fixedHeaders {
+		req.Header.Set(key, value)
+	}
+
+	return nil
 }
