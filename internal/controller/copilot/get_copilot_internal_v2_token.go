@@ -41,6 +41,7 @@ func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 		"chat_enabled":                             true,
 		"chat_jetbrains_enabled":                   true,
 		"code_quote_enabled":                       true,
+		"code_review_enabled":                      true,
 		"codesearch":                               true,
 		"copilot_ide_agent_chat_gpt4_small_prompt": false,
 		"copilotignore_enabled":                    false,
