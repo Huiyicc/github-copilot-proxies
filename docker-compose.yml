@@ -33,5 +33,6 @@ services:
       - COPILOT_GHU_TOKEN=ghu_xxxx
       - COPILOT_PROXY_ALL=false
       - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800
+      - DASHSCOPE_API_KEY=
     volumes:
       - ./logs:/app/logs

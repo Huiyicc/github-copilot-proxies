@@ -34,6 +34,7 @@
 | COPILOT_GHU_TOKEN                 | 官方copilot服务的ghu token, 如果 `COPILOT_CLIENT_TYPE` 值为 `github` 的时候必填<br/>获取方法: 程序启动后访问 [获取 GitHub GHU](http://127.0.0.1:1188/github/login/device/code) 页面按提示操作即可 | string |                                                 |
 | COPILOT_PROXY_ALL                 | 在使用官方Copilot服务的时候是否全代理 (可选值: `false` `true`) <br/> **有封号的风险, 请自行甄别后慎重使用**                                                                                     | bool   | false                                           |
 | DISGUISE_COPILOT_TOKEN_EXPIRES_AT | Copilot伪装token下发的有效期,单位秒 (如果是共享给他人的服务建议使用默认值, 自用的话可以设置很大来避免github copilot插件偶尔断连的问题)                                                                           | int    | 1800                                            |
+| DASHSCOPE_API_KEY                 | 阿里灵石API KEY, 目前用于embedding模型服务, [API-KEY的获取与配置](https://help.aliyun.com/zh/dashscope/developer-reference/acquisition-and-configuration-of-api-key)            | string |                                                 |
 
 以上环境变量参数配置可以手动在以下几个地方更改进行覆盖默认的设置:
 
