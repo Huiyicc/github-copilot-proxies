@@ -46,7 +46,8 @@ docker-compose down
 
 # 更新服务
 1. docker-compose pull
-2. docker-compose up -d
+2. docker-compose down
+3. docker-compose up -d
 
 # 查看日志
 docker-compose logs -f
