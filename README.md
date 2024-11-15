@@ -187,8 +187,18 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 - 设置环境变量参数 `COPILOT_PROXY_ALL=true` (默认值为 `false`).
 - 重启服务即可.
+- 全代理模式的 `/embeddings`和 `/chunks` 接口即将推出.
 
 **🚨 全代理模式有封号的风险, 请自行甄别谨慎使用.** 补全和对话接口的请求频率都有阀值限制的, 共享人数过多肯定会触发风控.
+
+## Embeddings模型配置
+
+> 目前仅 VSCode 最新版本的 `Github Copilot Chat` 插件支持使用 Embeddings 模型, 其他IDE可以不用考虑.
+
+插件默认使用 `512维` 的Embeddings模型, 为了方便项目借助阿里的模型, 文档: [API-KEY的获取与配置](https://help.aliyun.com/zh/dashscope/developer-reference/acquisition-and-configuration-of-api-key), 获取后填写环境变量 `DASHSCOPE_API_KEY` 即可.   
+注意: 阿里的Embedding模型是收费的, 但是有免费额度, 详细参考阿里的文档.   
+
+后续将继续测试其他维度的模型和本地 `Ollama` 部署Embeddings模型进行测试, 可以关注下后续的更新. 
 
 ## 通配符证书申请方法
 
