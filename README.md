@@ -86,10 +86,12 @@ docker-compose logs -f
 
 ```json
 "github.copilot.advanced": {
-"authProvider": "github-enterprise",
-"debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
-"debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-"debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions"
+    "authProvider": "github-enterprise",
+    "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
+    "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
+    "debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions",
+    "debug.overrideFastRewriteEngine": "v1/engines/copilot-centralus-h100",
+    "debug.overrideFastRewriteUrl": "http://api.mycopilot.com:1188"
 },
 "github-enterprise.uri": "http://mycopilot.com:1188"
 ```

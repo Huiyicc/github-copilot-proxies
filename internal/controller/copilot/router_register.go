@@ -87,6 +87,7 @@ func setupCopilotRoutes(g *gin.RouterGroup, config *Config) {
 		completionsGroup.POST("/v1/engines/copilot-codex", createCompletionsHandler(config))
 		completionsGroup.POST("/chat/completions", createChatHandler(config))
 		completionsGroup.POST("/v1/chat/completions", createChatHandler(config))
+		completionsGroup.POST("/v1/engines/copilot-centralus-h100/speculation", createCompletionsHandler(config))
 	}
 }
 
