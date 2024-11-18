@@ -10,10 +10,11 @@ import (
 )
 
 type ClientAuthInfo struct {
-	ClientId   string `json:"client_id"`
-	DeviceCode string `json:"device_code"`
-	UserCode   string `json:"user_code"`
-	CardCode   string `json:"card_code"`
+	ClientId        string `json:"client_id"`
+	DisplayUserName string `json:"display_user_name,omitempty"`
+	DeviceCode      string `json:"device_code"`
+	UserCode        string `json:"user_code"`
+	CardCode        string `json:"card_code"`
 }
 
 type ClientOAuthInfo struct {
@@ -119,7 +120,7 @@ func GenDevicesCode(codeLen int) string {
 }
 
 // UpdateClientAuthStatusByDeviceCode 更新客户端授权码通过设备代码
-func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) error {
+func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string, displayUserName string) error {
 	redisKey := fmt.Sprintf("copilot.proxy.map.%s", deviceCode)
 	uCode, err := cache.Get(redisKey)
 	if err != nil {
@@ -136,6 +137,9 @@ func UpdateClientAuthStatusByDeviceCode(deviceCode string, cardCode string) erro
 		return err
 	}
 	authInfo.CardCode = cardCode
+	if displayUserName != "" {
+		authInfo.DisplayUserName = displayUserName
+	}
 	authInfoData, _ = json.Marshal(authInfo)
 	err = cache.Set(redisKey, authInfoData, -1)
 	return err
