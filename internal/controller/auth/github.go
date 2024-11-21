@@ -25,6 +25,13 @@ type postLoginDeviceCodeResponse struct {
 	Interval        int    `json:"interval"`         // 间隔时间
 }
 
+type loginDeviceRequestInfo struct {
+	Code            string `json:"code"`
+	Authorization   string `json:"authorization"`
+	DisplayUserName string `json:"displayUserName,omitempty"`
+	Password        string `json:"password"`
+}
+
 func postLoginDeviceCode(ctx *gin.Context) {
 	cli := postLoginDeviceCodeRequest{}
 	if err := ctx.ShouldBind(&cli); err != nil {
@@ -83,6 +90,7 @@ func postLoginOauthAccessToken(ctx *gin.Context) {
 		return
 	}
 	tk, _ := jwtpkg.CreateToken(&middleware.UserLoad{
+		UserDisplayName:  cliAuthInfo.DisplayUserName,
 		CardCode:         u.CardCode,
 		Client:           cliAuthInfo.ClientId,
 		RegisteredClaims: jwtpkg.CreateStandardClaims(t.Unix(), "user"),
@@ -93,12 +101,6 @@ func postLoginOauthAccessToken(ctx *gin.Context) {
 		"scope":        "",
 		"token_type":   "bearer",
 	})
-}
-
-type loginDeviceRequestInfo struct {
-	Code          string `json:"code"`
-	Authorization string `json:"authorization"`
-	Password      string `json:"password"`
 }
 
 func postLoginDevice(ctx *gin.Context) {
@@ -129,7 +131,7 @@ func postLoginDevice(ctx *gin.Context) {
 		return
 	}
 
-	err = github_auth.UpdateClientAuthStatusByDeviceCode(authInfo.DeviceCode, info.Authorization)
+	err = github_auth.UpdateClientAuthStatusByDeviceCode(authInfo.DeviceCode, info.Authorization, info.DisplayUserName)
 	if err != nil {
 		response.FailJson(ctx, response.FailStruct{
 			Code: 500,

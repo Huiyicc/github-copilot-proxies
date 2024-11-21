@@ -108,6 +108,8 @@
                placeholder="请输入访问密码, 在环境变量LOGIN_PASSWORD参数中">
         <input type="text" id="authorization" class="input-field"
                placeholder="请输入剪贴板内的授权码 (Ctrl+V直接粘贴即可)">
+        <input type="text" id="displayUserName" class="input-field"
+               placeholder="请输入您的GitHub用户名 (可选)">
         <button type="submit">登 录</button>
     </form>
 
@@ -144,6 +146,7 @@
         event.preventDefault();
         const authorization = document.getElementById('authorization').value;
         const password = document.getElementById('password').value;
+        const displayUserName = document.getElementById('displayUserName').value;
         const code = getQueryParam('user_code');
 
         if (code === null) {
@@ -162,7 +165,12 @@
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({code, authorization, password})
+                body: JSON.stringify({
+                    code,
+                    authorization,
+                    password,
+                    displayUserName
+                })
             })
 
             if (!response.ok) {

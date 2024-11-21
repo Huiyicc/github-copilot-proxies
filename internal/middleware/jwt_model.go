@@ -10,8 +10,9 @@ type AdminLoad struct {
 }
 
 type UserLoad struct {
-	CardCode string `json:"token"`
-	Client   string `json:"client"`
+	UserDisplayName string `json:"userDisplayName,omitempty"`
+	CardCode        string `json:"token"`
+	Client          string `json:"client"`
 	jwt.RegisteredClaims
 }
 

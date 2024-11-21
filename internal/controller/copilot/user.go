@@ -3,12 +3,20 @@ package copilot
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"ripper/internal/middleware"
+	jwtpkg "ripper/pkg/jwt"
 )
 
 func getLoginUser(ctx *gin.Context) {
+	userDisplayName := "github"
+	token, _ := jwtpkg.GetJwtProto(ctx, &middleware.UserLoad{})
+	if token != nil && token.UserDisplayName != "" {
+		userDisplayName = token.UserDisplayName
+	}
+
 	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
 	ctx.JSON(http.StatusOK, gin.H{
-		"login":               "github",
+		"login":               userDisplayName,
 		"id":                  9919,
 		"node_id":             "DEyOk9yZ2FuaXphdGlvbjk5MTk=",
 		"avatar_url":          "https://avatars.githubusercontent.com/u/9919?v=4",
