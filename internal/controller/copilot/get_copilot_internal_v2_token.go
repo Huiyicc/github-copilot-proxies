@@ -11,6 +11,8 @@ import (
 	"ripper/internal/cache"
 	"strconv"
 	"time"
+	"math/rand"
+	"strings"
 )
 
 // getDisguiseCopilotInternalV2Token 返回伪装的token
@@ -69,7 +71,13 @@ func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 
 // getCopilotInternalV2Token 获取github copilot官方token
 func getCopilotInternalV2Token(c *gin.Context) {
-	ghu := os.Getenv("COPILOT_GHU_TOKEN")
+	ghuTokens := strings.Split(os.Getenv("COPILOT_GHU_TOKEN"), ",")
+	if len(ghuTokens) == 0 {
+		return
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	ghu := ghuTokens[rand.Intn(len(ghuTokens))]
 	if ghu == "" {
 		log.Println("ghu token is empty")
 		c.JSON(http.StatusUnprocessableEntity, gin.H{
@@ -113,7 +121,7 @@ func getCopilotInternalV2Token(c *gin.Context) {
 		return
 	}
 	if resp.StatusCode != 200 {
-		errorMsg := "获取 Token 失败, 当前 ghu_token 账户可能并未订阅 github copilot 服务!"
+		errorMsg := "获取 Token 失败, 当前 ghu_token 账户可能并未订阅 github copilot 服务!" + ghu
 		c.JSON(resp.StatusCode, gin.H{"error": errorMsg})
 		log.Println(errorMsg)
 		return

@@ -16,6 +16,8 @@ import (
 	"ripper/internal/cache"
 	"strconv"
 	"time"
+	"math/rand"
+	"strings"
 )
 
 // codexCompletions 全代理GitHub的代码补全接口
@@ -143,7 +145,13 @@ func chatsCompletions(c *gin.Context) {
 
 // getAuthToken 获取GitHub Copilot的临时Token
 func getAuthToken() (string, error) {
-	ghu := os.Getenv("COPILOT_GHU_TOKEN")
+	ghuTokens := strings.Split(os.Getenv("COPILOT_GHU_TOKEN"), ",")
+	if len(ghuTokens) == 0 {
+		return "", fmt.Errorf("COPILOT_GHU_TOKEN environment variable is empty or malformed")
+	}
+
+	rand.Seed(time.Now().UnixNano())
+	ghu := ghuTokens[rand.Intn(len(ghuTokens))]
 	cacheKey := "github:copilot_internal_v2_token:" + ghu
 	token, err := cache.Get(cacheKey)
 	if err != nil {
@@ -181,7 +189,7 @@ func getAuthToken() (string, error) {
 	defer res.Body.Close()
 
 	if res.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("获取 Token 失败")
+		return "", fmt.Errorf("获取 Token 失败" + ghu)
 	}
 
 	body, err := ioutil.ReadAll(res.Body)

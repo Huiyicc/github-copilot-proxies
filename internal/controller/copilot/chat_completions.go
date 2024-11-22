@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -28,6 +29,21 @@ func chatCompletions(c *gin.Context) {
 	envModelName := os.Getenv("CHAT_API_MODEL_NAME")
 	c.Header("Content-Type", "text/event-stream")
 	body, _ = sjson.SetBytes(body, "model", envModelName)
+
+	if !gjson.GetBytes(body, "function_call").Exists() {
+		messages := gjson.GetBytes(body, "messages").Array()
+		for i, msg := range messages {
+			toolCalls := msg.Get("tool_calls").Array()
+			if len(toolCalls) == 0 {
+				body, _ = sjson.DeleteBytes(body, fmt.Sprintf("messages.%d.tool_calls", i))
+			}
+		}
+		lastIndex := len(messages) - 1
+		if !strings.Contains(messages[lastIndex].Get("content").String(), "Respond in the following locale") {
+			body, _ = sjson.SetBytes(body, "messages."+strconv.Itoa(lastIndex)+".content", messages[lastIndex].Get("content").String()+"Respond in the following locale: "+os.Getenv("CHAT_LOCALE")+".")
+		}
+	}
+
 	body, _ = sjson.DeleteBytes(body, "intent")
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
