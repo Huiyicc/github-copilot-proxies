@@ -13,7 +13,7 @@ services:
       - LOGIN_PASSWORD=
       # 代码补全配置
       - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
-      - CODEX_API_KEY=yourapikey # 代码补全API密钥
+      - CODEX_API_KEY=yourapikey # 代码补全API密钥, 支持多个轮询APIKEY，用英文逗号分隔
       - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
       - CODEX_MAX_TOKENS=500 # 代码补全API最大返回token数
       - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
@@ -30,7 +30,7 @@ services:
       - PROXY_BASE_URL=https://copilot-proxy.mycopilot.com
       - TELEMETRY_BASE_URL=https://copilot-telemetry-service.mycopilot.com
       - COPILOT_CLIENT_TYPE=default
-      - COPILOT_GHU_TOKEN=ghu_xxxx
+      - COPILOT_GHU_TOKEN=ghu_xxxx # 支持多个轮询token，用英文逗号分隔
       - COPILOT_PROXY_ALL=false
       - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800
       - DASHSCOPE_API_KEY=

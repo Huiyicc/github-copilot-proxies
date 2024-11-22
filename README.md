@@ -8,7 +8,7 @@
 > 服务端代码会与此仓库版本保持一致, 感谢[硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3)提供免费的模型服务,
 > 使用方式详见:[IDE设置方法](#ide设置方法) 将域名部分替换即可.
 
-## 特点
+## 功能特性
 
 - [x] 支持使用Docker部署, 简单方便
 - [x] 支持多种IDE,
@@ -17,6 +17,8 @@
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 - [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
+- [x] 代码补全APIKEY支持多个轮询, 避免限频
+- [ ] Ollama 部署的 Embeddings 模型支持
 
 ## 如何使用?
 
