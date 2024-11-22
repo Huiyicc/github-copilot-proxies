@@ -17,8 +17,9 @@ import (
 	"net/http"
 	"os"
 	"strconv"
-	"strings"
 	"time"
+	"math/rand"
+	"strings"
 )
 
 // codeCompletions 代码补全
@@ -49,7 +50,25 @@ func codeCompletions(c *gin.Context) {
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("CODEX_API_KEY"))
+
+	apiKeys := strings.Split(os.Getenv("CODEX_API_KEY"), ",")
+
+	// 检查 apiKeys 是否有效
+	if len(apiKeys) == 0 || (len(apiKeys) == 1 && apiKeys[0] == "") {
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+
+	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
+	selectedKey := strings.TrimSpace(apiKeys[randGen.Intn(len(apiKeys))])
+
+	if selectedKey == "" {
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	req.Header.Set("Authorization", "Bearer "+selectedKey)
 
 	client := &http.Client{
 		Timeout: 30 * time.Second,
