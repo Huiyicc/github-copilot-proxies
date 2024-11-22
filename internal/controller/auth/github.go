@@ -146,3 +146,8 @@ func getLoginDevice(ctx *gin.Context) {
 	ctx.Header("Content-Type", "text/html; charset=utf-8")
 	ctx.HTML(http.StatusOK, "code.html", gin.H{})
 }
+
+func getHelpPage(ctx *gin.Context) {
+	ctx.Header("Content-Type", "text/html; charset=utf-8")
+	ctx.HTML(http.StatusOK, "help.html", gin.H{})
+}

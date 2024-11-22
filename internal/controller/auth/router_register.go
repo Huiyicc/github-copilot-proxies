@@ -7,6 +7,7 @@ import (
 )
 
 func GinApi(g *gin.RouterGroup) {
+	g.GET("/help", getHelpPage)
 	// 启动设备代码登录流程
 	g.POST("/login/device/code", postLoginDeviceCode)
 	g.POST("/login/device", postLoginDevice)
