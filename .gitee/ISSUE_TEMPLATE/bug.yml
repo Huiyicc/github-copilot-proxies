@@ -13,6 +13,12 @@ body:
       options:
         - label: 我已经搜索过现有的 [Issues列表](https://gitee.com/ripperTs/github-copilot-proxies/issues)
           required: true
+  - type: checkboxes
+    attributes:
+      label: 是否关闭了代理工具?
+      options:
+        - label: 我确定已经关闭了所有代理工具 (无论是系统代理还是其他代理方式) 后依旧无法解决问题
+          required: true
   - type: textarea
     attributes:
       label: 遇到的问题
@@ -29,7 +35,6 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
     attributes:
       label: 部署方式
       description: 你当前是如何部署项目的?
@@ -39,13 +44,21 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: version
     attributes:
-      label: 部署环境
-      description: 你是将程序部署在哪里的?
+      label: IDE 类型
+      description: 你使用的 ide 是什么?
       options:
-        - 本机(默认)
-        - 服务器
+        - 'Jetbrains系列 (如: IntelliJ IDEA, PyCharm等)'
+        - VSCode
+        - Visual Studio 2022
+        - HBuilderX
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Github Copilot 插件版本
+      description: 填写你当前使用的 Github Copilot 插件版本
+      placeholder: 例如：v1.5.29 (已是最新版本)
     validations:
       required: true
   - type: textarea
@@ -55,9 +68,8 @@ body:
       value: |
         [在这里上传图片]
   - type: input
-    id: version
     attributes:
-      label: 版本
+      label: 软件版本
       description: 你当前正在使用我们软件的哪个版本/分支？
       placeholder: 例如：v1.0.0
     validations:
