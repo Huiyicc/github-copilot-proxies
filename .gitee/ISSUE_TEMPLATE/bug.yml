@@ -30,8 +30,8 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: 环境变量配置
-      description: 请提供你的环境变量配置，以便我们更好地定位问题, 如果数据敏感，请替换为假数据。
+      label: 完整的环境变量配置
+      description: 请提供你的环境变量配置，如果内容敏感不想让其他人看见, 勾选最下方 **添加内容风险标识** 即可。
     validations:
       required: true
   - type: dropdown
