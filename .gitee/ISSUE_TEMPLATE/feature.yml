@@ -8,26 +8,11 @@ body:
       value: |
         感谢提出功能建议，我们将仔细考虑！
   - type: textarea
-    id: related-problem
     attributes:
-      label: 你的功能建议是否和某个问题相关？
-      description: 清晰并简洁地描述问题是什么，例如，当我...时，我总是感到困扰。
-    validations:
-      required: false
-  - type: textarea
-    id: desired-solution
-    attributes:
-      label: 你希望看到什么解决方案？
-      description: 清晰并简洁地描述你希望发生的事情, 不知道请填写 "无" 即可。
+      label: 你的建议是什么?
+      description: 清晰并简洁地描述哦~
     validations:
       required: true
-  - type: textarea
-    id: additional-context
-    attributes:
-      label: 你有其他上下文或截图吗？
-      description: 在此处添加有关功能请求的任何其他上下文或截图。
-    validations:
-      required: false
   - type: checkboxes
     attributes:
       label: 意向参与贡献
