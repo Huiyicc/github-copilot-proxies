@@ -14,12 +14,12 @@ import (
 	"github.com/tidwall/sjson"
 	"io"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"strconv"
-	"time"
-	"math/rand"
 	"strings"
+	"time"
 )
 
 // codeCompletions 代码补全
@@ -58,7 +58,6 @@ func codeCompletions(c *gin.Context) {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-
 
 	randGen := rand.New(rand.NewSource(time.Now().UnixNano()))
 	selectedKey := strings.TrimSpace(apiKeys[randGen.Intn(len(apiKeys))])
@@ -172,6 +171,8 @@ func codeCompletions(c *gin.Context) {
 func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	envCodexModel := os.Getenv("CODEX_API_MODEL_NAME")
 	body, _ = sjson.SetBytes(body, "model", envCodexModel)
+	body, _ = sjson.DeleteBytes(body, "extra")
+	body, _ = sjson.DeleteBytes(body, "nwo")
 
 	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
 	if temperature != -1 {
