@@ -39,8 +39,9 @@ func chatCompletions(c *gin.Context) {
 			}
 		}
 		lastIndex := len(messages) - 1
-		if !strings.Contains(messages[lastIndex].Get("content").String(), "Respond in the following locale") {
-			body, _ = sjson.SetBytes(body, "messages."+strconv.Itoa(lastIndex)+".content", messages[lastIndex].Get("content").String()+"Respond in the following locale: "+os.Getenv("CHAT_LOCALE")+".")
+        chatLocale := os.Getenv("CHAT_LOCALE")
+		if chatLocale != "" && !strings.Contains(messages[lastIndex].Get("content").String(), "Respond in the following locale") {
+			body, _ = sjson.SetBytes(body, "messages."+strconv.Itoa(lastIndex)+".content", messages[lastIndex].Get("content").String()+"Respond in the following locale: "+chatLocale+".")
 		}
 	}
 
