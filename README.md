@@ -55,7 +55,8 @@ docker-compose down
 docker-compose logs -f
 ```
 
-镜像全部上传到阿里云容器镜像服务, 国内访问无惧.
+镜像全部上传到阿里云容器镜像服务, 国内访问无惧.   
+每个版本都有对应的镜像可使用或回滚, 例如: `v0.0.20` 对应的镜像为 `registry.cn-hangzhou.aliyuncs.com/ripper/copilot-proxies:v0.0.20`, 详细版本参考: [Releases](https://gitee.com/ripperTs/github-copilot-proxies/releases)   
 
 ### 下载文件直接部署使用
 
