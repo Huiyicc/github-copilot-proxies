@@ -7,21 +7,23 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"io"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"ripper/internal/cache"
 	"strconv"
-	"time"
-	"math/rand"
 	"strings"
+	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 // codexCompletions 全代理GitHub的代码补全接口
 func codexCompletions(c *gin.Context) {
+	println("codexCompletions")
 	ctx := c.Request.Context()
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
