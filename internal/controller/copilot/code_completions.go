@@ -8,10 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/gin-gonic/gin"
-	"github.com/gofrs/uuid"
-	"github.com/tidwall/gjson"
-	"github.com/tidwall/sjson"
 	"io"
 	"log"
 	"math/rand"
@@ -20,6 +16,11 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
+	"github.com/tidwall/gjson"
+	"github.com/tidwall/sjson"
 )
 
 // codeCompletions 代码补全
@@ -173,7 +174,21 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	body, _ = sjson.SetBytes(body, "model", envCodexModel)
 	body, _ = sjson.DeleteBytes(body, "extra")
 	body, _ = sjson.DeleteBytes(body, "nwo")
+	body, _ = sjson.DeleteBytes(body, "suffix")
 
+	//limit prompt
+	envLimitPrompt := os.Getenv("CODEX_LIMIT_PROMPT")
+	limitPrompt, _ := strconv.Atoi(envLimitPrompt)
+	if limitPrompt > 0 {
+		prompt := gjson.GetBytes(body, "prompt")
+		promptRows := strings.Split(prompt.Str, "\n")
+		promptLen := len(promptRows)
+		if promptLen > limitPrompt {
+			newPrompt := strings.Join(promptRows[promptLen-limitPrompt:], "\n")
+			body, _ = sjson.SetBytes(body, "prompt", newPrompt)
+		}
+	}
+	
 	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
 	if temperature != -1 {
 		body, _ = sjson.SetBytes(body, "temperature", temperature)
