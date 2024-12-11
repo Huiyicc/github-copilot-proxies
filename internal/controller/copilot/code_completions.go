@@ -175,18 +175,8 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	body, _ = sjson.DeleteBytes(body, "extra")
 	body, _ = sjson.DeleteBytes(body, "nwo")
 
-	//limit prompt
-	envLimitPrompt := os.Getenv("CODEX_LIMIT_PROMPT")
-	limitPrompt, _ := strconv.Atoi(envLimitPrompt)
-	if limitPrompt > 0 {
-		prompt := gjson.GetBytes(body, "prompt")
-		promptRows := strings.Split(prompt.Str, "\n")
-		promptLen := len(promptRows)
-		if promptLen > limitPrompt {
-			newPrompt := strings.Join(promptRows[promptLen-limitPrompt:], "\n")
-			body, _ = sjson.SetBytes(body, "prompt", newPrompt)
-		}
-	}
+	// 限制 prompt 和 suffix 的长度
+	body = applyPromptLengthLimit(body)
 
 	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
 	if temperature != -1 {
@@ -221,6 +211,58 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	if codexServiceType == "ollama" {
 		return constructWithOllamaModel(body, codeMaxTokens)
 	}
+
+	return body
+}
+
+// applyPromptLengthLimit 对 prompt 和 suffix 应用长度限制
+func applyPromptLengthLimit(body []byte) []byte {
+	envLimitPrompt := os.Getenv("CODEX_LIMIT_PROMPT")
+	limitPrompt, err := strconv.Atoi(envLimitPrompt)
+	if err != nil || limitPrompt <= 0 {
+		return body
+	}
+
+	body = limitPromptLength(body, limitPrompt)
+	body = limitSuffixLength(body, limitPrompt)
+
+	return body
+}
+
+// limitPromptLength 限制 prompt 长度
+func limitPromptLength(body []byte, limitRows int) []byte {
+	prompt := gjson.GetBytes(body, "prompt")
+	if !prompt.Exists() {
+		return body
+	}
+
+	rows := strings.Split(prompt.Str, "\n")
+	if len(rows) <= limitRows {
+		return body
+	}
+
+	// 保留后面的内容
+	newPrompt := strings.Join(rows[len(rows)-limitRows:], "\n")
+	body, _ = sjson.SetBytes(body, "prompt", newPrompt)
+
+	return body
+}
+
+// limitSuffixLength 限制 suffix 长度
+func limitSuffixLength(body []byte, limitRows int) []byte {
+	suffix := gjson.GetBytes(body, "suffix")
+	if !suffix.Exists() {
+		return body
+	}
+
+	rows := strings.Split(suffix.Str, "\n")
+	if len(rows) <= limitRows {
+		return body
+	}
+
+	// 保留前面的内容
+	newSuffix := strings.Join(rows[:limitRows], "\n")
+	body, _ = sjson.SetBytes(body, "suffix", newSuffix)
 
 	return body
 }
