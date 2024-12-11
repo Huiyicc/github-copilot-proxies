@@ -25,7 +25,6 @@ import (
 
 // codeCompletions 代码补全
 func codeCompletions(c *gin.Context) {
-	println("codeCompletions")
 	ctx := c.Request.Context()
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
@@ -186,12 +185,10 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 		promptLen := len(promptRows)
 		if promptLen > limitPrompt {
 			newPrompt := strings.Join(promptRows[promptLen-limitPrompt:], "\n")
-			// log.Println("len(strs)", newPrompt)
 			body, _ = sjson.SetBytes(body, "prompt", newPrompt)
 		}
 	}
-	// log.Println("new body", string(body))
-
+	
 	temperature, _ := strconv.ParseFloat(os.Getenv("CODEX_TEMPERATURE"), 64)
 	if temperature != -1 {
 		body, _ = sjson.SetBytes(body, "temperature", temperature)
