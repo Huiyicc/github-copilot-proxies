@@ -197,25 +197,17 @@
 }</pre>
     <button id="copyBtn" class="copy-button">复制配置</button>
 </div>
-<div class="note">
-    这里默认使用的是https的服务地址，如果您没设置好https，可以改成http
-</div>
+
 <h2>Jetbrains IDE系列</h2>
 <div class="step">找到<code>设置</code> > <code>语言与框架</code> > <code>GitHub Copilot</code> > <code>Authentication
     Provider</code></div>
 <div class="step">填写的值为: <code><span class="dynamic-domain">loading...</span></code></div>
-<div class="step">首次打开 IDE 应该会提示是否信任证书的弹窗, 点击<strong>同意</strong>即可, 如果已经配置了系统级别的信任证书可以忽略.
-</div>
 
 <h2>Visual Studio 2022</h2>
 <div class="step">更新到最新版本（内置 Copilot 版本）至少是 <code>17.10.x</code> 以上</div>
 <div class="step">首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选"包含 Github Enterprise 服务器账户"</div>
 <div class="step">然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 <code>https://<span
         class="dynamic-domain">loading...</span></code> 即可。
-</div>
-
-<div class="warning">
-    如果是默认自签证书的域名, 那么本次操作之前务必操作下 <code>信任根证书</code> 然后重启浏览器和IDE, 具体方法网上搜索下<br>
 </div>
 
 <div class="note">

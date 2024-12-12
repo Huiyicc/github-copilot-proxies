@@ -10,3 +10,4 @@ apiclient_key.pem
 docker-compose-local.yml
 out
 logs
+cert

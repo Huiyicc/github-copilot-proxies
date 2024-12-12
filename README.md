@@ -18,26 +18,26 @@
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 - [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
 - [x] 代码补全APIKEY支持多个轮询, 避免限频
+- [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书
 - [ ] Ollama 部署的 Embeddings 模型支持
 
 ## 如何使用?
 
-> 在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT`
-> 相关的环境变量删除, 然后将插件更新最新版本后重启IDE即可.
+**在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT` 相关的环境变量删除, 然后将插件更新最新版本后重启IDE即可.**    
+
+**⚠️ 如果你本地有使用 VPN 设置, 那必须将域名 `copilot.supercopilot.top` 系列域名添加直连名单中, 否则无法正常使用!** 
+
 
 ### 快速使用步骤
 
 1. **部署服务**: 可以使用[下载文件直接部署使用](#下载文件直接部署使用) 或 使用[docker部署](#docker部署).
 2. **配置IDE**: 详细参考下面的[IDE设置方法](#ide设置方法).
-3. **修改本地hosts文件**: 具体参考[配置本机hosts文件](#配置本机hosts文件).
-4. **信任SSL证书**: 具体自行搜索各个系统平台信任根证书操作 **(可选)**.
-5. 重启IDE, 点击登录 `GitHub Copilot` 插件即可.
+3. **重启IDE**: 点击登录 `GitHub Copilot` 插件即可.
 
 ### Docker部署
 
 **(推荐)** 懒人推荐使用此方案, 比较简单  
-已经将自签证书的工作做完了, 只需要将 [docker-compose.yml](docker-compose.yml) 文件下载到本地, 将里面的
-**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:
+**模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:  
 
 ```shell
 # 启动服务
@@ -55,27 +55,72 @@ docker-compose down
 docker-compose logs -f
 ```
 
-镜像全部上传到阿里云容器镜像服务, 国内访问无惧.   
-每个版本都有对应的镜像可使用或回滚, 例如: `v0.0.20` 对应的镜像为 `registry.cn-hangzhou.aliyuncs.com/ripper/copilot-proxies:v0.0.20`, 详细版本参考: [Releases](https://gitee.com/ripperTs/github-copilot-proxies/releases)   
+镜像全部上传到阿里云容器镜像服务, 每个版本都有对应的镜像可使用或回滚.  
 
 ### 下载文件直接部署使用
 
-1. 下载最新版本的可执行文件
-   访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases), 修改里面 `.env` 文件的配置项, 然后直接运行即可.
-2. 如果希望绑定自己自有的域名, 可以参考: [自定义域名](#自定义域名) 配置, 然后将所有 `mycopilot.com` 相关的域名都修改为自己的域名.
-3. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
-4. 重启IDE,登录 `GitHub Copilot` 插件.
+1. 下载最新版本的可执行文件访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases), 修改里面 `.env` 文件的配置项, 然后直接运行即可.
+2. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
+3. 重启IDE,登录 `GitHub Copilot` 插件.
 
-### 配置本机hosts文件
+### 自有服务器部署
 
-将下面hosts配置添加到本机hosts文件中, 以便访问本地服务:
-
+1. 使用 `docker-compose` 或下载可执行文件运行起程序 (如果已有 nginx, 避免 443 端口占用可直接修改其他端口, 后面借助nginx 反向代理实现 https)   
+2. 解析四个域名到服务器IP, 假设你的域名是: `domain.com`, 那么你需要解析的域名分别是: 
 ```
-127.0.0.1 mycopilot.com
-127.0.0.1 api.mycopilot.com
-127.0.0.1 copilot-proxy.mycopilot.com
-127.0.0.1 copilot-telemetry-service.mycopilot.com
+domain.com  
+api.domain.com  
+copilot-proxy.domain.com  
+copilot-telemetry-service.domain.com  
 ```
+**特别注意: 域名前缀不可变**
+3. 将四个域名全部配置好 `SSL` 证书
+4. 配置 Nginx 反向代理或伪静态规则, 参考配置如下:
+```nginx
+location ^~ /
+{
+    proxy_pass http://127.0.0.1:1188/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header REMOTE-HOST $remote_addr;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "Upgrade";
+    proxy_http_version 1.1;
+    # proxy_hide_header Upgrade;
+
+    add_header X-Cache $upstream_cache_status;
+    
+    proxy_redirect off;
+    proxy_buffering off;
+    proxy_max_temp_file_size 0;
+    client_max_body_size 10m;
+    client_body_buffer_size 128k;
+    proxy_connect_timeout 90;
+    proxy_send_timeout 90;
+    proxy_read_timeout 90;
+    proxy_buffer_size 4k;
+    proxy_buffers 4 32k;
+    proxy_busy_buffers_size 64k;
+    proxy_temp_file_write_size 64k;
+
+    #Set Nginx Cache
+    
+    
+    set $static_filer5CIeZff 0;
+    if ( $uri ~* "\.(gif|png|jpg|css|js|woff|woff2)$" )
+    {
+    	set $static_filer5CIeZff 1;
+    	expires 1m;
+        }
+    if ( $static_filer5CIeZff = 0 )
+    {
+    add_header Cache-Control no-cache;
+    }
+}
+```
+5. 最后将以上域名修改到对应的环境变量配置文件中.
+6. 最终使用 https 方式访问四个域名必须是正常的, 不能有任何问题, 否则插件无法正常使用.
 
 ### 环境变量参数说明
 
@@ -91,62 +136,37 @@ docker-compose logs -f
 ```json
 "github.copilot.advanced": {
     "authProvider": "github-enterprise",
-    "debug.overrideCAPIUrl": "http://api.mycopilot.com:1188",
-    "debug.overrideProxyUrl": "http://copilot-proxy.mycopilot.com:1188",
-    "debug.chatOverrideProxyUrl": "http://api.mycopilot.com:1188/chat/completions",
+    "debug.overrideCAPIUrl": "https://api.copilot.supercopilot.top",
+    "debug.overrideProxyUrl": "https://copilot-proxy.copilot.supercopilot.top",
+    "debug.chatOverrideProxyUrl": "https://copilot-telemetry-service.copilot.supercopilot.top/chat/completions",
     "debug.overrideFastRewriteEngine": "v1/engines/copilot-centralus-h100",
-    "debug.overrideFastRewriteUrl": "http://api.mycopilot.com:1188"
+    "debug.overrideFastRewriteUrl": "https://api.copilot.supercopilot.top"
 },
-"github-enterprise.uri": "http://mycopilot.com:1188"
+"github-enterprise.uri": "https://copilot.supercopilot.top"
 ```
-
-vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这里使用http的域名+端口的形式   
-(不直接使用80端口是为了防止服务冲突), 形式不重要直接粘贴进去即可.
 
 ### Jetbrains IDE系列
 
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
-2. 填写的值为: `mycopilot.com`
+2. 填写的值为: `copilot.supercopilot.top`
 3. 首次打开 `IDE` 应该会提示是否信任证书的弹窗, 点击**同意**即可, 如果已经配置了系统级别的信任证书可以忽略.
 
 ### Visual Studio 2022
 
 1. 更新到最新版本（内置 Copilot 版本）至少是 `17.10.x` 以上
 2. 首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
-3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://mycopilot.com` 即可。
+3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://copilot.supercopilot.top` 即可。
 
-🚨 如果是默认自签证书的域名, 那么本次操作之前务必操作下 `信任根证书` 然后重启浏览器和IDE, 具体方法网上搜索下
-证书文件 [mycopilot.crt](ssl/mycopilot.crt)  
 🚧 Chat服务在代码选中后右键选择解释代码会报错, 解决方法是点击一下"在聊天窗口中继续"即可.
 
 ### HBuilderX
 
-> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 mycopilot.com 域名配置.
+> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 copilot.supercopilot.top 域名配置.
 
 1. 下载 **[copilot-for-hbuilderx.zip](https://pan.quark.cn/s/eb7f501ad585)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
-## 自定义域名
-
-如果你有自己的域名或者不想使用默认的 `mycopilot.com` 域名, 你需要申请或自签一个https证书, 然后将证书文件路径配置到
-`.env` 或 `docker-compose.yml` 文件中.
-
-### 自有域名配置
-
-将域名添加解析以下四个域名, 假设你的域名为 `yourdomain.com` (非必须是顶级域名), 则你需要解析的域名记录如下:
-
-- `DEFAULT_BASE_URL`: `yourdomain.com`
-- `API_BASE_URL`: `api.yourdomain.com`
-- `PROXY_BASE_URL`: `copilot-proxy.yourdomain.com`
-- `TELEMETRY_BASE_URL`: `copilot-telemetry-service.yourdomain.com`
-- 以上四个域名都需要配置SSL证书, 通配符证书教程参考[免费通配符证书申请方法](#通配符证书申请方法).
-- 以上几个域名前缀 (`api`, `copilot-proxy`, `copilot-telemetry-service`) 必须是一样的, 不可自定义修改, 否则会导致插件无法登录或正常使用.
-- 最后将以上域名修改到对应的环境变量配置文件中.
-
-### 没有域名自签本地证书
-
-如果你没有域名, 可以随便想一个"假"域名, 然后直接修改 `hosts` 文件的方式进行解析, 然后使用自签证书即可.
 
 ## 支持的模型
 
@@ -182,7 +202,7 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 ### 使用方法
 
 - 设置环境变量参数 `COPILOT_CLIENT_TYPE=github` (设置此参数后其他的Copilot相关配置都可以不用设置了, 因为这里已经使用了官方的服务).
-- 启动服务访问 `http://127.0.0.1:1188/github/login/device/code` 获取 `ghu_` 的参数
+- 启动服务访问 `https://copilot.supercopilot.top/github/login/device/code` 获取 `ghu_` 的参数
 - 将获取到的 `ghu_` 参数填写到 `COPILOT_GHU_TOKEN` 环境变量中.
 - 重启服务, 重启IDE即可.
 
@@ -204,61 +224,6 @@ vscode 使用https有些问题, 并且直接使用ip好像也不行, 所以这�
 
 后续将继续测试其他维度的模型和本地 `Ollama` 部署Embeddings模型进行测试, 可以关注下后续的更新. 
 
-## 通配符证书申请方法
-
-> 使用 [acme.sh](https://github.com/acmesh-official/acme.sh/wiki/%E8%AF%B4%E6%98%8E) 依旧可以申请通配符域名证书,
-> 如果你的域名托管在 `cf` `腾讯云` `阿里云` 等等, 都可以使用他们的API来自动续期.
-
-### 安装acme.sh
-
-```shell
-# 官方
-curl https://get.acme.sh | sh -s email=617498836@qq.com
-
-# 国内镜像
-https://github.com/acmesh-official/acme.sh/wiki/Install-in-China
-
-# 使环境变量立即生效
-source ~/.bashrc
-
-# 创建一个 alias，便于后续访问:
-alias acme.sh=~/.acme.sh/acme.sh
-```
-
-### 操作步骤
-
-我这里域名是托管在 `cf` 上的, 所以使用 `cf` 的API来申请证书, 你可以根据自己的情况来选择.
-
-1. 配置dns秘钥
-
-```shell
-export CF_Email="110110110@qq.com"
-export CF_Key="xxxxxxx"
-```
-
-2. 签发证书
-
-```shell
-acme.sh --issue --dns dns_cf -d supercopilot.top -d '*.supercopilot.top'
-```
-
-3. 安装证书
-
-```shell
-# 新建一个证书目录
-mkdir -p /etc/nginx/cert_file/supercopilot.top
-
-# 安装证书
-acme.sh --install-cert -d supercopilot.top -d *.supercopilot.top \
-		--key-file   /etc/nginx/cert_file/key.pem  \
-		--fullchain-file /etc/nginx/cert_file/fullchain.pem
-```
-
-4. 修改对应的环境变量配置
-    - CERT_FILE=/etc/nginx/cert_file/fullchain.pem
-    - KEY_FILE=/etc/nginx/cert_file/key.pem
-
-**如果你使用`宝塔`面板将会更加容易的申请, 因为面板中已经高度集成了此模块**
 
 ## 注意事项
 

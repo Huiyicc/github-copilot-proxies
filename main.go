@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/signal"
 	"path/filepath"
+	"ripper/pkg/certificate"
 	"ripper/pkg/message"
 	"strconv"
 	"syscall"
@@ -62,8 +63,12 @@ func main() {
 	httpPort, _ := strconv.Atoi(os.Getenv("PORT"))
 	httpsPort, _ := strconv.Atoi(os.Getenv("HTTPS_PORT"))
 	host := os.Getenv("HOST")
-	certFile := os.Getenv("CERT_FILE")
-	keyFile := os.Getenv("KEY_FILE")
+
+	// 初始化证书
+	certFile, keyFile, reloadChan, err := certificate.InitCertificates()
+	if err != nil {
+		log.Fatalf("Failed to initialize certificates: %v", err)
+	}
 
 	// 检查端口是否被占用
 	checkPortAndExit(host, httpPort)
@@ -90,23 +95,33 @@ func main() {
 		return httpServer.ListenAndServe()
 	})
 
-	// 启动HTTPS服务器
-	httpsServer := &http.Server{
-		Addr:    fmt.Sprintf("%s:%d", host, httpsPort),
-		Handler: r,
-		TLSConfig: &tls.Config{
-			MinVersion: tls.VersionTLS10,
-			MaxVersion: tls.VersionTLS13,
-		},
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 60 * time.Second,
-		IdleTimeout:  120 * time.Second,
+	// 创建一个函数来启动HTTPS服务器
+	var httpsServer *http.Server
+	startHTTPSServer := func() *http.Server {
+		server := &http.Server{
+			Addr:    fmt.Sprintf("%s:%d", host, httpsPort),
+			Handler: r,
+			TLSConfig: &tls.Config{
+				MinVersion: tls.VersionTLS10,
+				MaxVersion: tls.VersionTLS13,
+			},
+			ReadTimeout:  30 * time.Second,
+			WriteTimeout: 60 * time.Second,
+		}
+
+		g.Go(func() error {
+			log.Printf("Starting HTTPS server on %s\n", server.Addr)
+			if httpsServer == nil { // 仅在首次启动时发送信号
+				serverStarted <- struct{}{}
+			}
+			return server.ListenAndServeTLS(certFile, keyFile)
+		})
+
+		return server
 	}
-	g.Go(func() error {
-		log.Printf("Starting HTTPS server on %s\n", httpsServer.Addr)
-		serverStarted <- struct{}{}
-		return httpsServer.ListenAndServeTLS(certFile, keyFile)
-	})
+
+	// 启动初始HTTPS服务器
+	httpsServer = startHTTPSServer()
 
 	// 等待两个服务器都启动
 	<-serverStarted
@@ -115,22 +130,48 @@ func main() {
 	// 显示消息或消息框
 	message.ShowAppLaunchMessage()
 
-	// 设置优雅关闭
+	// 监听证书更新和关闭信号
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 
-	select {
-	case <-quit:
-		log.Println("Shutdown signal received, exiting...")
-	case <-groupCtx.Done():
-		log.Println("Unexpected exit, trying to shutdown gracefully...")
-	}
+	// 处理证书更新和服务器关闭
+	go func() {
+		for {
+			select {
+			case <-reloadChan:
+				log.Println("Certificate update detected, reloading HTTPS server...")
 
-	// 取消上下文
-	cancel()
+				// 创建关闭超时上下文
+				shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+
+				// 关闭当前的HTTPS服务器
+				if err := httpsServer.Shutdown(shutdownCtx); err != nil {
+					log.Printf("Error shutting down HTTPS server: %v", err)
+				}
+				shutdownCancel()
+
+				// 启动新的HTTPS服务器
+				httpsServer = startHTTPSServer()
+
+			case <-quit:
+				log.Println("Shutdown signal received, exiting...")
+				cancel()
+				return
+
+			case <-groupCtx.Done():
+				log.Println("Unexpected exit, trying to shutdown gracefully...")
+				cancel()
+				return
+			}
+		}
+	}()
+
+	// 等待取消信号
+	<-ctx.Done()
 
 	// 给服务器一些时间来完成正在处理的请求
-	shutdownCtx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer shutdownCancel()
 
 	// 优雅地关闭服务器
 	if err := httpServer.Shutdown(shutdownCtx); err != nil {
@@ -142,7 +183,7 @@ func main() {
 	}
 
 	// 等待所有 goroutine 完成
-	if err := g.Wait(); err != nil {
+	if err := g.Wait(); err != nil && err != http.ErrServerClosed {
 		log.Printf("Error during server operations: %v", err)
 	}
 }
