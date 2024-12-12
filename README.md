@@ -66,16 +66,15 @@ docker-compose logs -f
 ### 自有服务器部署
 
 1. 使用 `docker-compose` 或下载可执行文件运行起程序 (如果已有 nginx, 避免 443 端口占用可直接修改其他端口, 后面借助nginx 反向代理实现 https)   
-2. 解析四个域名到服务器IP, 假设你的域名是: `domain.com`, 那么你需要解析的域名分别是: 
+2. 解析四个域名到服务器IP, 假设你的域名是: `domain.com`, 那么你需要解析的域名分别是 (**特别注意: 域名前缀不可变**): 
 ```
 domain.com  
 api.domain.com  
 copilot-proxy.domain.com  
 copilot-telemetry-service.domain.com  
-```
-**特别注意: 域名前缀不可变**
-3. 将四个域名全部配置好 `SSL` 证书
-4. 配置 Nginx 反向代理或伪静态规则, 参考配置如下:
+```   
+3. 将四个域名全部配置好 `SSL` 证书   
+4. 配置 Nginx 反向代理或伪静态规则, 参考配置如下:  
 ```nginx
 location ^~ /
 {
@@ -118,9 +117,9 @@ location ^~ /
     add_header Cache-Control no-cache;
     }
 }
-```
-5. 最后将以上域名修改到对应的环境变量配置文件中.
-6. 最终使用 https 方式访问四个域名必须是正常的, 不能有任何问题, 否则插件无法正常使用.
+```   
+5. 最后将以上域名修改到对应的环境变量配置文件中.   
+6. 最终使用 https 方式访问四个域名必须是正常的, 不能有任何问题, 否则插件无法正常使用.  
 
 ### 环境变量参数说明
 
