@@ -29,9 +29,6 @@ WORKDIR /root/
 COPY --from=builder /app/main .
 COPY .env.example .env
 
-# 复制 SSL 证书文件夹
-COPY ssl /root/ssl
-
 # 暴露端口
 EXPOSE 1188
 EXPOSE 443
