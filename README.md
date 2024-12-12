@@ -170,7 +170,7 @@ location ^~ /
 
 ## 局域网共享方案
 如果是局域网多台电脑共用一个服务端，只需要更改hosts文件指向到内网服务器 ip 即可, 例如：   
-如果在局域网服务器(192.168.80.40)部署了copilot-proxies服务，那么局域网内其他机器仅需要修改host为以下即可，可以工作。 (@pennbay 提供实测反馈)       
+如果在局域网服务器(192.168.80.40)部署了copilot-proxies服务，那么局域网内其他机器仅需要修改host为以下即可，可以工作。 ( @pennbay 提供实测反馈 )       
 ```
 192.168.80.40 copilot.supercopilot.top
 192.168.80.40 api.copilot.supercopilot.top
