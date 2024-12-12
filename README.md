@@ -18,7 +18,7 @@
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 - [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
 - [x] 代码补全APIKEY支持多个轮询, 避免限频
-- [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书
+- [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 热重载未实现, 可能需要手动重启服务)
 - [ ] Ollama 部署的 Embeddings 模型支持
 
 ## 如何使用?
@@ -135,12 +135,12 @@ location ^~ /
 
 ```json
 "github.copilot.advanced": {
-    "authProvider": "github-enterprise",
-    "debug.overrideCAPIUrl": "https://api.copilot.supercopilot.top",
-    "debug.overrideProxyUrl": "https://copilot-proxy.copilot.supercopilot.top",
-    "debug.chatOverrideProxyUrl": "https://copilot-telemetry-service.copilot.supercopilot.top/chat/completions",
-    "debug.overrideFastRewriteEngine": "v1/engines/copilot-centralus-h100",
-    "debug.overrideFastRewriteUrl": "https://api.copilot.supercopilot.top"
+  "authProvider": "github-enterprise",
+  "debug.overrideCAPIUrl": "https://api.copilot.supercopilot.top",
+  "debug.overrideProxyUrl": "https://copilot-proxy.copilot.supercopilot.top",
+  "debug.chatOverrideProxyUrl": "https://api.copilot.supercopilot.top/chat/completions",
+  "debug.overrideFastRewriteEngine": "v1/engines/copilot-centralus-h100",
+  "debug.overrideFastRewriteUrl": "https://api.copilot.supercopilot.top"
 },
 "github-enterprise.uri": "https://copilot.supercopilot.top"
 ```

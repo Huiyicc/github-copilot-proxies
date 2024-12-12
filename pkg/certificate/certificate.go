@@ -22,29 +22,26 @@ const (
 )
 
 var (
-	mutex             sync.Mutex
-	stopChan          chan struct{}
-	httpsServerReload chan struct{} // 用于通知需要重载服务器
+	mutex    sync.Mutex
+	stopChan chan struct{}
 )
 
 // InitCertificates 初始化证书管理
-func InitCertificates() (string, string, chan struct{}, error) {
+func InitCertificates() (string, string, error) {
 	// 确保证书目录存在
 	if err := os.MkdirAll(filepath.Dir(certPath), 0755); err != nil {
-		return "", "", nil, fmt.Errorf("failed to create cert directory: %v", err)
+		return "", "", fmt.Errorf("failed to create cert directory: %v", err)
 	}
-
-	httpsServerReload = make(chan struct{}, 1)
 
 	// 首次检查和更新证书
 	if err := checkAndUpdateCertificates(); err != nil {
-		return "", "", nil, err
+		return "", "", err
 	}
 
 	// 启动定时检查
 	startPeriodicCheck()
 
-	return certPath, keyPath, httpsServerReload, nil
+	return certPath, keyPath, nil
 }
 
 // StopPeriodicCheck 停止定时检查
@@ -54,6 +51,7 @@ func StopPeriodicCheck() {
 	}
 }
 
+// startPeriodicCheck 启动定期检查证书
 func startPeriodicCheck() {
 	stopChan = make(chan struct{})
 	go func() {
@@ -73,46 +71,45 @@ func startPeriodicCheck() {
 	}()
 }
 
+// checkAndUpdateCertificates 检查并更新证书
 func checkAndUpdateCertificates() error {
 	mutex.Lock()
 	defer mutex.Unlock()
 
+	// 检查证书是否需要更新
 	needsUpdate, err := certificateNeedsUpdate()
 	if err != nil {
 		return fmt.Errorf("failed to check certificate: %v", err)
 	}
 
 	if needsUpdate {
+		// 下载新证书
 		if err := downloadFile(certURL, certPath); err != nil {
 			return fmt.Errorf("failed to download certificate: %v", err)
 		}
 		if err := downloadFile(keyURL, keyPath); err != nil {
 			return fmt.Errorf("failed to download key: %v", err)
 		}
-
-		// 通知需要重载服务器
-		select {
-		case httpsServerReload <- struct{}{}:
-			log.Println("Certificates updated, triggering server reload")
-		default:
-			// 如果通道已满，说明已经有一个重载信号在等待处理
-			log.Println("Server reload already pending")
-		}
+		log.Println("Certificates updated successfully")
 	}
 
 	return nil
 }
 
+// certificateNeedsUpdate 检查证书是否需要更新
 func certificateNeedsUpdate() (bool, error) {
+	// 检查文件是否存在
 	if !fileExists(certPath) || !fileExists(keyPath) {
 		return true, nil
 	}
 
+	// 读取证书文件
 	certData, err := os.ReadFile(certPath)
 	if err != nil {
 		return false, fmt.Errorf("failed to read certificate: %v", err)
 	}
 
+	// 解析证书
 	block, _ := pem.Decode(certData)
 	if block == nil {
 		return true, nil
@@ -123,9 +120,11 @@ func certificateNeedsUpdate() (bool, error) {
 		return false, fmt.Errorf("failed to parse certificate: %v", err)
 	}
 
+	// 检查证书是否过期或即将过期（提前24小时更新）
 	return time.Now().Add(24 * time.Hour).After(cert.NotAfter), nil
 }
 
+// downloadFile 从URL下载文件
 func downloadFile(url string, filepath string) error {
 	resp, err := http.Get(url)
 	if err != nil {
@@ -147,6 +146,7 @@ func downloadFile(url string, filepath string) error {
 	return err
 }
 
+// fileExists 检查文件是否存在
 func fileExists(filename string) bool {
 	_, err := os.Stat(filename)
 	return !os.IsNotExist(err)
