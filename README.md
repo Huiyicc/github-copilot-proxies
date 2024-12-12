@@ -148,7 +148,6 @@ location ^~ /
 
 1. 找到`设置` > `语言与框架` > `GitHub Copilot` > `Authentication Provider`
 2. 填写的值为: `copilot.supercopilot.top`
-3. 首次打开 `IDE` 应该会提示是否信任证书的弹窗, 点击**同意**即可, 如果已经配置了系统级别的信任证书可以忽略.
 
 ### Visual Studio 2022
 
