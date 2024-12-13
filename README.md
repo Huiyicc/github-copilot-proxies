@@ -12,15 +12,16 @@
 
 ## 功能特性
 
-- [x] 支持使用Docker部署, 简单方便
-- [x] 支持多种IDE, 如: [VSCode](#vscode), [Jetbrains IDE系列](#jetbrains-ide系列), [Visual Studio 2022](#visual-studio-2022), [HBuilderX](#hbuilderx)
-- [x] 支持任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
+- [x] 使用 `docker-compose` 部署, 简单方便
+- [x] 多种IDE, 如: [VSCode](#vscode), [Jetbrains IDE系列](#jetbrains-ide系列), [Visual Studio 2022](#visual-studio-2022), [HBuilderX](#hbuilderx)
+- [x] 任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
-- [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
+- [x] 使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
 - [x] 代码补全APIKEY支持多个轮询, 避免限频
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
-- [x] 支持完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
+- [x] 局域网共享, 可多台电脑共享一个服务端, 参考: [局域网共享方案](#局域网共享方案)
+- [x] 完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
 - [ ] Ollama 部署的 Embeddings 模型支持
 
 ## 如何使用?
