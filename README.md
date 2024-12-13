@@ -13,21 +13,21 @@
 ## 功能特性
 
 - [x] 支持使用Docker部署, 简单方便
-- [x] 支持多种IDE,
-  如: [VSCode](#vscode), [Jetbrains IDE系列](#jetbrains-ide系列), [Visual Studio 2022](#visual-studio-2022), [HBuilderX](#hbuilderx)
+- [x] 支持多种IDE, 如: [VSCode](#vscode), [Jetbrains IDE系列](#jetbrains-ide系列), [Visual Studio 2022](#visual-studio-2022), [HBuilderX](#hbuilderx)
 - [x] 支持任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
 - [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
 - [x] 支持使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
 - [x] 代码补全APIKEY支持多个轮询, 避免限频
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
+- [x] 支持完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
 - [ ] Ollama 部署的 Embeddings 模型支持
 
 ## 如何使用?
 
 **在使用之前确保自己的环境是干净的, 也就是说不能使用过其他的激活服务, 可以先检查自己的环境变量将 `GITHUB` `COPILOT` 相关的环境变量删除, 然后将插件更新最新版本后重启IDE即可.**    
 
-**⚠️ 如果你本地有使用任何代理服务, 那必须将域名 `copilot.supercopilot.top` 系列域名添加直连名单中, 否则无法正常使用!** 
+**⚠️ 如果你本地有使用科学上网工具, 那必须将域名 `copilot.supercopilot.top` 系列域名添加直连名单中, 否则无法正常使用!** 
 
 
 ### 快速使用步骤
@@ -161,9 +161,9 @@ location ^~ /
 
 ### HBuilderX
 
-> 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 copilot.supercopilot.top 域名配置.
+⚠️ 注意, 插件中的相关 domain 已经写死无法修改, 所以必须使用默认的 `copilot.supercopilot.top` 域名配置.
 
-1. 下载 **[copilot-for-hbuilderx.zip](https://pan.quark.cn/s/eb7f501ad585)** 插件到本地
+1. 下载 **[copilot-for-hbuilderx-v1.zip](https://pan.quark.cn/s/70e6849970e5)** 插件到本地
 2. 将插件安装到 plugin目录下, 详细参考: [离线插件安装指南](https://hx.dcloud.net.cn/Tutorial/OfflineInstall)
 3. 重启 Hbuilder X 后点击登录 `GitHub Copilot` 即可.
 
@@ -178,6 +178,15 @@ location ^~ /
 192.168.80.40 copilot-telemetry-service.copilot.supercopilot.top
 ```
 
+## 纯内网离线部署方案
+`v0.1.0` 版本之后 ssl 证书调整为从网络上下载同步, 这对于纯内网部署造成了一些困难, 下面我提供一个简单的方案你需要做如下操作:   
+
+- 从外网下载最新证书文件, 远程下载地址参考 [certificate.go](pkg/certificate/certificate.go), 注意证书最长只有 6 个月, 需要手动更新.
+- 将两个证书文件放在 `/cert` 目录下.
+- 因为也无法连接公共 DNS 服务器, 所以也需要更改本机 hosts 文件, 将域名 `copilot.supercopilot.top` `api.copilot.supercopilot.top` `copilot-proxy.copilot.supercopilot.top` `copilot-telemetry-service.copilot.supercopilot.top`  手动指向到本机的 IP 地址.
+- 启动主程序.
+
+还有一种方案, 依旧使用 `v0.1.0` 之前版本的自签证书, 但这会在未来 `GitHub Copilot` 插件更新后可能无法正常使用.
 
 ## 支持的模型
 
@@ -213,7 +222,7 @@ location ^~ /
 ### 使用方法
 
 - 设置环境变量参数 `COPILOT_CLIENT_TYPE=github` (设置此参数后其他的Copilot相关配置都可以不用设置了, 因为这里已经使用了官方的服务).
-- 启动服务访问 `https://copilot.supercopilot.top/github/login/device/code` 获取 `ghu_` 的参数
+- 启动服务访问 [https://copilot.supercopilot.top/github/login/device/code](https://copilot.supercopilot.top/github/login/device/code) 获取 `ghu_` 的参数
 - 将获取到的 `ghu_` 参数填写到 `COPILOT_GHU_TOKEN` 环境变量中.
 - 重启服务, 重启IDE即可.
 
