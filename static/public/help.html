@@ -58,6 +58,12 @@
             background-color: var(--primary-color);
         }
 
+        .step a {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
         pre {
             background-color: var(--code-background);
             border-radius: 12px;
@@ -157,6 +163,14 @@
             font-weight: 500;
         }
 
+        #show-hb {
+            display: none;
+        }
+
+        #hidden-hb {
+            display: block;
+        }
+
         .footer {
             display: flex;
             justify-content: center;
@@ -213,6 +227,21 @@
 <div class="note">
     Chat服务在代码选中后右键选择解释代码会报错, 解决方法是点击一下"在聊天窗口中继续"即可.
 </div>
+
+<h2>HBuilderX</h2>
+<div id="show-hb">
+    <div class="step">点击下载 <code><a href="https://pan.quark.cn/s/70e6849970e5" target="_blank">copilot-for-hbuilderx-v1.zip</a></code>
+        插件到本地
+    </div>
+    <div class="step">将插件安装到 plugin目录下, 具体教程参考: <code><a
+            href="https://hx.dcloud.net.cn/Tutorial/OfflineInstall" target="_blank">离线插件安装指南</a></code></div>
+    <div class="step">重启 Hbuilder X 后点击登录 <code>GitHub Copilot</code> 即可.</div>
+</div>
+
+<div id="hidden-hb" class="warning">
+    当前部署方式不支持 HBuilderX
+</div>
+
 <div class="footer">
     © 2024 Open Source Contributors
 </div>
@@ -220,6 +249,15 @@
     document.addEventListener('DOMContentLoaded', function () {
         // 获取当前域名和端口
         const currentHost = window.location.host; // 这将获取 "domain:port" 格式
+
+        // 只要是默认本地部署的域名，就显示 HBuilderX 的安装步骤
+        if (currentHost.includes('copilot.supercopilot.top')) {
+            document.getElementById('show-hb').style.display = 'block';
+            document.getElementById('hidden-hb').style.display = 'none';
+        } else {
+            document.getElementById('show-hb').style.display = 'none';
+            document.getElementById('hidden-hb').style.display = 'block';
+        }
 
         // 更新所有需要替换的地方
         const domainElements = document.querySelectorAll('.dynamic-domain');
