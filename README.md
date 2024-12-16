@@ -62,9 +62,10 @@ docker-compose logs -f
 
 ### 下载文件直接部署使用
 
-1. 下载最新版本的可执行文件访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases), 修改里面 `.env` 文件的配置项, 然后直接运行即可.
-2. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
-3. 重启IDE,登录 `GitHub Copilot` 插件.
+1. 下载最新版本的对应系统的可执行文件访问 [releases](https://gitee.com/ripperTs/github-copilot-proxies/releases).
+2. 在可执行文件同级目录下创建 `.env` 文件, 参考 [.env.example](.env.example) 文件配置.
+3. 启动服务后然后按照[IDE设置方法](#ide设置方法)配置IDE.
+4. 重启IDE,登录 `GitHub Copilot` 插件.
 
 ### 自有服务器部署
 
@@ -245,6 +246,14 @@ location ^~ /
 
 后续将继续测试其他维度的模型和本地 `Ollama` 部署Embeddings模型进行测试, 可以关注下后续的更新. 
 
+
+## 问题排查
+如果本地部署遇到了 `无法登录` `无法对话` `无法补全` 等问题, 可以参考下面的排查方法:
+1. 确认最新版本服务
+2. `ping copilot.supercopilot.top` 是否指向 `127.0.0.1` ，如果不是则表明受到了代理工具影响
+3. 访问 [https://copilot.supercopilot.top](https://copilot.supercopilot.top/help) 是否出现帮助页面
+4. 检查目录下是否含有 `cert` 目录
+5. 特别注意检查 https 端口不可被占用
 
 ## 注意事项
 
