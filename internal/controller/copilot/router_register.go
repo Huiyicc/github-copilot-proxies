@@ -14,8 +14,8 @@ type Config struct {
 	CopilotProxyAll bool
 }
 
-// LoadConfig loads the configuration from environment variables.
-func LoadConfig() (*Config, error) {
+// loadConfig loads the configuration from environment variables.
+func loadConfig() (*Config, error) {
 	proxyAll, err := strconv.ParseBool(os.Getenv("COPILOT_PROXY_ALL"))
 	if err != nil {
 		return nil, fmt.Errorf("invalid boolean value for COPILOT_PROXY_ALL: %v", err)
@@ -29,7 +29,7 @@ func LoadConfig() (*Config, error) {
 
 // GinApi 注册路由
 func GinApi(g *gin.RouterGroup) {
-	config, err := LoadConfig()
+	config, err := loadConfig()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -49,10 +49,10 @@ func GinApi(g *gin.RouterGroup) {
 
 // setupBasicRoutes 设置基础路由
 func setupBasicRoutes(g *gin.RouterGroup) {
-	g.GET("/models", models)
-	g.GET("/_ping", _ping)
-	g.POST("/telemetry", postTelemetry)
-	g.GET("/agents", agents)
+	g.GET("/models", GetModels)
+	g.GET("/_ping", GetPing)
+	g.POST("/telemetry", PostTelemetry)
+	g.GET("/agents", GetAgents)
 }
 
 // setupUserRoutes 设置用户相关路由
@@ -62,11 +62,11 @@ func setupUserRoutes(g *gin.RouterGroup) {
 	userGroup := g.Group("")
 	userGroup.Use(authMiddleware)
 	{
-		userGroup.GET("/user", getLoginUser)
-		userGroup.GET("/user/orgs", getUserOrgs)
-		userGroup.GET("/api/v3/user", getLoginUser)
-		userGroup.GET("/api/v3/user/orgs", getUserOrgs)
-		userGroup.GET("/teams/:teamID/memberships/:username", getMembership)
+		userGroup.GET("/user", GetLoginUser)
+		userGroup.GET("/user/orgs", GetUserOrgs)
+		userGroup.GET("/api/v3/user", GetLoginUser)
+		userGroup.GET("/api/v3/user/orgs", GetUserOrgs)
+		userGroup.GET("/teams/:teamID/memberships/:username", GetMembership)
 	}
 }
 
@@ -87,7 +87,7 @@ func setupCopilotRoutes(g *gin.RouterGroup, config *Config) {
 		completionsGroup.POST("/v1/engines/copilot-codex", createCompletionsHandler(config))
 		completionsGroup.POST("/chat/completions", createChatHandler(config))
 		completionsGroup.POST("/v1/chat/completions", createChatHandler(config))
-		completionsGroup.POST("/v1/engines/copilot-centralus-h100/speculation", createCompletionsHandler(config))
+		completionsGroup.POST("/v1/engines/copilot-centralus-h100/speculation", createChatEditCompletionsHandler(config))
 		completionsGroup.POST("/chunks", HandleChunks)
 		completionsGroup.POST("/embeddings", HandleEmbeddings)
 	}
@@ -95,18 +95,18 @@ func setupCopilotRoutes(g *gin.RouterGroup, config *Config) {
 
 // setupV3Routes 设置API v3相关路由
 func setupV3Routes(g *gin.RouterGroup) {
-	g.GET("/api/v3/meta", v3meta)
-	g.GET("/api/v3/", cliv3)
-	g.GET("/", cliv3)
+	g.GET("/api/v3/meta", V3meta)
+	g.GET("/api/v3/", Cliv3)
+	g.GET("/", Cliv3)
 }
 
 // 处理函数生成器
 func createTokenHandler(config *Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if config.ClientType == "github" && !config.CopilotProxyAll {
-			getCopilotInternalV2Token(c)
+			GetCopilotInternalV2Token(c)
 		} else {
-			getDisguiseCopilotInternalV2Token(c)
+			GetDisguiseCopilotInternalV2Token(c)
 		}
 	}
 }
@@ -115,9 +115,9 @@ func createTokenHandler(config *Config) gin.HandlerFunc {
 func createCompletionsHandler(config *Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if config.ClientType == "github" && config.CopilotProxyAll {
-			codexCompletions(c)
+			CodexCompletions(c)
 		} else {
-			codeCompletions(c)
+			CodeCompletions(c)
 		}
 	}
 }
@@ -126,9 +126,20 @@ func createCompletionsHandler(config *Config) gin.HandlerFunc {
 func createChatHandler(config *Config) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if config.ClientType == "github" && config.CopilotProxyAll {
-			chatsCompletions(c)
+			ChatsCompletions(c)
 		} else {
-			chatCompletions(c)
+			ChatCompletions(c)
+		}
+	}
+}
+
+// createChatEditCompletionsHandler 生成聊天编辑补全处理函数
+func createChatEditCompletionsHandler(config *Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if config.ClientType == "github" && config.CopilotProxyAll {
+			ChatEditCompletions(c)
+		} else {
+			CodeCompletions(c)
 		}
 	}
 }

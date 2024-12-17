@@ -21,8 +21,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// codexCompletions 全代理GitHub的代码补全接口
-func codexCompletions(c *gin.Context) {
+// CodexCompletions 全代理GitHub的代码补全接口
+func CodexCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
@@ -69,7 +69,7 @@ func codexCompletions(c *gin.Context) {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-	defer closeIO(resp.Body)
+	defer CloseIO(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -84,8 +84,8 @@ func codexCompletions(c *gin.Context) {
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
-// chatsCompletions 全代理GitHub的聊天补全接口
-func chatsCompletions(c *gin.Context) {
+// ChatsCompletions 全代理GitHub的聊天补全接口
+func ChatsCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
 	if ctx.Err() != nil {
 		abortCodex(c, http.StatusRequestTimeout)
@@ -129,7 +129,7 @@ func chatsCompletions(c *gin.Context) {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-	defer closeIO(resp.Body)
+	defer CloseIO(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
@@ -141,6 +141,66 @@ func chatsCompletions(c *gin.Context) {
 
 	c.Status(resp.StatusCode)
 	c.Header("Content-Type", "text/event-stream")
+	_, _ = io.Copy(c.Writer, resp.Body)
+}
+
+// ChatEditCompletions 聊天编辑补全接口
+func ChatEditCompletions(c *gin.Context) {
+	ctx := c.Request.Context()
+	if ctx.Err() != nil {
+		abortCodex(c, http.StatusRequestTimeout)
+		return
+	}
+
+	body, err := io.ReadAll(c.Request.Body)
+	if nil != err {
+		abortCodex(c, http.StatusBadRequest)
+		return
+	}
+
+	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-centralus-h100/speculation"
+	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
+	if nil != err {
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	// 合并请求头
+	if err := mergeHeaders(c.Request.Header, req); err != nil {
+		log.Println(err)
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	resp, err := client.Do(req)
+	if nil != err {
+		if errors.Is(err, context.Canceled) {
+			abortCodex(c, http.StatusRequestTimeout)
+			return
+		}
+
+		log.Println("request failed:", err.Error())
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+	defer CloseIO(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		log.Println("请求 Chat 编辑接口失败:", string(body))
+
+		abortCodex(c, resp.StatusCode)
+		return
+	}
+
+	c.Status(resp.StatusCode)
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
