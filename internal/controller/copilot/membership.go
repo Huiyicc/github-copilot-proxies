@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-func getMembership(c *gin.Context) {
+// GetMembership 获取团队成员信息
+func GetMembership(c *gin.Context) {
 	teamID := c.Param("teamID")
 	username := c.Param("username")
 

@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-func agents(c *gin.Context) {
+// GetAgents 获取代理列表
+func GetAgents(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"agents": []interface{}{},
 	})

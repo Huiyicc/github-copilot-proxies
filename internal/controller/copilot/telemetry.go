@@ -5,7 +5,8 @@ import (
 	"net/http"
 )
 
-func postTelemetry(c *gin.Context) {
+// PostTelemetry 接收并处理来自GitHub Copilot的遥测数据
+func PostTelemetry(c *gin.Context) {
 	var jsonData []interface{}
 	if err := c.BindJSON(&jsonData); err != nil {
 		c.JSON(http.StatusOK, gin.H{

@@ -15,7 +15,8 @@ type Pong struct {
 	Ns1    string `json:"ns1"`
 }
 
-func _ping(ctx *gin.Context) {
+// GetPing 模拟ping接口
+func GetPing(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, Pong{
 		Now:    time.Now().Second(),
 		Status: "ok",
@@ -23,7 +24,8 @@ func _ping(ctx *gin.Context) {
 	})
 }
 
-func models(ctx *gin.Context) {
+// GetModels 获取模型列表
+func GetModels(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": []gin.H{
 			{
@@ -319,7 +321,7 @@ func models(ctx *gin.Context) {
 	})
 }
 
-func closeIO(c io.Closer) {
+func CloseIO(c io.Closer) {
 	err := c.Close()
 	if nil != err {
 		log.Println(err)

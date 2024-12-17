@@ -23,8 +23,8 @@ import (
 	"github.com/tidwall/sjson"
 )
 
-// codeCompletions 代码补全
-func codeCompletions(c *gin.Context) {
+// CodeCompletions 代码补全
+func CodeCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
@@ -87,7 +87,7 @@ func codeCompletions(c *gin.Context) {
 		abortCodex(c, http.StatusInternalServerError)
 		return
 	}
-	defer closeIO(resp.Body)
+	defer CloseIO(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

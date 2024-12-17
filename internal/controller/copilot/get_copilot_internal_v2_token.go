@@ -15,8 +15,8 @@ import (
 	"time"
 )
 
-// getDisguiseCopilotInternalV2Token 返回伪装的token
-func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
+// GetDisguiseCopilotInternalV2Token 返回伪装的token
+func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 	trackingId, _ := uuid.NewV4()
 	now := time.Now().Unix()
 	dcAt, _ := strconv.Atoi(os.Getenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT"))
@@ -69,8 +69,8 @@ func getDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gout)
 }
 
-// getCopilotInternalV2Token 获取github copilot官方token
-func getCopilotInternalV2Token(c *gin.Context) {
+// GetCopilotInternalV2Token 获取github copilot官方token
+func GetCopilotInternalV2Token(c *gin.Context) {
 	ghuTokens := strings.Split(os.Getenv("COPILOT_GHU_TOKEN"), ",")
 	if len(ghuTokens) == 0 {
 		return

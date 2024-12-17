@@ -18,7 +18,8 @@ import (
 	"time"
 )
 
-func chatCompletions(c *gin.Context) {
+// ChatCompletions chat对话接口
+func ChatCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
 
 	body, err := io.ReadAll(c.Request.Body)
@@ -113,7 +114,7 @@ func chatCompletions(c *gin.Context) {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
-	defer closeIO(resp.Body)
+	defer CloseIO(resp.Body)
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)

@@ -5,11 +5,11 @@ import (
 	"net/http"
 )
 
-func v3meta(c *gin.Context) {
+func V3meta(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{})
 }
 
-func cliv3(c *gin.Context) {
+func Cliv3(c *gin.Context) {
 	c.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
 	c.JSON(http.StatusOK, gin.H{
 		"current_user_url":                     "https://api.github.com/user",

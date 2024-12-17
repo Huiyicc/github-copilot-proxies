@@ -7,7 +7,8 @@ import (
 	jwtpkg "ripper/pkg/jwt"
 )
 
-func getLoginUser(ctx *gin.Context) {
+// GetLoginUser 获取登录用户信息
+func GetLoginUser(ctx *gin.Context) {
 	userDisplayName := "github"
 	token, _ := jwtpkg.GetJwtProto(ctx, &middleware.UserLoad{})
 	if token != nil && token.UserDisplayName != "" {
@@ -52,7 +53,7 @@ func getLoginUser(ctx *gin.Context) {
 
 }
 
-func getUserOrgs(ctx *gin.Context) {
+func GetUserOrgs(ctx *gin.Context) {
 	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
 	ctx.JSON(http.StatusOK, []interface{}{})
 }
