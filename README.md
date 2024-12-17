@@ -16,8 +16,9 @@
 - [x] 多种IDE, 如: [VSCode](#vscode), [Jetbrains IDE系列](#jetbrains-ide系列), [Visual Studio 2022](#visual-studio-2022), [HBuilderX](#hbuilderx)
 - [x] 任意符合 `OpenAI` 接口规范的模型, 和 `Ollama` 部署的本地模型
 - [x] `GitHub Copilot` 插件各种API接口**全接管**, 无需担心插件升级导致服务失效
-- [x] 代码补全请求防抖设置, 避免过度消耗 Tokens
+- [x] 代码补全请求防抖设置和自定义 prompt 精简, 避免过度消耗 Tokens
 - [x] 使用 Github Copilot 官方服务, 参考: [使用GitHub Copilot官方服务](#使用github-copilot官方服务)
+- [x] VSCode 对话编辑模式
 - [x] 代码补全APIKEY支持多个轮询, 避免限频
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
 - [x] 局域网共享, 可多台电脑共享一个服务端, 参考: [局域网共享方案](#局域网共享方案)
@@ -183,7 +184,7 @@ location ^~ /
 ## 纯内网离线部署方案
 `v0.1.0` 版本之后 ssl 证书调整为从网络上下载同步, 这对于纯内网部署造成了一些困难, 下面我提供一个简单的方案你需要做如下操作:   
 
-- 从外网下载最新证书文件, 远程下载地址参考 [certificate.go](pkg/certificate/certificate.go), 注意证书最长只有 6 个月, 需要手动更新.
+- 从外网下载最新证书文件, 远程下载地址参考 [certificate.go](pkg/certificate/certificate.go), 注意证书最长只有 60 天, 需要手动更新.
 - 将两个证书文件放在 `/cert` 目录下.
 - 因为也无法连接公共 DNS 服务器, 所以也需要更改本机 hosts 文件, 将域名 `copilot.supercopilot.top` `api.copilot.supercopilot.top` `copilot-proxy.copilot.supercopilot.top` `copilot-telemetry-service.copilot.supercopilot.top`  手动指向到本机的 IP 地址.
 - 启动主程序.
