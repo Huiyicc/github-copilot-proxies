@@ -5,16 +5,17 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
-	"fmt"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func chatCompletions(c *gin.Context) {
@@ -39,7 +40,7 @@ func chatCompletions(c *gin.Context) {
 			}
 		}
 		lastIndex := len(messages) - 1
-        chatLocale := os.Getenv("CHAT_LOCALE")
+		chatLocale := os.Getenv("CHAT_LOCALE")
 		if chatLocale != "" && !strings.Contains(messages[lastIndex].Get("content").String(), "Respond in the following locale") {
 			body, _ = sjson.SetBytes(body, "messages."+strconv.Itoa(lastIndex)+".content", messages[lastIndex].Get("content").String()+"Respond in the following locale: "+chatLocale+".")
 		}
@@ -96,6 +97,7 @@ func chatCompletions(c *gin.Context) {
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("CHAT_API_KEY"))
 
 	client := &http.Client{
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},

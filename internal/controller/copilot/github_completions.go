@@ -113,7 +113,7 @@ func chatsCompletions(c *gin.Context) {
 	}
 
 	client := &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
@@ -165,7 +165,7 @@ func getAuthToken() (string, error) {
 
 	url := "https://api.github.com/copilot_internal/v2/token"
 	client := &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: 30 * time.Second,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},

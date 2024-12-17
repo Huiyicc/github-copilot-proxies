@@ -5,14 +5,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"log"
+	"math/rand"
 	"net/http"
 	"os"
 	"ripper/internal/app/github_auth"
 	"ripper/internal/cache"
 	"strconv"
-	"time"
-	"math/rand"
 	"strings"
+	"time"
 )
 
 // getDisguiseCopilotInternalV2Token 返回伪装的token
@@ -113,7 +113,7 @@ func getCopilotInternalV2Token(c *gin.Context) {
 	req.Header.Set("editor-version", "JetBrains-IU/242.21829.142")
 	req.Header.Set("user-agent", "GithubCopilot/1.228.0")
 
-	client := &http.Client{Timeout: 60 * time.Second}
+	client := &http.Client{Timeout: 30 * time.Second}
 	resp, err := client.Do(req)
 	if err != nil {
 		log.Println(err.Error())
