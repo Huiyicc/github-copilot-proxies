@@ -69,9 +69,9 @@ func CodeCompletions(c *gin.Context) {
 	}
 
 	req.Header.Set("Authorization", "Bearer "+selectedKey)
-
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},

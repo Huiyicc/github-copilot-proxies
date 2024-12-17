@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -86,7 +87,8 @@ func makeRequest(c *gin.Context, method, url string, body map[string]string) (in
 	req.Header.Set("user-agent", "GithubCopilot/1.228.0")
 	req.Header.Set("editor-version", "JetBrains-IU/242.21829.142")
 
-	client := &http.Client{Timeout: 60 * time.Second}
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
+	client := &http.Client{Timeout: httpClientTimeout}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err

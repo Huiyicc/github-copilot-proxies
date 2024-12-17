@@ -227,4 +227,8 @@ func initDefaultEnv() {
 		os.Setenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT", "1800")
 	}
 
+	if os.Getenv("HTTP_CLIENT_TIMEOUT") == "" {
+		os.Setenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT", "60")
+	}
+
 }

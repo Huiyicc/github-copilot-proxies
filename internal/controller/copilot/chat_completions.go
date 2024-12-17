@@ -96,9 +96,9 @@ func ChatCompletions(c *gin.Context) {
 
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("CHAT_API_KEY"))
-
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},

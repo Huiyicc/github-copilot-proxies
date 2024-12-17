@@ -52,8 +52,9 @@ func CodexCompletions(c *gin.Context) {
 		return
 	}
 
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 60 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
@@ -112,8 +113,9 @@ func ChatsCompletions(c *gin.Context) {
 		return
 	}
 
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
@@ -172,8 +174,9 @@ func ChatEditCompletions(c *gin.Context) {
 		return
 	}
 
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
@@ -224,8 +227,9 @@ func getAuthToken() (string, error) {
 	}
 
 	url := "https://api.github.com/copilot_internal/v2/token"
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
-		Timeout: 30 * time.Second,
+		Timeout: httpClientTimeout,
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		},
