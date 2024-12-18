@@ -1,8 +1,6 @@
 # Github Copilot 后端代理服务
 
-[仅需四步](#快速使用步骤)即刻拥有完全离线的 `Copilot小助手` 同款服务，速度更快，更稳定，更安全。
-
-借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
+借助其他支持 `FIM` 接口的模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
 ✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
 
@@ -184,7 +182,11 @@ location ^~ /
 
 - 从外网下载最新证书文件, 远程下载地址参考 [certificate.go](pkg/certificate/certificate.go), 注意证书最长只有 60 天, 需要手动更新.
 - 将两个证书文件放在 `/cert` 目录下.
-- 因为也无法连接公共 DNS 服务器, 所以也需要更改本机 hosts 文件, 将域名 `copilot.supercopilot.top` `api.copilot.supercopilot.top` `copilot-proxy.copilot.supercopilot.top` `copilot-telemetry-service.copilot.supercopilot.top`  手动指向到本机的 IP 地址.
+- 因为也无法连接公共 DNS 服务器, 所以也需要更改本机 hosts 文件, 将以下域名手动指向到本机的 `127.0.0.1`:  
+  - `copilot.supercopilot.top`   
+  - `api.copilot.supercopilot.top`   
+  - `copilot-proxy.copilot.supercopilot.top`   
+  - `copilot-telemetry-service.copilot.supercopilot.top`
 - 启动主程序.
 
 还有一种方案, 依旧使用 `v0.1.0` 之前版本的自签证书, 但这会在未来 `GitHub Copilot` 插件更新后可能无法正常使用.
