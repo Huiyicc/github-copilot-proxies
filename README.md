@@ -4,7 +4,7 @@
 
 借助其他FIM模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
 
-✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 服务端代码会与此仓库版本保持一致, 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
+✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
 
 🚨 **破坏性更新提示: v0.1.0 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**
 
