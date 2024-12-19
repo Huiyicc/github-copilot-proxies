@@ -231,4 +231,8 @@ func initDefaultEnv() {
 		os.Setenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT", "60")
 	}
 
+	if os.Getenv("COPILOT_ACCOUNT_TYPE") == "" {
+		os.Setenv("COPILOT_ACCOUNT_TYPE", "individual")
+	}
+
 }

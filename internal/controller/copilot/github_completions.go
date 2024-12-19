@@ -38,7 +38,8 @@ func CodexCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-codex/completions"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/copilot-codex/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
@@ -99,7 +100,8 @@ func ChatsCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://api.individual.githubcopilot.com/chat/completions"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://api." + copilotAccountType + ".githubcopilot.com/chat/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
@@ -160,7 +162,8 @@ func ChatEditCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-centralus-h100/speculation"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/copilot-centralus-h100/speculation"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)

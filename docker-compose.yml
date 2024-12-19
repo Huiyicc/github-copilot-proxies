@@ -35,6 +35,7 @@ services:
       - COPILOT_CLIENT_TYPE=default
       - COPILOT_GHU_TOKEN=ghu_xxxx # 支持多个轮询token，用英文逗号分隔
       - COPILOT_PROXY_ALL=false
+      - COPILOT_ACCOUNT_TYPE=individual
       - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800
       - DASHSCOPE_API_KEY=
     volumes:
