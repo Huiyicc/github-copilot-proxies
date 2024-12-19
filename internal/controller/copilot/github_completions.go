@@ -82,7 +82,7 @@ func CodexCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-	c.Header("Content-Type", "text/event-stream")
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
@@ -144,7 +144,7 @@ func ChatsCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-	c.Header("Content-Type", "text/event-stream")
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
