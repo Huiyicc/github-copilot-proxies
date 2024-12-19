@@ -1,6 +1,5 @@
 name: 功能建议
 description: 对本项目提出一个功能建议
-title: "[建议]: "
 labels: ["enhancement"]
 body:
   - type: markdown
