@@ -32,11 +32,11 @@ services:
       - API_BASE_URL=https://api.copilot.supercopilot.top
       - PROXY_BASE_URL=https://copilot-proxy.copilot.supercopilot.top
       - TELEMETRY_BASE_URL=https://copilot-telemetry-service.copilot.supercopilot.top
-      - COPILOT_CLIENT_TYPE=default
+      - COPILOT_CLIENT_TYPE=default # copilot的客户端类型, 用于区分是否使用官方copilot服务
       - COPILOT_GHU_TOKEN=ghu_xxxx # 支持多个轮询token，用英文逗号分隔
-      - COPILOT_PROXY_ALL=false
-      - COPILOT_ACCOUNT_TYPE=individual
-      - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800
+      - COPILOT_PROXY_ALL=false # 在使用官方Copilot服务的时候是否全代理请求
+      - COPILOT_ACCOUNT_TYPE=individual # github copilot 官方账号类型, 企业版账号需要调整此参数, 否则在全代理模式下无法正常使用 (可选值: individual/business)
+      - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800 # Copilot伪装token下发的有效期,单位秒
       - DASHSCOPE_API_KEY=
     volumes:
       - ./logs:/app/logs
