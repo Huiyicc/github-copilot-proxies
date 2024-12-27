@@ -53,6 +53,7 @@ func setupBasicRoutes(g *gin.RouterGroup) {
 	g.GET("/_ping", GetPing)
 	g.POST("/telemetry", PostTelemetry)
 	g.GET("/agents", GetAgents)
+	g.GET("/copilot_internal/user", GetCopilotInternalUser)
 }
 
 // setupUserRoutes 设置用户相关路由
