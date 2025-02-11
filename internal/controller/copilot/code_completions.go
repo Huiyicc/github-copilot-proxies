@@ -175,6 +175,15 @@ func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	body, _ = sjson.DeleteBytes(body, "extra")
 	body, _ = sjson.DeleteBytes(body, "nwo")
 
+	// 修复ollama的coder模型不准确的问题
+	if useRaw, uerr := strconv.ParseBool(os.Getenv("CODEX_USE_RAW")); uerr == nil && useRaw {
+		body, _ = sjson.SetBytes(body, "raw", true)
+	}
+	body, _ = sjson.SetBytes(body, "options", map[string]int{
+		"num_ctx": 4096,
+	})
+	body, _ = sjson.SetBytes(body, "keep_alive", -1)
+
 	// 限制 prompt 和 suffix 的长度
 	body = applyPromptLengthLimit(body)
 
