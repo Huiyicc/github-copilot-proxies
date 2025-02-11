@@ -7,6 +7,9 @@ WORKDIR /app
 # 复制源代码
 COPY . .
 
+# 换源
+RUN go env -w GO111MODULE=on
+RUN go env -w GOPROXY=https://goproxy.cn,direct
 # 检查 go.mod 是否存在，如果不存在则初始化一个新的模块
 RUN if [ ! -f go.mod ]; then \
     go mod init myapp; \
