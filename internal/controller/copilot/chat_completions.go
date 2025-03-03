@@ -31,6 +31,7 @@ func ChatCompletions(c *gin.Context) {
 	envModelName := os.Getenv("CHAT_API_MODEL_NAME")
 	c.Header("Content-Type", "text/event-stream")
 	body, _ = sjson.SetBytes(body, "model", envModelName)
+	body, _ = sjson.SetBytes(body, "stream", true) // 强制流式输出
 
 	if !gjson.GetBytes(body, "function_call").Exists() {
 		messages := gjson.GetBytes(body, "messages").Array()

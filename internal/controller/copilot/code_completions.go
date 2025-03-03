@@ -172,6 +172,7 @@ func CodeCompletions(c *gin.Context) {
 func ConstructRequestBody(body []byte, codexServiceType string) []byte {
 	envCodexModel := os.Getenv("CODEX_API_MODEL_NAME")
 	body, _ = sjson.SetBytes(body, "model", envCodexModel)
+	body, _ = sjson.SetBytes(body, "stream", true) // 强制流式输出
 	body, _ = sjson.DeleteBytes(body, "extra")
 	body, _ = sjson.DeleteBytes(body, "nwo")
 
