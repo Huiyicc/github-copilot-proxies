@@ -30,6 +30,7 @@ func ChatCompletions(c *gin.Context) {
 
 	envModelName := os.Getenv("CHAT_API_MODEL_NAME")
 	c.Header("Content-Type", "text/event-stream")
+
 	body, _ = sjson.SetBytes(body, "model", envModelName)
 	body, _ = sjson.SetBytes(body, "stream", true) // 强制流式输出
 
@@ -71,14 +72,22 @@ func ChatCompletions(c *gin.Context) {
 
 	messages := gjson.GetBytes(body, "messages").Array()
 	userAgent := c.GetHeader("User-Agent")
+
+	// 拦截处理vscode对话首次预处理请求, 减少等待时间
+	firstRole := gjson.GetBytes(body, "messages.0.role").String()
+	firstContent := gjson.GetBytes(body, "messages.0.content").String()
+	if strings.Contains(firstRole, "system") && strings.Contains(firstContent, "You are a helpful AI programming assistant to a user") {
+		_, _ = c.Writer.WriteString("data: [DONE]\n\n")
+		c.Writer.Flush()
+		return
+	}
+
 	// vs2022客户端的兼容处理
 	if strings.Contains(userAgent, "VSCopilotClient") {
 		lastMessage := messages[len(messages)-1]
 		messageRole := lastMessage.Get("role").String()
 		messageContent := lastMessage.Get("content").String()
-		firstRole := gjson.GetBytes(body, "messages.0.role").String()
-		firstContent := gjson.GetBytes(body, "messages.0.content").String()
-		if strings.Contains(firstRole, "system") && firstContent == "You are an AI programming assistant." {
+		if strings.Contains(firstRole, "system") && strings.Contains(firstContent, "You are an AI programming assistant") {
 			vs2022FirstChatTemplate(c)
 			return
 		}
@@ -88,6 +97,7 @@ func ChatCompletions(c *gin.Context) {
 			return
 		}
 	}
+
 	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CHAT_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
 	if nil != err {
 		c.AbortWithStatus(http.StatusInternalServerError)
