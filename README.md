@@ -4,7 +4,9 @@
 
 ✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
 
-🚨 **破坏性更新提示: v0.1.0 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**
+🚨 **破坏性更新提示: `v0.1.0` 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**   
+
+🚨 **破坏性更新提示: `v0.1.6` 版本更新对 `Embeddings模型` 进行了调整, 如果还想继续使用阿里灵石的模型, 请自行借助 `One API` 之类的中转系统进行接入.**
 
 ## 功能特性
 
