@@ -15,9 +15,8 @@ import (
 
 // 常量定义
 const (
-	defaultEmbeddingModel = "text-embedding-v3"
-	defaultTimeout        = 30 * time.Second
-	contentTypeJSON       = "application/json"
+	defaultTimeout  = 30 * time.Second
+	contentTypeJSON = "application/json"
 )
 
 // EmbeddingRequest 表示向嵌入API发送的请求
@@ -70,6 +69,10 @@ func NewEmbeddingClient(dimensions int) (*EmbeddingClient, error) {
 		return nil, fmt.Errorf("EMBEDDING_API_BASE or EMBEDDING_API_KEY environment variable not set")
 	}
 
+	if os.Getenv("EMBEDDING_API_MODEL_NAME") == "" {
+		return nil, fmt.Errorf("EMBEDDING_API_MODEL_NAME environment variable not set")
+	}
+
 	// 解析超时时间，如果未设置或解析失败则使用默认值
 	timeout := defaultTimeout
 	if timeoutStr := os.Getenv("HTTP_CLIENT_TIMEOUT"); timeoutStr != "" {
@@ -88,7 +91,7 @@ func NewEmbeddingClient(dimensions int) (*EmbeddingClient, error) {
 	return &EmbeddingClient{
 		apiURL:     apiURL,
 		apiKey:     apiKey,
-		model:      defaultEmbeddingModel,
+		model:      os.Getenv("EMBEDDING_API_MODEL_NAME"),
 		dimensions: dimensions,
 		httpClient: client,
 	}, nil
@@ -118,12 +121,11 @@ func (c *EmbeddingClient) GetEmbedding(ctx context.Context, text string) ([]floa
 // GetEmbeddings 批量获取多个文本的嵌入
 func (c *EmbeddingClient) GetEmbeddings(ctx context.Context, texts []string) (*EmbeddingResponse, error) {
 	c.clientMutex.RLock()
-	model := c.model
 	dimensions := c.dimensions
 	c.clientMutex.RUnlock()
 
 	reqBody := EmbeddingRequest{
-		Model:      model,
+		Model:      os.Getenv("EMBEDDING_API_MODEL_NAME"),
 		Input:      texts,
 		Dimensions: dimensions,
 	}

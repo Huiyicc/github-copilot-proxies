@@ -16,7 +16,6 @@ import (
 // 常量定义
 const (
 	defaultDimensionSize = 1536 // 默认向量维度
-	defaultModelName     = "text-embedding-3-small-512"
 	markdownFilePrefix   = "File: `%s`\n```shell\n"
 	markdownFileSuffix   = "```"
 )
@@ -85,7 +84,7 @@ func NewChunkService() (*ChunkService, error) {
 
 	return &ChunkService{
 		embeddingClient: client,
-		modelName:       defaultModelName,
+		modelName:       os.Getenv("EMBEDDING_API_MODEL_NAME"),
 	}, nil
 }
 
