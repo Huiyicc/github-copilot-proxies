@@ -39,5 +39,6 @@ services:
       - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800 # Copilot伪装token下发的有效期,单位秒
       - EMBEDDING_API_BASE=http://127.0.0.1:5012/v1/embeddings
       - EMBEDDING_API_KEY=
+      - EMBEDDING_DIMENSION_SIZE=1536
     volumes:
       - ./logs:/app/logs

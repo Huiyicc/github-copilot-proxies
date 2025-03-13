@@ -2,6 +2,8 @@ package copilot
 
 import (
 	"net/http"
+	"os"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,6 +21,14 @@ func HandleEmbeddings(c *gin.Context) {
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
+	}
+
+	// 从环境变量获取维度大小，默认为1536
+	dimensionSize := 1536
+	if dimSizeStr := os.Getenv("EMBEDDING_DIMENSION_SIZE"); dimSizeStr != "" {
+		if dimSize, err := strconv.Atoi(dimSizeStr); err == nil {
+			dimensionSize = dimSize
+		}
 	}
 
 	// 创建嵌入客户端

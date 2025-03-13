@@ -5,6 +5,8 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"sync"
 
@@ -13,13 +15,28 @@ import (
 
 // 常量定义
 const (
-	dimensionSize = 1536 // 向量维度
-	// 根据维度大小调整块大小，这里设置为维度的1.5倍左右
-	chunkSize          = dimensionSize * 3 / 2 // 768字符
-	defaultModelName   = "text-embedding-3-small-512"
-	markdownFilePrefix = "File: `%s`\n```shell\n"
-	markdownFileSuffix = "```"
+	defaultDimensionSize = 1536 // 默认向量维度
+	defaultModelName     = "text-embedding-3-small-512"
+	markdownFilePrefix   = "File: `%s`\n```shell\n"
+	markdownFileSuffix   = "```"
 )
+
+// 获取向量维度大小
+func getDimensionSize() int {
+	dimensionSize := defaultDimensionSize
+	if dimSizeStr := os.Getenv("EMBEDDING_DIMENSION_SIZE"); dimSizeStr != "" {
+		if dimSize, err := strconv.Atoi(dimSizeStr); err == nil {
+			dimensionSize = dimSize
+		}
+	}
+	return dimensionSize
+}
+
+// 计算块大小
+func getChunkSize() int {
+	// 根据维度大小调整块大小，这里设置为维度的1.5倍左右
+	return getDimensionSize() * 3 / 2
+}
 
 // ChunkRequest 表示分块请求
 type ChunkRequest struct {
@@ -61,7 +78,7 @@ type ChunkService struct {
 
 // NewChunkService 创建新的分块服务
 func NewChunkService() (*ChunkService, error) {
-	client, err := NewEmbeddingClient(dimensionSize)
+	client, err := NewEmbeddingClient(getDimensionSize())
 	if err != nil {
 		return nil, fmt.Errorf("failed to create embedding client: %w", err)
 	}
@@ -107,6 +124,7 @@ func HandleChunks(c *gin.Context) {
 func (s *ChunkService) SplitIntoChunks(content, path string) []Chunk {
 	var chunks []Chunk
 	lines := strings.Split(content, "\n")
+	chunkSize := getChunkSize()
 
 	// 预分配切片容量，减少内存重新分配
 	estimatedChunks := len(content)/chunkSize + 1
