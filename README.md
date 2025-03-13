@@ -19,7 +19,7 @@
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
 - [x] 局域网共享, 可多台电脑共享一个服务端, 参考: [局域网共享方案](#局域网共享方案)
 - [x] 完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
-- [ ] Ollama 部署的 Embeddings 模型支持
+- [x] 本地部署的 Embeddings 模型支持
 
 ## 如何使用?
 
@@ -241,11 +241,36 @@ location ^~ /
 
 > 目前仅 VSCode 最新版本的 `Github Copilot Chat` 插件支持使用 Embeddings 模型, 其他IDE可以不用考虑.
 
-插件默认使用 `512维` 的Embeddings模型, 为了方便项目借助阿里的模型, 文档: [API-KEY的获取与配置](https://help.aliyun.com/zh/dashscope/developer-reference/acquisition-and-configuration-of-api-key), 获取后填写环境变量 `DASHSCOPE_API_KEY` 即可.   
-注意: 阿里的Embedding模型是收费的, 但是有免费额度, 详细参考阿里的文档.   
+支持使用任意符合 `OpenAI` 接口格式的模型, 推荐本地Docker部署m3e的模型, 具体步骤如下: 
 
-后续将继续测试其他维度的模型和本地 `Ollama` 部署Embeddings模型进行测试, 可以关注下后续的更新. 
+**1. 拉取并部署镜像**   
 
+> 镜像来源于网络, 请自行甄别.
+
+```shell
+# docker hub 官方镜像
+docker pull stawky/m3e-large-api:latest
+
+# 国内镜像
+docker pull registry.cn-hangzhou.aliyuncs.com/fastgpt_docker/m3e-large-api:latest
+```
+
+默认端口号: `6008`   
+环境变量: `sk-key` 默认值为: `sk-aaabbbcccdddeeefffggghhhiiijjjkkk`, 可以自行修改, 如命令:    
+```shell
+docker run -e sk-key=your-key stawky/m3e-large-api
+```
+
+**2. 配置服务端**   
+修改下面相关环境变量文件内容:   
+```
+EMBEDDING_API_BASE=http://127.0.0.1/v1/embeddings
+EMBEDDING_API_KEY=sk-aaabbbcccdddeeefffggghhhiiijjjkkk
+EMBEDDING_API_MODEL_NAME=m3e
+EMBEDDING_DIMENSION_SIZE=1536
+```
+
+如果你是 `One API` 之类的中转站, 也可以按照上面环境变量内容直接接入.   
 
 ## 问题排查
 如果本地部署遇到了 `无法登录` `无法对话` `无法补全` 等问题, 可以参考下面的排查方法:
