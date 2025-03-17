@@ -21,7 +21,7 @@
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
 - [x] 局域网共享, 可多台电脑共享一个服务端, 参考: [局域网共享方案](#局域网共享方案)
 - [x] 完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
-- [x] 本地部署的 Embeddings 模型支持
+- [x] 本地部署的 Embeddings 模型支持, 参考: [README.md](embeddings/README.md)
 
 ## 如何使用?
 
@@ -243,33 +243,15 @@ location ^~ /
 
 > 目前仅 VSCode 最新版本的 `Github Copilot Chat` 插件支持使用 Embeddings 模型, 其他IDE可以不用考虑.
 
-支持使用任意符合 `OpenAI` 接口格式的模型, 推荐本地Docker部署m3e的模型, 具体步骤如下: 
+支持使用任意符合 `OpenAI` 接口格式的模型, 推荐本地Docker部署bge-m3的模型, 具体步骤如下参考: [README.md](embeddings/README.md) 中的Docker运行部分内容.  
 
-**1. 拉取并部署镜像**   
-
-> 镜像来源于网络, 请自行甄别.
-
-```shell
-# docker hub 官方镜像
-docker pull stawky/m3e-large-api:latest
-
-# 国内镜像
-docker pull registry.cn-hangzhou.aliyuncs.com/fastgpt_docker/m3e-large-api:latest
-```
-
-默认端口号: `6008`   
-环境变量: `sk-key` 默认值为: `sk-aaabbbcccdddeeefffggghhhiiijjjkkk`, 可以自行修改, 如命令:    
-```shell
-docker run -e sk-key=your-key stawky/m3e-large-api
-```
-
-**2. 配置服务端**   
+**然后配置服务端**     
 修改下面相关环境变量文件内容:   
 ```
 EMBEDDING_API_BASE=http://127.0.0.1/v1/embeddings
 EMBEDDING_API_KEY=sk-aaabbbcccdddeeefffggghhhiiijjjkkk
-EMBEDDING_API_MODEL_NAME=m3e
-EMBEDDING_DIMENSION_SIZE=1536
+EMBEDDING_API_MODEL_NAME=bge-m3
+EMBEDDING_DIMENSION_SIZE=1024
 ```
 
 如果你是 `One API` 之类的中转站, 也可以按照上面环境变量内容直接接入.   
