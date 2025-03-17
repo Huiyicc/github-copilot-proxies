@@ -9,8 +9,8 @@
 
 ## 环境变量参数
 - `sk-key`: 服务的 `API KEY`，默认为 `sk-aaabbbcccdddeeefffggghhhiiijjjkkk`
-- `auto_dim`: 是否自动进行维度操作, 若为 `true` 则会自动提升或降级维度到512, 默认为 `false`
-- `model_path`: 模型目录名称, 默认为 `bge-m3`, 注意必须在models文件夹下有对应的模型文件夹
+- `auto-dim`: 是否自动进行维度操作, 若为 `true` 则会自动提升或降级维度到512, 默认为 `false`
+- `model-path`: 模型目录名称, 默认为 `bge-m3`, 注意必须在models文件夹下有对应的模型文件夹
 
 
 ## 运行服务
@@ -33,4 +33,23 @@ curl --location --request POST 'http://127.0.0.1:6008/v1/embeddings' \
     "model": "text-embedding-3-small",
     "dimensions": 512
 }'
+```
+
+## Docker 运行
+
+将 [docker-compose.yml](docker-compose.yml) 文件放在任意目录下, 然后执行命令:  
+```bash
+docker-compose up -d
+```
+
+镜像内已经将模型打包好了, 所以首次执行会比较慢, 如果需要更新或新增模型, 直接将新的模型文件放在 `./models` 目录下, 更改环境变量 `model-path` 即可   
+
+然后重新启动服务即可:   
+```bash
+docker-compose restart
+
+# 如果未生效, 可以先停止再启动
+docker-compose down
+
+docker-compose up -d
 ```

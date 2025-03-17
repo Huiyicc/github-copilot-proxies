@@ -16,9 +16,9 @@ import os
 # 接口秘钥环境变量传入
 sk_key = os.environ.get('sk-key', 'sk-aaabbbcccdddeeefffggghhhiiijjjkkk')
 # 是否自动进行维度操作的环境变量，默认为false
-auto_dim = os.environ.get('auto_dim', 'false').lower() == 'true'
+auto_dim = os.environ.get('auto-dim', 'false').lower() == 'true'
 # 模型名称, 必须在models文件夹下有对应的模型文件夹
-model_name = os.environ.get('model_name', 'bge-m3')
+model_name = os.environ.get('model-name', 'bge-m3')
 
 # 创建一个FastAPI实例
 app = FastAPI()
