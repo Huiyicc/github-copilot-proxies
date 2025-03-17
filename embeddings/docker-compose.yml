@@ -10,5 +10,5 @@ services:
       - sk-key=sk-aaabbbcccdddeeefffggghhhiiijjjkkk
       - auto-dim=false
       - model-name=bge-m3
-    volumes:
-      - ./models:/app/models
+#    volumes:
+#      - ./models:/app/models  # 如果需要自己更改模型, 将模型文件放到models文件夹下, 并取消注释
