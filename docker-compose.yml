@@ -26,6 +26,7 @@ services:
       - CHAT_API_KEY=yourapikey # 聊天补全API密钥
       - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
       - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
+      - CHAT_USE_TOOLS=true
       # 下面是Copilot配置
       - DEFAULT_BASE_URL=https://copilot.supercopilot.top
       - COPILOT_DEBOUNCE=200 # 补全防抖时间(毫秒)
@@ -37,6 +38,7 @@ services:
       - COPILOT_PROXY_ALL=false # 在使用官方Copilot服务的时候是否全代理请求
       - COPILOT_ACCOUNT_TYPE=individual # github copilot 官方账号类型, 企业版账号需要调整此参数, 否则在全代理模式下无法正常使用 (可选值: individual/business)
       - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800 # Copilot伪装token下发的有效期,单位秒
+      # Embedding 模型配置
       - EMBEDDING_API_BASE=http://127.0.0.1:5012/v1/embeddings
       - EMBEDDING_API_KEY=
       - EMBEDDING_API_MODEL_NAME=m3e

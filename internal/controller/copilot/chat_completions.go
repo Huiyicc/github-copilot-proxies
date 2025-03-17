@@ -53,7 +53,9 @@ func ChatCompletions(c *gin.Context) {
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
 
-	if !strings.HasPrefix(envModelName, "gpt-") {
+	// 是否支持使用工具, 避免模型不支持相关功能报错
+	chatUseTools, _ := strconv.ParseBool(os.Getenv("CHAT_USE_TOOLS"))
+	if !chatUseTools {
 		body, _ = sjson.DeleteBytes(body, "tools")
 		body, _ = sjson.DeleteBytes(body, "tool_call")
 		body, _ = sjson.DeleteBytes(body, "functions")
