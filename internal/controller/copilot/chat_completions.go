@@ -78,7 +78,8 @@ func ChatCompletions(c *gin.Context) {
 	// 拦截处理vscode对话首次预处理请求, 减少等待时间
 	firstRole := gjson.GetBytes(body, "messages.0.role").String()
 	firstContent := gjson.GetBytes(body, "messages.0.content").String()
-	if strings.Contains(firstRole, "system") && strings.Contains(firstContent, "You are a helpful AI programming assistant to a user") {
+	if strings.Contains(firstRole, "system") && strings.Contains(firstContent, "You are a helpful AI programming assistant to a user") &&
+		!gjson.GetBytes(body, "tool_choice").Exists() {
 		_, _ = c.Writer.WriteString("data: [DONE]\n\n")
 		c.Writer.Flush()
 		return
