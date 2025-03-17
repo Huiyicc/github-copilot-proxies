@@ -11,4 +11,4 @@ services:
       - auto-dim=false
       - model-name=bge-m3
     volumes:
-      - ./models:app/models
+      - ./models:/app/models
