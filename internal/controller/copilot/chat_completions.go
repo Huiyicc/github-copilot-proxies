@@ -52,6 +52,7 @@ func ChatCompletions(c *gin.Context) {
 	body, _ = sjson.DeleteBytes(body, "intent")
 	body, _ = sjson.DeleteBytes(body, "intent_threshold")
 	body, _ = sjson.DeleteBytes(body, "intent_content")
+	body, _ = sjson.DeleteBytes(body, "logprobs") // #IBZYCA
 
 	// 是否支持使用工具, 避免模型不支持相关功能报错
 	chatUseTools, _ := strconv.ParseBool(os.Getenv("CHAT_USE_TOOLS"))
