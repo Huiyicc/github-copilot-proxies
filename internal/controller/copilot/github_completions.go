@@ -24,6 +24,7 @@ import (
 // CodexCompletions 全代理GitHub的代码补全接口
 func CodexCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
+	urlModelName := c.Param("model-name")
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
 
@@ -39,7 +40,7 @@ func CodexCompletions(c *gin.Context) {
 	}
 
 	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
-	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/copilot-codex/completions"
+	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/" + urlModelName + "/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)

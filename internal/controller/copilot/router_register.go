@@ -85,7 +85,7 @@ func setupCopilotRoutes(g *gin.RouterGroup, config *Config) {
 	completionsGroup := g.Group("")
 	completionsGroup.Use(tokenMiddleware)
 	{
-		completionsGroup.POST("/v1/engines/copilot-codex/completions", createCompletionsHandler(config))
+		completionsGroup.POST("/v1/engines/:model-name/completions", createCompletionsHandler(config))
 		completionsGroup.POST("/v1/engines/copilot-codex", createCompletionsHandler(config))
 		completionsGroup.POST("/chat/completions", createChatHandler(config))
 		completionsGroup.POST("/agents/chat", createChatHandler(config))
