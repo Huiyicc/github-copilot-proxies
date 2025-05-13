@@ -80,6 +80,7 @@ func ChatCompletions(c *gin.Context) {
 	firstRole := gjson.GetBytes(body, "messages.0.role").String()
 	firstContent := gjson.GetBytes(body, "messages.0.content").String()
 	if strings.Contains(firstRole, "system") && strings.Contains(firstContent, "You are a helpful AI programming assistant to a user") &&
+		!strings.Contains(firstContent, "If you cannot choose just one category, or if none of the categories seem like they would provide the user with a better result, you must always respond with") &&
 		!gjson.GetBytes(body, "tool_choice").Exists() {
 		_, _ = c.Writer.WriteString("data: [DONE]\n\n")
 		c.Writer.Flush()
