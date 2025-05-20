@@ -45,3 +45,4 @@ services:
       - EMBEDDING_DIMENSION_SIZE=1536
     volumes:
       - ./logs:/app/logs
+      - ./models.json:/app/models.json
