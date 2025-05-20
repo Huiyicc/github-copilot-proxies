@@ -235,4 +235,8 @@ func initDefaultEnv() {
 		os.Setenv("COPILOT_ACCOUNT_TYPE", "individual")
 	}
 
+	if os.Getenv("LIGHTWEIGHT_MODEL") == "" {
+		os.Setenv("LIGHTWEIGHT_MODEL", "gpt-4o-mini")
+	}
+
 }

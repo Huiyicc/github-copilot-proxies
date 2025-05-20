@@ -12,6 +12,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -28,7 +29,27 @@ func ChatCompletions(c *gin.Context) {
 		return
 	}
 
+	apiModelName := gjson.GetBytes(body, "model").String()
+	// 默认设置的对话模型
 	envModelName := os.Getenv("CHAT_API_MODEL_NAME")
+	// 默认设置的对话请求地址
+	chatAPIURL := os.Getenv("CHAT_API_BASE")
+	// 默认设置的对话模型key
+	apiKey := os.Getenv("CHAT_API_KEY")
+
+	// 轻量模型直接走代码补全接口, 节约成本
+	if strings.Contains(apiModelName, os.Getenv("LIGHTWEIGHT_MODEL")) {
+		envModelName = os.Getenv("CODEX_API_MODEL_NAME")
+		codexAPIURL := os.Getenv("CODEX_API_BASE")
+		parsedURL, err := url.Parse(codexAPIURL)
+		if err != nil {
+			fmt.Println("URL解析错误:", err)
+			return
+		}
+		chatAPIURL = "https://" + parsedURL.Hostname() + "/v1/chat/completions"
+		apiKey = os.Getenv("CODEX_API_KEY")
+	}
+
 	c.Header("Content-Type", "text/event-stream")
 
 	body, _ = sjson.SetBytes(body, "model", envModelName)
@@ -103,14 +124,14 @@ func ChatCompletions(c *gin.Context) {
 		}
 	}
 
-	req, err := http.NewRequestWithContext(ctx, http.MethodPost, os.Getenv("CHAT_API_BASE"), io.NopCloser(bytes.NewBuffer(body)))
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, chatAPIURL, io.NopCloser(bytes.NewBuffer(body)))
 	if nil != err {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		return
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("CHAT_API_KEY"))
+	req.Header.Set("Authorization", "Bearer "+apiKey)
 	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
 	client := &http.Client{
 		Timeout: httpClientTimeout,

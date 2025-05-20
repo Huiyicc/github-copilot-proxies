@@ -43,6 +43,7 @@ services:
       - EMBEDDING_API_KEY=
       - EMBEDDING_API_MODEL_NAME=m3e
       - EMBEDDING_DIMENSION_SIZE=1536
+      - LIGHTWEIGHT_MODEL=gpt-4o-mini
     volumes:
       - ./logs:/app/logs
       - ./models.json:/app/models.json
