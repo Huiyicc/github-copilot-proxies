@@ -35,7 +35,7 @@ func GinApi(g *gin.RouterGroup) {
 	}
 
 	// 基础路由
-	setupBasicRoutes(g)
+	setupBasicRoutes(g, config)
 
 	// 用户相关路由
 	setupUserRoutes(g)
@@ -48,8 +48,8 @@ func GinApi(g *gin.RouterGroup) {
 }
 
 // setupBasicRoutes 设置基础路由
-func setupBasicRoutes(g *gin.RouterGroup) {
-	g.GET("/models", GetModels)
+func setupBasicRoutes(g *gin.RouterGroup, config *Config) {
+	g.GET("/models", createModelsHandler(config))
 	g.GET("/_ping", GetPing)
 	g.POST("/telemetry", PostTelemetry)
 	g.GET("/agents", GetAgents)
@@ -142,6 +142,17 @@ func createChatEditCompletionsHandler(config *Config) gin.HandlerFunc {
 			ChatEditCompletions(c)
 		} else {
 			CodeCompletions(c)
+		}
+	}
+}
+
+// createModelsHandler 生成模型处理函数
+func createModelsHandler(config *Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if config.ClientType == "github" && config.CopilotProxyAll {
+			GetCopilotModels(c)
+		} else {
+			GetModels(c)
 		}
 	}
 }

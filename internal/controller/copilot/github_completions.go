@@ -311,3 +311,54 @@ func mergeHeaders(originalHeader http.Header, req *http.Request) error {
 
 	return nil
 }
+
+// GetCopilotModels 获取GitHub Copilot的模型列表
+func GetCopilotModels(c *gin.Context) {
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://api." + copilotAccountType + ".githubcopilot.com/models"
+	req, err := http.NewRequestWithContext(c, "GET", url, nil)
+	if nil != err {
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	// 合并请求头
+	if err := mergeHeaders(c.Request.Header, req); err != nil {
+		log.Println(err)
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
+	client := &http.Client{
+		Timeout: httpClientTimeout,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	resp, err := client.Do(req)
+	if nil != err {
+		if errors.Is(err, context.Canceled) {
+			abortCodex(c, http.StatusRequestTimeout)
+			return
+		}
+
+		log.Println("获取模型列表失败:", err.Error())
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+	defer CloseIO(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		log.Println("请求GitHub Copilot模型列表失败:", string(body))
+
+		abortCodex(c, resp.StatusCode)
+		return
+	}
+
+	// 转发原始响应
+	c.Status(resp.StatusCode)
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	_, _ = io.Copy(c.Writer, resp.Body)
+}
