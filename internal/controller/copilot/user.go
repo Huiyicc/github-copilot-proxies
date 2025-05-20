@@ -92,6 +92,7 @@ func generateAssignedDate() string {
 func GetCopilotInternalUser(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{
 		"access_type_sku":         "free_educational",
+		"copilot_plan":            "individual",
 		"analytics_tracking_id":   generateTrackingID(),
 		"assigned_date":           generateAssignedDate(),
 		"can_signup_for_limited":  false,

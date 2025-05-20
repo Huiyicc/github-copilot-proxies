@@ -6,7 +6,7 @@
         "limits": {
           "max_context_window_tokens": 16384,
           "max_output_tokens": 4096,
-          "max_prompt_tokens": 16384
+          "max_prompt_tokens": 12288
         },
         "object": "model_capabilities",
         "supports": {
@@ -17,6 +17,8 @@
         "type": "chat"
       },
       "id": "gpt-3.5-turbo",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT 3.5 Turbo",
       "object": "model",
@@ -30,7 +32,7 @@
         "limits": {
           "max_context_window_tokens": 16384,
           "max_output_tokens": 4096,
-          "max_prompt_tokens": 16384
+          "max_prompt_tokens": 12288
         },
         "object": "model_capabilities",
         "supports": {
@@ -41,6 +43,8 @@
         "type": "chat"
       },
       "id": "gpt-3.5-turbo-0613",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT 3.5 Turbo",
       "object": "model",
@@ -54,7 +58,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 4096,
-          "max_prompt_tokens": 64000
+          "max_prompt_tokens": 12288
         },
         "object": "model_capabilities",
         "supports": {
@@ -66,6 +70,8 @@
         "type": "chat"
       },
       "id": "gpt-4o-mini",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o mini",
       "object": "model",
@@ -79,7 +85,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 4096,
-          "max_prompt_tokens": 64000
+          "max_prompt_tokens": 12288
         },
         "object": "model_capabilities",
         "supports": {
@@ -91,6 +97,8 @@
         "type": "chat"
       },
       "id": "gpt-4o-mini-2024-07-18",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o mini",
       "object": "model",
@@ -115,6 +123,8 @@
         "type": "chat"
       },
       "id": "gpt-4",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT 4",
       "object": "model",
@@ -139,6 +149,8 @@
         "type": "chat"
       },
       "id": "gpt-4-0613",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT 4",
       "object": "model",
@@ -164,6 +176,8 @@
         "type": "chat"
       },
       "id": "gpt-4-0125-preview",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT 4 Turbo",
       "object": "model",
@@ -200,6 +214,8 @@
         "type": "chat"
       },
       "id": "gpt-4o",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "GPT-4o",
       "object": "model",
@@ -236,6 +252,8 @@
         "type": "chat"
       },
       "id": "gpt-4o-2024-11-20",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o",
       "object": "model",
@@ -272,6 +290,8 @@
         "type": "chat"
       },
       "id": "gpt-4o-2024-05-13",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o",
       "object": "model",
@@ -297,6 +317,8 @@
         "type": "chat"
       },
       "id": "gpt-4-o-preview",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o",
       "object": "model",
@@ -322,6 +344,8 @@
         "type": "chat"
       },
       "id": "gpt-4o-2024-08-06",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4o",
       "object": "model",
@@ -345,6 +369,8 @@
         "type": "chat"
       },
       "id": "o1",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "o1 (Preview)",
       "object": "model",
@@ -368,6 +394,8 @@
         "type": "chat"
       },
       "id": "o1-2024-12-17",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "o1 (Preview)",
       "object": "model",
@@ -393,6 +421,8 @@
         "type": "chat"
       },
       "id": "o3-mini",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "o3-mini",
       "object": "model",
@@ -418,6 +448,8 @@
         "type": "chat"
       },
       "id": "o3-mini-2025-01-31",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "o3-mini",
       "object": "model",
@@ -443,6 +475,8 @@
         "type": "chat"
       },
       "id": "o3-mini-paygo",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "o3-mini",
       "object": "model",
@@ -461,6 +495,8 @@
         "type": "completion"
       },
       "id": "gpt-4o-copilot",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "GPT-4o Copilot",
       "object": "model",
@@ -480,6 +516,8 @@
         "type": "embeddings"
       },
       "id": "text-embedding-ada-002",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "Embedding V2 Ada",
       "object": "model",
@@ -501,6 +539,8 @@
         "type": "embeddings"
       },
       "id": "text-embedding-3-small",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "Embedding V3 small",
       "object": "model",
@@ -519,6 +559,8 @@
         "type": "embeddings"
       },
       "id": "text-embedding-3-small-inference",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "Embedding V3 small (Inference)",
       "object": "model",
@@ -554,6 +596,8 @@
         "type": "chat"
       },
       "id": "claude-3.5-sonnet",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "Claude 3.5 Sonnet",
       "object": "model",
@@ -593,6 +637,8 @@
         "type": "chat"
       },
       "id": "claude-3.7-sonnet",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "Claude 3.7 Sonnet",
       "object": "model",
@@ -630,6 +676,8 @@
         "type": "chat"
       },
       "id": "claude-3.7-sonnet-thought",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "Claude 3.7 Sonnet Thinking",
       "object": "model",
@@ -662,15 +710,15 @@
         },
         "object": "model_capabilities",
         "supports": {
-          "parallel_tool_calls": true,
           "streaming": true,
-          "tool_calls": true,
           "vision": true
         },
         "tokenizer": "o200k_base",
         "type": "chat"
       },
       "id": "gemini-2.0-flash-001",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "Gemini 2.0 Flash",
       "object": "model",
@@ -712,6 +760,8 @@
         "type": "chat"
       },
       "id": "gemini-2.5-pro",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "Gemini 2.5 Pro (Preview)",
       "object": "model",
@@ -753,6 +803,8 @@
         "type": "chat"
       },
       "id": "gemini-2.5-pro-preview-05-06",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "Gemini 2.5 Pro (Preview)",
       "object": "model",
@@ -770,7 +822,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 16384,
-          "max_prompt_tokens": 64000,
+          "max_prompt_tokens": 128000,
           "vision": {
             "max_prompt_image_size": 3145728,
             "max_prompt_images": 1,
@@ -794,6 +846,8 @@
         "type": "chat"
       },
       "id": "o4-mini",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": true,
       "name": "o4-mini (Preview)",
       "object": "model",
@@ -811,7 +865,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 16384,
-          "max_prompt_tokens": 64000,
+          "max_prompt_tokens": 128000,
           "vision": {
             "max_prompt_image_size": 3145728,
             "max_prompt_images": 1,
@@ -835,6 +889,8 @@
         "type": "chat"
       },
       "id": "o4-mini-2025-04-16",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "o4-mini (Preview)",
       "object": "model",
@@ -852,7 +908,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 16384,
-          "max_prompt_tokens": 64000,
+          "max_prompt_tokens": 128000,
           "vision": {
             "max_prompt_image_size": 3145728,
             "max_prompt_images": 1,
@@ -876,6 +932,8 @@
         "type": "chat"
       },
       "id": "gpt-4.1",
+      "is_chat_default": true,
+      "is_chat_fallback": true,
       "model_picker_enabled": true,
       "name": "GPT-4.1",
       "object": "model",
@@ -889,7 +947,7 @@
         "limits": {
           "max_context_window_tokens": 128000,
           "max_output_tokens": 16384,
-          "max_prompt_tokens": 64000,
+          "max_prompt_tokens": 128000,
           "vision": {
             "max_prompt_image_size": 3145728,
             "max_prompt_images": 1,
@@ -913,6 +971,8 @@
         "type": "chat"
       },
       "id": "gpt-4.1-2025-04-14",
+      "is_chat_default": false,
+      "is_chat_fallback": false,
       "model_picker_enabled": false,
       "name": "GPT-4.1",
       "object": "model",
