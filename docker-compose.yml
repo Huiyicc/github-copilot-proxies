@@ -46,3 +46,4 @@ services:
       - LIGHTWEIGHT_MODEL=gpt-4o-mini
     volumes:
       - ./logs:/app/logs
+#      - ./models.json:/root/models.json
