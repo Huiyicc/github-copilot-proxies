@@ -17,6 +17,9 @@ import (
 
 // GetDisguiseCopilotInternalV2Token 返回伪装的token
 func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
+
 	trackingId, _ := uuid.NewV4()
 	now := time.Now().Unix()
 	dcAt, _ := strconv.Atoi(os.Getenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT"))

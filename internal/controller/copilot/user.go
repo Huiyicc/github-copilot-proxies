@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"math/rand"
 	"net/http"
 	"ripper/internal/middleware"
@@ -21,6 +22,8 @@ func GetLoginUser(ctx *gin.Context) {
 	}
 
 	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
 	ctx.JSON(http.StatusOK, gin.H{
 		"login":               userDisplayName,
 		"id":                  9919,
@@ -90,6 +93,9 @@ func generateAssignedDate() string {
 
 // GetCopilotInternalUser 获取 Copilot 内部用户信息
 func GetCopilotInternalUser(ctx *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
+
 	ctx.JSON(http.StatusOK, gin.H{
 		"access_type_sku":         "free_educational",
 		"copilot_plan":            "individual",

@@ -3,6 +3,7 @@ package copilot
 import (
 	_ "embed"
 	"encoding/json"
+	"github.com/gofrs/uuid"
 	"io"
 	"log"
 	"net/http"
@@ -21,6 +22,9 @@ type Pong struct {
 
 // GetPing 模拟ping接口
 func GetPing(ctx *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
+
 	ctx.JSON(http.StatusOK, Pong{
 		Now:    time.Now().Second(),
 		Status: "ok",
@@ -61,6 +65,8 @@ func GetModels(ctx *gin.Context) {
 	}
 
 	// 返回模型列表数据
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
 	ctx.JSON(http.StatusOK, modelsResponse)
 }
 

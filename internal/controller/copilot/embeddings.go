@@ -1,6 +1,7 @@
 package copilot
 
 import (
+	"github.com/gofrs/uuid"
 	"net/http"
 	"os"
 	"strconv"
@@ -17,6 +18,9 @@ type EmbeddingsAPIRequest struct {
 
 // HandleEmbeddings 处理嵌入请求的HTTP处理器
 func HandleEmbeddings(c *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+
 	var req EmbeddingsAPIRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})

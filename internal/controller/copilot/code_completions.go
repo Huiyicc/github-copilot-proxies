@@ -26,6 +26,10 @@ import (
 // CodeCompletions 代码补全
 func CodeCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
 

@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 	"io"
@@ -22,6 +23,10 @@ import (
 // ChatCompletions chat对话接口
 func ChatCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	// 添加响应头, 解决vscode校验github所属问题
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
 
 	body, err := io.ReadAll(c.Request.Body)
 	if nil != err {

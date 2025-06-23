@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"net/http"
 	"os"
 	"strconv"
@@ -116,6 +117,8 @@ func HandleChunks(c *gin.Context) {
 		EmbeddingModel: service.modelName,
 	}
 
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
 	c.JSON(http.StatusOK, resp)
 }
 

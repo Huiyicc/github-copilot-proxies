@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gofrs/uuid"
 	"io"
 	"io/ioutil"
 	"log"
@@ -24,6 +25,10 @@ import (
 // CodexCompletions 全代理GitHub的代码补全接口
 func CodexCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+
 	urlModelName := c.Param("model-name")
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
@@ -208,6 +213,8 @@ func ChatEditCompletions(c *gin.Context) {
 
 	c.Status(resp.StatusCode)
 	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
@@ -360,5 +367,7 @@ func GetCopilotModels(c *gin.Context) {
 	// 转发原始响应
 	c.Status(resp.StatusCode)
 	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
