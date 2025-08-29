@@ -1,13 +1,22 @@
 # Github Copilot 后端代理服务
 
-借助其他支持 `FIM` 接口的模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
+借助其他支持 `FIM` 接口的模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。   
 
+⚠️ **随之Github Copilot更新频繁, 不建议您频繁更新插件, 否则可能出现无法使用的情况!**   
+
+⚠️ **免责声明: 本项目与 GitHub 公司无任何关联, 仅供学习交流使用, 请勿用于商业用途, 一切后果自负.**   
+
+---
 ✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
 
 🚨 **破坏性更新提示: `v0.1.0` 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**   
 
-🚨 **破坏性更新提示: `v0.1.6` 版本更新对 `Embeddings模型` 进行了调整, 如果还想继续使用阿里灵石的模型, 请自行借助 `One API` 之类的中转系统进行接入.**
+🚨 **破坏性更新提示: `v0.1.6` 版本更新对 `Embeddings模型` 进行了调整, 如果还想继续使用阿里灵石的模型, 请自行借助 `One API` 之类的中转系统进行接入.**   
 
+---
+💡 **【开源推荐】[Claude Code镜像服务](https://github.com/RipperTs/claude-code-relay)**: 自建Claude code镜像服务，支持多账号切换、 支持任意Claude Console的接入、能有效规避封号，OAuth集成可快捷添加账号池。   
+
+---
 ## 功能特性
 
 - [x] 使用 `docker-compose` 部署, 简单方便
@@ -42,6 +51,12 @@
 **模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:  
 
 ```shell
+# 复制环境变量配置文件
+cp .env.example .env
+
+# 修改 .env 文件内容, 主要是模型API KEY等相关配置
+# 确保.env文件和models.json与docker-compose.yml在同级目录下
+
 # 启动服务
 docker-compose up -d
 

@@ -10,40 +10,8 @@ services:
     environment:
       - PORT=1188
       - HTTPS_PORT=443
-      - LOGIN_PASSWORD=
-      - CHAT_LOCALE=zh-CN
-      - HTTP_CLIENT_TIMEOUT=60
-      # 代码补全配置
-      - CODEX_API_BASE=https://api.deepseek.com/beta/v1/completions # 代码补全API地址
-      - CODEX_API_KEY=yourapikey # 代码补全API密钥, 支持多个轮询APIKEY，用英文逗号分隔
-      - CODEX_API_MODEL_NAME=deepseek-chat # 代码补全API模型名称
-      - CODEX_MAX_TOKENS=500 # 代码补全API最大返回token数
-      - CODEX_TEMPERATURE=1 # 代码补全API温度, 默认值为:1, deepseek模型官方推荐设置为1, 如果要跟随插件动态设置,请设置为-1
-      - CODEX_SERVICE_TYPE=default # 补全服务类型, 默认值为:default, 可选值: ollama
-      - CODEX_LIMIT_PROMPT=0 # 限制prompt行数，可减少代码补全时消耗的tokens
-      # 聊天对话配置
-      - CHAT_API_BASE=https://api.deepseek.com/v1/chat/completions # 聊天补全API地址
-      - CHAT_API_KEY=yourapikey # 聊天补全API密钥
-      - CHAT_API_MODEL_NAME=deepseek-chat # 聊天补全API模型名称
-      - CHAT_MAX_TOKENS=4096 # 聊天API最大返回token数
-      - CHAT_USE_TOOLS=true
-      # 下面是Copilot配置
-      - DEFAULT_BASE_URL=https://copilot.supercopilot.top
-      - COPILOT_DEBOUNCE=200 # 补全防抖时间(毫秒)
-      - API_BASE_URL=https://api.copilot.supercopilot.top
-      - PROXY_BASE_URL=https://copilot-proxy.copilot.supercopilot.top
-      - TELEMETRY_BASE_URL=https://copilot-telemetry-service.copilot.supercopilot.top
-      - COPILOT_CLIENT_TYPE=default # copilot的客户端类型, 用于区分是否使用官方copilot服务
-      - COPILOT_GHU_TOKEN=ghu_xxxx # 支持多个轮询token，用英文逗号分隔
-      - COPILOT_PROXY_ALL=false # 在使用官方Copilot服务的时候是否全代理请求
-      - COPILOT_ACCOUNT_TYPE=individual # github copilot 官方账号类型, 企业版账号需要调整此参数, 否则在全代理模式下无法正常使用 (可选值: individual/business)
-      - DISGUISE_COPILOT_TOKEN_EXPIRES_AT=1800 # Copilot伪装token下发的有效期,单位秒
-      # Embedding 模型配置
-      - EMBEDDING_API_BASE=http://127.0.0.1:5012/v1/embeddings
-      - EMBEDDING_API_KEY=
-      - EMBEDDING_API_MODEL_NAME=m3e
-      - EMBEDDING_DIMENSION_SIZE=1536
-      - LIGHTWEIGHT_MODEL=gpt-4o-mini
+    env_file:
+      - .env
     volumes:
       - ./logs:/app/logs
-#      - ./models.json:/root/models.json
+      - ./models.json:/root/models.json
