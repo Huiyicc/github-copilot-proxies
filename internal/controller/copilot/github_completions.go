@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/gofrs/uuid"
+	"github.com/tidwall/gjson"
 	"io"
 	"io/ioutil"
 	"log"
@@ -107,7 +108,14 @@ func ChatsCompletions(c *gin.Context) {
 	}
 
 	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
-	url := "https://api." + copilotAccountType + ".githubcopilot.com/chat/completions"
+	modelName := gjson.GetBytes(body, "model").String()
+	var url string
+	// 解决 copilot-nes-xtab 补全模型走 proxy 请求地址
+	if modelName == "copilot-nes-xtab" {
+		url = "https://proxy." + copilotAccountType + ".githubcopilot.com/chat/completions"
+	} else {
+		url = "https://api." + copilotAccountType + ".githubcopilot.com/chat/completions"
+	}
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
