@@ -56,3 +56,20 @@ func HandleEmbeddings(c *gin.Context) {
 
 	c.JSON(http.StatusOK, resp)
 }
+
+// getEmbeddingModels 获取可用的嵌入模型列表
+func getEmbeddingModels(c *gin.Context) {
+	modelName := os.Getenv("EMBEDDING_API_MODEL_NAME")
+	if modelName == "" {
+		modelName = "text-embedding-3-small"
+	}
+
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+	c.JSON(http.StatusOK, gin.H{
+		"data": []gin.H{
+			{"id": modelName, "object": "model", "owned_by": "openai", "permission": []string{}},
+		},
+		"object": "list",
+	})
+}
