@@ -54,7 +54,7 @@ func setupBasicRoutes(g *gin.RouterGroup, config *Config) {
 	g.POST("/telemetry", PostTelemetry)
 	g.GET("/agents", GetAgents)
 	g.GET("/copilot_internal/user", GetCopilotInternalUser)
-	g.GET("/embeddings/models", getEmbeddingModels)
+	g.GET("/embeddings/models", EmbeddingModels)
 }
 
 // setupUserRoutes 设置用户相关路由

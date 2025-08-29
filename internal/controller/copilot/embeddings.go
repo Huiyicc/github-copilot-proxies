@@ -57,8 +57,8 @@ func HandleEmbeddings(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-// getEmbeddingModels 获取可用的嵌入模型列表
-func getEmbeddingModels(c *gin.Context) {
+// EmbeddingModels 获取可用的嵌入模型列表
+func EmbeddingModels(c *gin.Context) {
 	modelName := os.Getenv("EMBEDDING_API_MODEL_NAME")
 	if modelName == "" {
 		modelName = "text-embedding-3-small"
