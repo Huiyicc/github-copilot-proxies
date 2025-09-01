@@ -11,3 +11,6 @@ docker-compose-local.yml
 out
 logs
 cert
+CLAUDE.md
+.cursor
+.DS_Store

@@ -13,7 +13,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"strconv"
 	"strings"
@@ -46,12 +45,7 @@ func ChatCompletions(c *gin.Context) {
 	if strings.Contains(apiModelName, os.Getenv("LIGHTWEIGHT_MODEL")) {
 		envModelName = os.Getenv("CODEX_API_MODEL_NAME")
 		codexAPIURL := os.Getenv("CODEX_API_BASE")
-		parsedURL, err := url.Parse(codexAPIURL)
-		if err != nil {
-			fmt.Println("URL解析错误:", err)
-			return
-		}
-		chatAPIURL = "https://" + parsedURL.Hostname() + "/v1/chat/completions"
+		chatAPIURL = strings.Replace(codexAPIURL, "/v1/completions", "/v1/chat/completions", 1)
 		apiKey = os.Getenv("CODEX_API_KEY")
 	}
 

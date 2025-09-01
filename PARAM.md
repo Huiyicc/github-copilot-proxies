@@ -43,7 +43,7 @@
 | COPILOT_ACCOUNT_TYPE              | github copilot 官方账号类型 (可选值: `individual` `business`)<br/> 企业版账号需要调整此参数, 否则在全代理模式下无法正常使用                                                                                               | string | individual                                      |
 | DISGUISE_COPILOT_TOKEN_EXPIRES_AT | Copilot伪装token下发的有效期,单位秒 (如果是共享给他人的服务建议使用默认值, 自用的话可以设置很大来避免github copilot插件偶尔断连的问题)                                                                                                   | int    | 1800                                            |
 | ~~DASHSCOPE_API_KEY~~             | ~~阿里灵石API KEY, 目前用于embedding模型服务, [API-KEY的获取与配置](https://help.aliyun.com/zh/dashscope/developer-reference/acquisition-and-configuration-of-api-key)~~                                | string |                                                 |
-| LIGHTWEIGHT_MODEL                 | 轻量模型名称, 关键字即可无需全部模型名称, 比如gpt-4o-mini-0429, 直接使用gpt-4o-mini即可, 符合轻量模型的调用走代码补全接口, 节省成本                                                                                                  | string |                                                 |
+| LIGHTWEIGHT_MODEL                 | 轻量模型名称, 填写关键字即可, 无需全部模型名称, 比如gpt-4o-mini-0429, 直接使用gpt-4o-mini即可, 符合轻量模型的调用走代码补全接口, 节省成本                                                                                              | string |                                                 |
 
 以上环境变量参数配置可以手动在以下几个地方更改进行覆盖默认的设置:
 

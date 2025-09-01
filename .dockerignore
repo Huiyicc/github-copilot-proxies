@@ -3,3 +3,7 @@ docs
 nginx
 out
 cert
+CLAUDE.md
+.cursor
+.DS_Store
+.vscode
