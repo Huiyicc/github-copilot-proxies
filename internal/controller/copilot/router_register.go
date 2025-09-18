@@ -50,6 +50,7 @@ func GinApi(g *gin.RouterGroup) {
 // setupBasicRoutes 设置基础路由
 func setupBasicRoutes(g *gin.RouterGroup, config *Config) {
 	g.GET("/models", createModelsHandler(config))
+	g.GET("/models/session", createModelsHandler(config))
 	g.GET("/_ping", GetPing)
 	g.POST("/telemetry", PostTelemetry)
 	g.GET("/agents", GetAgents)
