@@ -49,13 +49,13 @@ func GinApi(g *gin.RouterGroup) {
 
 // setupBasicRoutes 设置基础路由
 func setupBasicRoutes(g *gin.RouterGroup, config *Config) {
-	g.GET("/models", createModelsHandler(config))
-	g.GET("/models/session", createModelsHandler(config))
-	g.GET("/_ping", GetPing)
-	g.POST("/telemetry", PostTelemetry)
-	g.GET("/agents", GetAgents)
-	g.GET("/copilot_internal/user", GetCopilotInternalUser)
-	g.GET("/embeddings/models", EmbeddingModels)
+	g.Any("/models", createModelsHandler(config))
+	g.Any("/models/session", createModelsHandler(config))
+	g.Any("/_ping", GetPing)
+	g.Any("/telemetry", PostTelemetry)
+	g.Any("/agents", GetAgents)
+	g.Any("/copilot_internal/user", GetCopilotInternalUser)
+	g.Any("/embeddings/models", EmbeddingModels)
 }
 
 // setupUserRoutes 设置用户相关路由
