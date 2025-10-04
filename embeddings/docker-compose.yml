@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  embeddings2openai:
+    container_name: embeddings2openai
+    image: registry.cn-hangzhou.aliyuncs.com/ripper/embeddings2openai:latest
+    restart: always
+    ports:
+      - 6008:6008
+    environment:
+      - sk-key=sk-aaabbbcccdddeeefffggghhhiiijjjkkk
+      - auto-dim=false
+      - model-name=bge-m3
+#    volumes:
+#      - ./models:/app/models  # 如果需要自己更改模型, 将模型文件放到models文件夹下, 并取消注释

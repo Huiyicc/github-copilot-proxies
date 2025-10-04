@@ -1,11 +1,22 @@
 # Github Copilot 后端代理服务
 
-借助其他支持 `FIM` 接口的模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。
+借助其他支持 `FIM` 接口的模型（如DeepSeek）来接管GitHub Copilot插件服务端, 廉价的模型+强大的补全插件相结合, 使得开发者可以更加高效的编写代码。   
 
+⚠️ **随之Github Copilot更新频繁, 不建议您频繁更新插件, 否则可能出现无法使用的情况!**   
+
+⚠️ **免责声明: 本项目与 GitHub 公司无任何关联, 仅供学习交流使用, 请勿用于商业用途, 一切后果自负.**   
+
+---
 ✨ **免费的公共服务端点: [mycopilot.noteo.cn](https://mycopilot.noteo.cn/help), 感谢 [硅基流动](https://cloud.siliconflow.cn/i/NO6ShUc3) 提供免费的模型服务**  
 
-🚨 **破坏性更新提示: v0.1.0 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**
+🚨 **破坏性更新提示: `v0.1.0` 版本更新之后需要做配置调整, 具体参考: [升级指南](https://gitee.com/ripperTs/github-copilot-proxies/releases/tag/v0.1.0) 部分内容.**   
 
+🚨 **破坏性更新提示: `v0.1.6` 版本更新对 `Embeddings模型` 进行了调整, 如果还想继续使用阿里灵石的模型, 请自行借助 `One API` 之类的中转系统进行接入.**   
+
+---
+💡 **【开源推荐】[Claude Code镜像服务](https://github.com/RipperTs/claude-code-relay)**: 自建Claude code镜像服务，支持多账号切换、 支持任意Claude Console的接入、能有效规避封号，OAuth集成可快捷添加账号池。   
+
+---
 ## 功能特性
 
 - [x] 使用 `docker-compose` 部署, 简单方便
@@ -19,7 +30,7 @@
 - [x] 无需自有域名, 自动配置和续签 `Let's Encrypt` SSL证书 (每 60 天自动更新一次证书, 自动重载 https 服务)
 - [x] 局域网共享, 可多台电脑共享一个服务端, 参考: [局域网共享方案](#局域网共享方案)
 - [x] 完全纯离线部署, 无需任何外部网络支持, 参考: [纯内网离线部署方案](#纯内网离线部署方案)
-- [ ] Ollama 部署的 Embeddings 模型支持
+- [x] 本地部署的 Embeddings 模型支持, 参考: [README.md](embeddings/README.md)
 
 ## 如何使用?
 
@@ -40,6 +51,12 @@
 **模型API KEY 替换为你的**, 然后执行以下命令即可启动服务:  
 
 ```shell
+# 复制环境变量配置文件
+cp .env.example .env
+
+# 修改 .env 文件内容, 主要是模型API KEY等相关配置
+# 确保.env文件和models.json与docker-compose.yml在同级目录下
+
 # 启动服务
 docker-compose up -d
 
@@ -153,10 +170,9 @@ location ^~ /
 ### Visual Studio 2022
 
 1. 更新到最新版本（内置 Copilot 版本）至少是 `17.10.x` 以上
-2. 首先开启 Github Enterprise 账户支持：工具-环境-账户-勾选“包含 Github Enterprise 服务器账户”
-3. 然后点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://copilot.supercopilot.top` 即可。
-
-🚧 Chat服务在代码选中后右键选择解释代码会报错, 解决方法是点击一下"在聊天窗口中继续"即可.
+2. 首先, 开启 `Github Enterprise` 账户支持：工具->环境->账户->勾选 `包含 Github Enterprise 服务器账户`
+3. 然后, 重启你的 `Visual Studio 2022` 编辑器
+4. 最后, 点击添加 Github 账户，切换到 Github Enterprise 选项卡，输入 `https://copilot.supercopilot.top` 即可。
 
 ### HBuilderX
 
@@ -242,11 +258,20 @@ location ^~ /
 
 > 目前仅 VSCode 最新版本的 `Github Copilot Chat` 插件支持使用 Embeddings 模型, 其他IDE可以不用考虑.
 
-插件默认使用 `512维` 的Embeddings模型, 为了方便项目借助阿里的模型, 文档: [API-KEY的获取与配置](https://help.aliyun.com/zh/dashscope/developer-reference/acquisition-and-configuration-of-api-key), 获取后填写环境变量 `DASHSCOPE_API_KEY` 即可.   
-注意: 阿里的Embedding模型是收费的, 但是有免费额度, 详细参考阿里的文档.   
+支持使用任意符合 `OpenAI` 接口格式的模型, 推荐本地Docker部署bge-m3的模型, 具体步骤如下参考: [README.md](embeddings/README.md) 中的Docker运行部分内容.  
 
-后续将继续测试其他维度的模型和本地 `Ollama` 部署Embeddings模型进行测试, 可以关注下后续的更新. 
+**然后配置服务端**     
+修改下面相关环境变量文件内容:   
+```
+EMBEDDING_API_BASE=http://127.0.0.1/v1/embeddings
+EMBEDDING_API_KEY=sk-aaabbbcccdddeeefffggghhhiiijjjkkk
+EMBEDDING_API_MODEL_NAME=bge-m3
+EMBEDDING_DIMENSION_SIZE=1024
+```
 
+如果你是 `One API` 之类的中转站, 也可以按照上面环境变量内容直接接入.   
+
+⚠️ 如果使用第三方API的Embedding模型, 可能会有隐私相关风险以及请求限频问题.   
 
 ## 问题排查
 如果本地部署遇到了 `无法登录` `无法对话` `无法补全` 等问题, 可以参考下面的排查方法:

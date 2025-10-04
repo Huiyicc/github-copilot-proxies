@@ -1,10 +1,16 @@
 package copilot
 
 import (
+	"crypto/md5"
+	"encoding/hex"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
+	"math/rand"
 	"net/http"
 	"ripper/internal/middleware"
 	jwtpkg "ripper/pkg/jwt"
+	"time"
 )
 
 // GetLoginUser 获取登录用户信息
@@ -16,6 +22,8 @@ func GetLoginUser(ctx *gin.Context) {
 	}
 
 	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
 	ctx.JSON(http.StatusOK, gin.H{
 		"login":               userDisplayName,
 		"id":                  9919,
@@ -56,4 +64,46 @@ func GetLoginUser(ctx *gin.Context) {
 func GetUserOrgs(ctx *gin.Context) {
 	ctx.Header("X-OAuth-Scopes", "gist, read:org, repo, user, workflow, write:public_key")
 	ctx.JSON(http.StatusOK, []interface{}{})
+}
+
+// generateTrackingID 生成模拟的 analytics_tracking_id
+func generateTrackingID() string {
+	// 生成一个随机字符串并计算其 MD5
+	randomStr := fmt.Sprintf("%d%d", time.Now().UnixNano(), rand.Int())
+	hash := md5.Sum([]byte(randomStr))
+	return hex.EncodeToString(hash[:])
+}
+
+// generateAssignedDate 生成模拟的 assigned_date
+func generateAssignedDate() string {
+	// 生成最近30天内的随机时间
+	now := time.Now()
+	daysAgo := rand.Intn(30)
+	randomTime := now.AddDate(0, 0, -daysAgo)
+
+	// 随机增加小时和分钟
+	randomHour := rand.Intn(24)
+	randomMinute := rand.Intn(60)
+	randomTime = randomTime.Add(time.Duration(randomHour) * time.Hour)
+	randomTime = randomTime.Add(time.Duration(randomMinute) * time.Minute)
+
+	// 返回格式化的时间字符串
+	return randomTime.Format(time.RFC3339)
+}
+
+// GetCopilotInternalUser 获取 Copilot 内部用户信息
+func GetCopilotInternalUser(ctx *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"access_type_sku":         "free_educational",
+		"copilot_plan":            "individual",
+		"analytics_tracking_id":   generateTrackingID(),
+		"assigned_date":           generateAssignedDate(),
+		"can_signup_for_limited":  false,
+		"chat_enabled":            true,
+		"organization_login_list": []interface{}{},
+		"organization_list":       []interface{}{},
+	})
 }

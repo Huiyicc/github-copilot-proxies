@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/gofrs/uuid"
+	"github.com/tidwall/gjson"
 	"io"
 	"io/ioutil"
 	"log"
@@ -24,6 +26,11 @@ import (
 // CodexCompletions 全代理GitHub的代码补全接口
 func CodexCompletions(c *gin.Context) {
 	ctx := c.Request.Context()
+
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+
+	urlModelName := c.Param("model-name")
 	debounceTime, _ := strconv.Atoi(os.Getenv("COPILOT_DEBOUNCE"))
 	time.Sleep(time.Duration(debounceTime) * time.Millisecond)
 
@@ -38,7 +45,8 @@ func CodexCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-codex/completions"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/" + urlModelName + "/completions"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
@@ -81,7 +89,7 @@ func CodexCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-	c.Header("Content-Type", "text/event-stream")
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
@@ -99,7 +107,15 @@ func ChatsCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://api.individual.githubcopilot.com/chat/completions"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	modelName := gjson.GetBytes(body, "model").String()
+	var url string
+	// 解决 copilot-nes-xtab 补全模型走 proxy 请求地址
+	if modelName == "copilot-nes-xtab" {
+		url = "https://proxy." + copilotAccountType + ".githubcopilot.com/chat/completions"
+	} else {
+		url = "https://api." + copilotAccountType + ".githubcopilot.com/chat/completions"
+	}
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
@@ -142,7 +158,7 @@ func ChatsCompletions(c *gin.Context) {
 	}
 
 	c.Status(resp.StatusCode)
-	c.Header("Content-Type", "text/event-stream")
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
@@ -160,7 +176,8 @@ func ChatEditCompletions(c *gin.Context) {
 		return
 	}
 
-	url := "https://proxy.individual.githubcopilot.com/v1/engines/copilot-centralus-h100/speculation"
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://proxy." + copilotAccountType + ".githubcopilot.com/v1/engines/copilot-centralus-h100/speculation"
 	req, err := http.NewRequestWithContext(c, "POST", url, bytes.NewBuffer(body))
 	if nil != err {
 		abortCodex(c, http.StatusInternalServerError)
@@ -204,6 +221,8 @@ func ChatEditCompletions(c *gin.Context) {
 
 	c.Status(resp.StatusCode)
 	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
 	_, _ = io.Copy(c.Writer, resp.Body)
 }
 
@@ -306,4 +325,57 @@ func mergeHeaders(originalHeader http.Header, req *http.Request) error {
 	}
 
 	return nil
+}
+
+// GetCopilotModels 获取GitHub Copilot的模型列表
+func GetCopilotModels(c *gin.Context) {
+	copilotAccountType := os.Getenv("COPILOT_ACCOUNT_TYPE")
+	url := "https://api." + copilotAccountType + ".githubcopilot.com/models"
+	req, err := http.NewRequestWithContext(c, "GET", url, nil)
+	if nil != err {
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	// 合并请求头
+	if err := mergeHeaders(c.Request.Header, req); err != nil {
+		log.Println(err)
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+
+	httpClientTimeout, _ := time.ParseDuration(os.Getenv("HTTP_CLIENT_TIMEOUT") + "s")
+	client := &http.Client{
+		Timeout: httpClientTimeout,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+	resp, err := client.Do(req)
+	if nil != err {
+		if errors.Is(err, context.Canceled) {
+			abortCodex(c, http.StatusRequestTimeout)
+			return
+		}
+
+		log.Println("获取模型列表失败:", err.Error())
+		abortCodex(c, http.StatusInternalServerError)
+		return
+	}
+	defer CloseIO(resp.Body)
+
+	if resp.StatusCode != http.StatusOK {
+		body, _ := io.ReadAll(resp.Body)
+		log.Println("请求GitHub Copilot模型列表失败:", string(body))
+
+		abortCodex(c, resp.StatusCode)
+		return
+	}
+
+	// 转发原始响应
+	c.Status(resp.StatusCode)
+	c.Header("Content-Type", resp.Header.Get("Content-Type"))
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+	_, _ = io.Copy(c.Writer, resp.Body)
 }

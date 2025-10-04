@@ -17,6 +17,9 @@ import (
 
 // GetDisguiseCopilotInternalV2Token 返回伪装的token
 func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	ctx.Header("x-github-request-id", requestID)
+
 	trackingId, _ := uuid.NewV4()
 	now := time.Now().Unix()
 	dcAt, _ := strconv.Atoi(os.Getenv("DISGUISE_COPILOT_TOKEN_EXPIRES_AT"))
@@ -34,7 +37,7 @@ func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 
 	endpoints := make(map[string]interface{})
 	endpoints["api"] = os.Getenv("API_BASE_URL")
-	endpoints["origin-tracker"] = "https://origin-tracker.githubusercontent.com"
+	endpoints["origin-tracker"] = "https://origin-tracker.individual.githubcopilot.com"
 	endpoints["proxy"] = os.Getenv("PROXY_BASE_URL")
 	endpoints["telemetry"] = os.Getenv("TELEMETRY_BASE_URL")
 
@@ -43,7 +46,7 @@ func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 		"chat_enabled":                             true,
 		"chat_jetbrains_enabled":                   true,
 		"code_quote_enabled":                       true,
-		"code_review_enabled":                      true,
+		"code_review_enabled":                      false,
 		"codesearch":                               true,
 		"copilot_ide_agent_chat_gpt4_small_prompt": false,
 		"copilotignore_enabled":                    false,
@@ -65,6 +68,9 @@ func GetDisguiseCopilotInternalV2Token(ctx *gin.Context) {
 		"vsc_panel_v2":                             false,
 		"xcode":                                    true,
 		"xcode_chat":                               true,
+		"limited_user_quotas":                      nil,
+		"limited_user_reset_date":                  nil,
+		"vsc_electron_fetcher_v2":                  false,
 	}
 	ctx.JSON(http.StatusOK, gout)
 }

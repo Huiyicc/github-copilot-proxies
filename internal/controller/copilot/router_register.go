@@ -35,7 +35,7 @@ func GinApi(g *gin.RouterGroup) {
 	}
 
 	// 基础路由
-	setupBasicRoutes(g)
+	setupBasicRoutes(g, config)
 
 	// 用户相关路由
 	setupUserRoutes(g)
@@ -48,11 +48,14 @@ func GinApi(g *gin.RouterGroup) {
 }
 
 // setupBasicRoutes 设置基础路由
-func setupBasicRoutes(g *gin.RouterGroup) {
-	g.GET("/models", GetModels)
-	g.GET("/_ping", GetPing)
-	g.POST("/telemetry", PostTelemetry)
-	g.GET("/agents", GetAgents)
+func setupBasicRoutes(g *gin.RouterGroup, config *Config) {
+	g.Any("/models", createModelsHandler(config))
+	g.Any("/models/session", createModelsHandler(config))
+	g.Any("/_ping", GetPing)
+	g.Any("/telemetry", PostTelemetry)
+	g.Any("/agents", GetAgents)
+	g.Any("/copilot_internal/user", GetCopilotInternalUser)
+	g.Any("/embeddings/models", EmbeddingModels)
 }
 
 // setupUserRoutes 设置用户相关路由
@@ -67,6 +70,7 @@ func setupUserRoutes(g *gin.RouterGroup) {
 		userGroup.GET("/api/v3/user", GetLoginUser)
 		userGroup.GET("/api/v3/user/orgs", GetUserOrgs)
 		userGroup.GET("/teams/:teamID/memberships/:username", GetMembership)
+		userGroup.POST("/chunks", HandleChunks)
 	}
 }
 
@@ -83,12 +87,12 @@ func setupCopilotRoutes(g *gin.RouterGroup, config *Config) {
 	completionsGroup := g.Group("")
 	completionsGroup.Use(tokenMiddleware)
 	{
-		completionsGroup.POST("/v1/engines/copilot-codex/completions", createCompletionsHandler(config))
+		completionsGroup.POST("/v1/engines/:model-name/completions", createCompletionsHandler(config))
 		completionsGroup.POST("/v1/engines/copilot-codex", createCompletionsHandler(config))
 		completionsGroup.POST("/chat/completions", createChatHandler(config))
+		completionsGroup.POST("/agents/chat", createChatHandler(config))
 		completionsGroup.POST("/v1/chat/completions", createChatHandler(config))
 		completionsGroup.POST("/v1/engines/copilot-centralus-h100/speculation", createChatEditCompletionsHandler(config))
-		completionsGroup.POST("/chunks", HandleChunks)
 		completionsGroup.POST("/embeddings", HandleEmbeddings)
 	}
 }
@@ -140,6 +144,17 @@ func createChatEditCompletionsHandler(config *Config) gin.HandlerFunc {
 			ChatEditCompletions(c)
 		} else {
 			CodeCompletions(c)
+		}
+	}
+}
+
+// createModelsHandler 生成模型处理函数
+func createModelsHandler(config *Config) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		if config.ClientType == "github" && config.CopilotProxyAll {
+			GetCopilotModels(c)
+		} else {
+			GetModels(c)
 		}
 	}
 }

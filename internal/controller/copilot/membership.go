@@ -2,11 +2,15 @@ package copilot
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/gofrs/uuid"
 	"net/http"
 )
 
 // GetMembership 获取团队成员信息
 func GetMembership(c *gin.Context) {
+	requestID := uuid.Must(uuid.NewV4()).String()
+	c.Header("x-github-request-id", requestID)
+
 	teamID := c.Param("teamID")
 	username := c.Param("username")
 

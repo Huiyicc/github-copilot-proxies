@@ -31,6 +31,7 @@ WORKDIR /root/
 # 从 builder 阶段复制构建的二进制文件
 COPY --from=builder /app/main .
 COPY .env.example .env
+COPY models.json models.json
 
 # 暴露端口
 EXPOSE 1188

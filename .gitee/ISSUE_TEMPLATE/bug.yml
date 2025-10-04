@@ -1,6 +1,5 @@
 name: Bug 反馈
 description: 当你在代码中发现了一个 Bug，导致应用崩溃或抛出异常，或者某些地方看起来不对劲。
-title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: markdown
@@ -23,15 +22,17 @@ body:
     attributes:
       label: 遇到的问题
       description: 请详细告诉我们如何复现你遇到的问题，如涉及代码，可提供一个最小代码示例，并使用反引号```附上它
-      value: |
-        - 问题描述: 
-        - 使用的模型:
     validations:
       required: true
   - type: textarea
     attributes:
       label: 完整的环境变量配置
       description: 请提供你的环境变量配置，如果内容敏感不想让其他人看见, 勾选最下方 **添加内容风险标识** 即可。
+      value: |
+        ```
+        # 请在这里粘贴你的环境变量配置
+        
+        ```
     validations:
       required: true
   - type: dropdown
